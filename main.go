@@ -34,6 +34,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	frameCount++
 
 	op := ebiten.DrawImageOptions{}
+	op.GeoM.Translate(128-12, 128-12)
 	op.GeoM.Scale(2, 2)
 
 	screen.DrawImage(getFrame(DIR_SOUTH).(*ebiten.Image), &op)
