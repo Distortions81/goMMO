@@ -1,6 +1,8 @@
 package main
 
 import (
+	"image"
+
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
@@ -30,8 +32,39 @@ func newGame() *Game {
 /* Ebiten: Draw everything */
 func (g *Game) Draw(screen *ebiten.Image) {
 
-	screen.DrawImage(walkNorth, nil)
+	screen.DrawImage(getFrame(DIR_SOUTH).(*ebiten.Image), nil)
 
+}
+
+var walkframe int
+
+const spriteSize = 24
+
+func getFrame(dir int) image.Image {
+
+	rect := image.Rectangle{}
+	rect.Min.X = (walkframe * spriteSize)
+	rect.Max.X = (walkframe * spriteSize) + spriteSize
+	rect.Min.Y = 0
+	rect.Max.Y = spriteSize
+
+	walkframe++
+	if walkframe > 11 {
+		walkframe = 0
+	}
+
+	switch dir {
+	case DIR_NORTH:
+		return walkNorth.SubImage(rect)
+	case DIR_EAST:
+		return walkEast.SubImage(rect)
+	case DIR_SOUTH:
+		return walkSouth.SubImage(rect)
+	case DIR_WEST:
+		return walkWest.SubImage(rect)
+	default:
+		return nil
+	}
 }
 
 /* Ebiten resize handling */
