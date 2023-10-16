@@ -29,12 +29,13 @@ const (
 	xyCenter = 32768.0
 	xyMax    = xyCenter * 2.0
 	xyMin    = 1.0
+)
 
+const (
 	/* Directions */
-	DIR_NORTH = 0
-	DIR_EAST  = 1
-	DIR_SOUTH = 2
-	DIR_WEST  = 3
-	DIR_MAX   = 4
-	DIR_ANY   = 255
+	DIR_NORTH = iota
+	DIR_EAST
+	DIR_SOUTH
+	DIR_WEST
+	DIR_NONE
 )
