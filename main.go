@@ -1,6 +1,8 @@
 package main
 
-import "github.com/hajimehoshi/ebiten/v2"
+import (
+	"github.com/hajimehoshi/ebiten/v2"
+)
 
 type Game struct {
 }
@@ -11,7 +13,9 @@ func main() {
 	ebiten.SetTPS(ebiten.SyncWithFPS)
 	ebiten.SetScreenClearedEveryFrame(true)
 	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeDisabled)
-	ebiten.SetWindowSize(1024, 1024)
+	ebiten.SetWindowSize(512, 512)
+	loadTest()
+
 	if err := ebiten.RunGameWithOptions(newGame(), &ebiten.RunGameOptions{GraphicsLibrary: ebiten.GraphicsLibraryOpenGL}); err != nil {
 		return
 	}
@@ -25,6 +29,9 @@ func newGame() *Game {
 
 /* Ebiten: Draw everything */
 func (g *Game) Draw(screen *ebiten.Image) {
+
+	screen.DrawImage(walkNorth, nil)
+
 }
 
 /* Ebiten resize handling */
