@@ -4,6 +4,7 @@ import (
 	"image"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/inpututil"
 )
 
 type Game struct {
@@ -37,12 +38,13 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	op.GeoM.Translate(128-12, 128-12)
 	op.GeoM.Scale(2, 2)
 
-	screen.DrawImage(getFrame(DIR_SOUTH).(*ebiten.Image), &op)
+	screen.DrawImage(getFrame(goDir).(*ebiten.Image), &op)
 
 }
 
 var walkframe int
 var frameCount int
+var goDir int
 
 const spriteSize = 24
 
@@ -82,6 +84,18 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 
 /* Input interface handler */
 func (g *Game) Update() error {
-
+	if inpututil.IsKeyJustPressed(ebiten.KeyW) ||
+		inpututil.IsKeyJustPressed(ebiten.KeyArrowUp) {
+		goDir = DIR_NORTH
+	} else if inpututil.IsKeyJustPressed(ebiten.KeyA) ||
+		inpututil.IsKeyJustPressed(ebiten.KeyArrowLeft) {
+		goDir = DIR_WEST
+	} else if inpututil.IsKeyJustPressed(ebiten.KeyS) ||
+		inpututil.IsKeyJustPressed(ebiten.KeyArrowDown) {
+		goDir = DIR_SOUTH
+	} else if inpututil.IsKeyJustPressed(ebiten.KeyD) ||
+		inpututil.IsKeyJustPressed(ebiten.KeyArrowRight) {
+		goDir = DIR_EAST
+	}
 	return nil
 }
