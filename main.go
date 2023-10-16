@@ -31,12 +31,17 @@ func newGame() *Game {
 
 /* Ebiten: Draw everything */
 func (g *Game) Draw(screen *ebiten.Image) {
+	frameCount++
 
-	screen.DrawImage(getFrame(DIR_SOUTH).(*ebiten.Image), nil)
+	op := ebiten.DrawImageOptions{}
+	op.GeoM.Scale(2, 2)
+
+	screen.DrawImage(getFrame(DIR_SOUTH).(*ebiten.Image), &op)
 
 }
 
 var walkframe int
+var frameCount int
 
 const spriteSize = 24
 
@@ -48,9 +53,11 @@ func getFrame(dir int) image.Image {
 	rect.Min.Y = 0
 	rect.Max.Y = spriteSize
 
-	walkframe++
-	if walkframe > 11 {
-		walkframe = 0
+	if frameCount%2 == 0 {
+		walkframe++
+		if walkframe > 11 {
+			walkframe = 0
+		}
 	}
 
 	switch dir {
