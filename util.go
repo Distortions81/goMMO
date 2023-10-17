@@ -1,6 +1,8 @@
 package main
 
-func dirToOffset(dir int) int {
+import "image"
+
+func dirToCharOffset(dir int) int {
 	switch dir {
 	case DIR_S:
 		return charSpriteSize * 0
@@ -20,4 +22,18 @@ func dirToOffset(dir int) int {
 		return charSpriteSize * 7
 	}
 	return 0
+}
+
+func getCharFrame(dir int) image.Image {
+
+	dirOff := dirToCharOffset(dir)
+
+	rect := image.Rectangle{}
+	rect.Min.X = (walkframe * charSpriteSize)
+	rect.Max.X = (walkframe * charSpriteSize) + charSpriteSize
+	rect.Min.Y = dirOff
+	rect.Max.Y = charSpriteSize + dirOff
+
+	return testChar.SubImage(rect)
+
 }

@@ -29,7 +29,7 @@ func getSpriteImage(name string, unmanaged bool) (*ebiten.Image, error) {
 	if cLoadEmbedSprites {
 		gpng, err := f.Open(gfxDir + name)
 		if err != nil {
-			//DoLog(true, "GetSpriteImage: Embedded: %v", err)
+			doLog(true, "GetSpriteImage: Embedded: %v", err)
 			return nil, err
 		}
 
