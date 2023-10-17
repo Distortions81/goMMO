@@ -29,8 +29,8 @@ func newGame() *Game {
 /* Ebiten: Draw everything */
 func (g *Game) Draw(screen *ebiten.Image) {
 	op := ebiten.DrawImageOptions{}
-	op.GeoM.Translate(64-12+float64(charPos.X), 64-12+float64(charPos.Y))
-	op.GeoM.Scale(4, 4)
+	op.GeoM.Translate(128-26+float64(charPos.X), 128-26+float64(charPos.Y))
+	op.GeoM.Scale(2, 2)
 
 	screen.DrawImage(getFrame(goDir).(*ebiten.Image), &op)
 }
