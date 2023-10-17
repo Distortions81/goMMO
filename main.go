@@ -5,6 +5,9 @@ import (
 )
 
 func main() {
+	StartLog()
+	LogDaemon()
+
 	/* Set up ebiten and window */
 	ebiten.SetVsyncEnabled(true)
 	ebiten.SetTPS(60)
