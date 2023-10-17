@@ -22,6 +22,8 @@ func getFrame(dir int) image.Image {
 
 /* Ebiten: Draw everything */
 func (g *Game) Draw(screen *ebiten.Image) {
+	screen.Fill(colorGrass)
+
 	op := ebiten.DrawImageOptions{}
 	op.GeoM.Translate(128-26+float64(charPos.X), 128-26+float64(charPos.Y))
 	op.GeoM.Scale(2, 2)

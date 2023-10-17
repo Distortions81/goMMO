@@ -4,6 +4,7 @@ const (
 	/* Files and directories */
 	dataDir     = "data/"
 	gfxDir      = dataDir + "sprites/"
+	testAreaDir = "testArea"
 	testCharDir = "chars/"
 
 	charSpriteSize    = 52
