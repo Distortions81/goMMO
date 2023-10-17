@@ -36,6 +36,16 @@ func (g *Game) Draw(screen *ebiten.Image) {
 }
 
 func dirToOffset(dir int) int {
+	switch dir {
+	case DIR_N:
+		return charSpriteSize * 4
+	case DIR_E:
+		return charSpriteSize * 2
+	case DIR_S:
+		return charSpriteSize * 0
+	case DIR_W:
+		return charSpriteSize * 6
+	}
 	return 0
 }
 
