@@ -19,7 +19,7 @@ const (
 	/* Files and directories */
 	dataDir     = "data/"
 	gfxDir      = dataDir + "sprites/"
-	testCharDir = "testCharacter/"
+	testCharDir = "chars/"
 
 	/* WASD speeds */
 	moveSpeed = 4.0
@@ -33,9 +33,12 @@ const (
 
 const (
 	/* Directions */
-	DIR_NORTH = iota
-	DIR_EAST
-	DIR_SOUTH
-	DIR_WEST
-	DIR_NONE
+	DIR_S = iota
+	DIR_SW
+	DIR_W
+	DIR_NW
+	DIR_N
+	DIR_NE
+	DIR_E
+	DIR_SE
 )

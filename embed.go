@@ -13,27 +13,12 @@ var (
 	//go:embed data
 	f embed.FS
 
-	walkNorth *ebiten.Image
-	walkEast  *ebiten.Image
-	walkSouth *ebiten.Image
-	walkWest  *ebiten.Image
+	testChar *ebiten.Image
 )
 
 func loadTest() {
 	var err error
-	walkNorth, err = getSpriteImage(testCharDir+"Walk Up.png", false)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	walkEast, err = getSpriteImage(testCharDir+"Walk Right.png", false)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	walkSouth, err = getSpriteImage(testCharDir+"Walk Down.png", false)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	walkWest, err = getSpriteImage(testCharDir+"Walk Left.png", false)
+	testChar, err = getSpriteImage(testCharDir+"Civilian1(black)_Move.png", false)
 	if err != nil {
 		log.Fatalln(err)
 	}
