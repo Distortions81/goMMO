@@ -3,9 +3,9 @@ package main
 var (
 	WASMMode bool = false
 
-	walkframe  int
-	frameCount int
-	goDir      int
-	isWalking  bool
-	charPos    xy
+	walkframe   int
+	updateCount int
+	goDir       int
+	isWalking   bool
+	charPos     xy
 )

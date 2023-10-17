@@ -10,7 +10,7 @@ import (
 func main() {
 	/* Set up ebiten and window */
 	ebiten.SetVsyncEnabled(true)
-	ebiten.SetTPS(ebiten.SyncWithFPS)
+	ebiten.SetTPS(60)
 	ebiten.SetScreenClearedEveryFrame(true)
 	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeDisabled)
 	ebiten.SetWindowSize(512, 512)
@@ -28,8 +28,6 @@ func newGame() *Game {
 
 /* Ebiten: Draw everything */
 func (g *Game) Draw(screen *ebiten.Image) {
-	frameCount++
-
 	op := ebiten.DrawImageOptions{}
 	op.GeoM.Translate(64-12+float64(charPos.X), 64-12+float64(charPos.Y))
 	op.GeoM.Scale(4, 4)
@@ -51,18 +49,6 @@ func getFrame(dir int) image.Image {
 	rect.Min.Y = dirOff
 	rect.Max.Y = charSpriteSize + dirOff
 
-	if isWalking {
-		if frameCount%2 == 0 {
-			walkframe++
-			if walkframe > 3 {
-				walkframe = 0
-			}
-			MoveDir(dir)
-		}
-	} else {
-		walkframe = 0
-	}
-
 	return testChar.SubImage(rect)
 
 }
@@ -79,6 +65,7 @@ func MoveDir(dir int) {
 	case DIR_W:
 		charPos.X--
 	}
+
 }
 
 /* Ebiten resize handling */
@@ -88,6 +75,8 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 
 /* Input interface handler */
 func (g *Game) Update() error {
+	updateCount++
+
 	pressedKeys := inpututil.AppendPressedKeys(nil)
 	if pressedKeys == nil {
 		isWalking = false
@@ -112,6 +101,18 @@ func (g *Game) Update() error {
 		isWalking = true
 	} else {
 		isWalking = false
+	}
+
+	if isWalking {
+		if updateCount%6 == 0 {
+			walkframe++
+			if walkframe > 3 {
+				walkframe = 0
+			}
+		}
+		MoveDir(goDir)
+	} else {
+		walkframe = 0
 	}
 
 	return nil
