@@ -20,4 +20,5 @@ const (
 	DIR_NE
 	DIR_E
 	DIR_SE
+	DIR_NONE
 )

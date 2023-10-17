@@ -37,14 +37,22 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 func dirToOffset(dir int) int {
 	switch dir {
-	case DIR_N:
-		return charSpriteSize * 4
-	case DIR_E:
-		return charSpriteSize * 2
 	case DIR_S:
 		return charSpriteSize * 0
+	case DIR_SE:
+		return charSpriteSize * 1
+	case DIR_E:
+		return charSpriteSize * 2
+	case DIR_NE:
+		return charSpriteSize * 3
+	case DIR_N:
+		return charSpriteSize * 4
+	case DIR_NW:
+		return charSpriteSize * 5
 	case DIR_W:
 		return charSpriteSize * 6
+	case DIR_SW:
+		return charSpriteSize * 7
 	}
 	return 0
 }
@@ -68,11 +76,23 @@ func MoveDir(dir int) {
 	switch dir {
 	case DIR_N:
 		charPos.Y--
+	case DIR_NE:
+		charPos.Y--
+		charPos.X++
 	case DIR_E:
 		charPos.X++
+	case DIR_SE:
+		charPos.X++
+		charPos.Y++
 	case DIR_S:
 		charPos.Y++
+	case DIR_SW:
+		charPos.Y++
+		charPos.X--
 	case DIR_W:
+		charPos.X--
+	case DIR_NW:
+		charPos.Y--
 		charPos.X--
 	}
 
@@ -89,25 +109,55 @@ func (g *Game) Update() error {
 
 	pressedKeys := inpututil.AppendPressedKeys(nil)
 	if pressedKeys == nil {
-		isWalking = false
+		walkframe = 0
 		return nil
 	}
 
-	if pressedKeys[0] == ebiten.KeyW ||
-		pressedKeys[0] == ebiten.KeyArrowUp {
-		goDir = DIR_N
-		isWalking = true
-	} else if pressedKeys[0] == ebiten.KeyA ||
-		pressedKeys[0] == ebiten.KeyArrowLeft {
-		goDir = DIR_W
-		isWalking = true
-	} else if pressedKeys[0] == ebiten.KeyS ||
-		pressedKeys[0] == ebiten.KeyArrowDown {
-		goDir = DIR_S
-		isWalking = true
-	} else if pressedKeys[0] == ebiten.KeyD ||
-		pressedKeys[0] == ebiten.KeyArrowRight {
-		goDir = DIR_E
+	newDir := DIR_NONE
+	for _, key := range pressedKeys {
+		if key == ebiten.KeyW ||
+			key == ebiten.KeyArrowUp {
+			if newDir == DIR_NONE {
+				newDir = DIR_N
+			} else if newDir == DIR_E {
+				newDir = DIR_NE
+			} else if newDir == DIR_W {
+				newDir = DIR_NW
+			}
+		}
+		if key == ebiten.KeyA ||
+			key == ebiten.KeyArrowLeft {
+			if newDir == DIR_NONE {
+				newDir = DIR_W
+			} else if newDir == DIR_N {
+				newDir = DIR_NW
+			} else if newDir == DIR_S {
+				newDir = DIR_SW
+			}
+		}
+		if key == ebiten.KeyS ||
+			key == ebiten.KeyArrowDown {
+			if newDir == DIR_NONE {
+				newDir = DIR_S
+			} else if newDir == DIR_E {
+				newDir = DIR_SE
+			} else if newDir == DIR_W {
+				newDir = DIR_SW
+			}
+		}
+		if key == ebiten.KeyD ||
+			key == ebiten.KeyArrowRight {
+			if newDir == DIR_NONE {
+				newDir = DIR_E
+			} else if newDir == DIR_N {
+				newDir = DIR_NE
+			} else if newDir == DIR_S {
+				newDir = DIR_SE
+			}
+		}
+	}
+	if newDir != DIR_NONE {
+		goDir = newDir
 		isWalking = true
 	} else {
 		isWalking = false
