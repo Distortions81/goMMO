@@ -24,8 +24,6 @@ func loadTest() {
 	}
 }
 
-const cLoadEmbedSprites = true
-
 func getSpriteImage(name string, unmanaged bool) (*ebiten.Image, error) {
 
 	if cLoadEmbedSprites {

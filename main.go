@@ -7,14 +7,6 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 )
 
-type Game struct {
-}
-
-type xy struct {
-	X int
-	Y int
-}
-
 func main() {
 	/* Set up ebiten and window */
 	ebiten.SetVsyncEnabled(true)
@@ -30,7 +22,6 @@ func main() {
 }
 
 func newGame() *Game {
-
 	/* Initialize the game */
 	return &Game{}
 }
@@ -46,16 +37,6 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	screen.DrawImage(getFrame(goDir).(*ebiten.Image), &op)
 }
 
-var (
-	walkframe  int
-	frameCount int
-	goDir      int
-	isWalking  bool
-	charPos    xy
-)
-
-const spriteSize = 52
-
 func dirToOffset(dir int) int {
 	return 0
 }
@@ -65,10 +46,10 @@ func getFrame(dir int) image.Image {
 	dirOff := dirToOffset(dir)
 
 	rect := image.Rectangle{}
-	rect.Min.X = (walkframe * spriteSize)
-	rect.Max.X = (walkframe * spriteSize) + spriteSize
+	rect.Min.X = (walkframe * charSpriteSize)
+	rect.Max.X = (walkframe * charSpriteSize) + charSpriteSize
 	rect.Min.Y = dirOff
-	rect.Max.Y = spriteSize + dirOff
+	rect.Max.Y = charSpriteSize + dirOff
 
 	if isWalking {
 		if frameCount%2 == 0 {
