@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"math/rand"
+	"sync"
 	"time"
 
 	"nhooyr.io/websocket"
@@ -61,8 +62,66 @@ func doConnect() bool {
 	c.SetReadLimit(netReadLimit)
 
 	localPlayer = &playerData{conn: c, context: ctx, cancel: cancel, id: 0}
+	c.Write(ctx, websocket.MessageBinary, []byte{byte(CMD_INIT)})
+	doLog(true, "Connected!")
 
 	changeGameMode(MODE_CONNECTED, 0)
+	go readNet()
 
 	return true
+}
+
+var gameLock sync.Mutex
+
+func readNet() {
+	if localPlayer == nil ||
+		localPlayer.conn == nil ||
+		localPlayer.context == nil {
+		return
+	}
+
+	for {
+
+		_, input, err := localPlayer.conn.Read(localPlayer.context)
+		gameLock.Lock()
+
+		if err != nil {
+			doLog(true, "readNet error: %v", err)
+
+			doLog(true, "Connection lost.")
+			changeGameMode(MODE_ERROR, 0)
+			changeGameMode(MODE_BOOT, time.Second)
+			gameLock.Unlock()
+
+			connectServer()
+			return
+		}
+		inputLen := len(input)
+		if inputLen <= 0 {
+			gameLock.Unlock()
+			return
+		}
+		d := CMD(input[0])
+		//data := input[1:]
+
+		//cmdName := cmdNames[d]
+		cmdName := "???"
+		if d != RECV_PLAYERUPDATE {
+			if cmdName == "" {
+				doLog(true, "Received: 0x%02X (%vb)", d, inputLen)
+			} else {
+				doLog(true, "Received: %v (%vb)", cmdName, inputLen)
+			}
+		}
+
+		switch d {
+		default:
+			doLog(true, "Received invalid: 0x%02X\n", d)
+			localPlayer.conn.Close(websocket.StatusNormalClosure, "closed")
+			gameLock.Unlock()
+			return
+		}
+		gameLock.Unlock()
+	}
+
 }
