@@ -17,6 +17,12 @@ var (
 	client *http.Client = &http.Client{Transport: transport}
 )
 
+const windowStartX = 1500
+const windowStartY = 800
+
+const halfWindowStartX = windowStartX / 2
+const halfWindowStartY = windowStartY / 2
+
 func main() {
 	StartLog()
 	LogDaemon()
@@ -36,7 +42,7 @@ func main() {
 	ebiten.SetTPS(60)
 	ebiten.SetScreenClearedEveryFrame(false)
 	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeDisabled)
-	ebiten.SetWindowSize(512, 512)
+	ebiten.SetWindowSize(windowStartX, windowStartY)
 	ebiten.SetWindowTitle("goMMO")
 
 	loadTest()
