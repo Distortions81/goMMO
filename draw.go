@@ -9,13 +9,16 @@ import (
 func (g *Game) Draw(screen *ebiten.Image) {
 
 	if gameMode == MODE_PLAYING {
-		if !dataDirty {
-			return
-		}
-		screen.Fill(colorGrass)
 
 		playerListLock.Lock()
 		defer playerListLock.Unlock()
+
+		if !dataDirty {
+			return
+		}
+		dataDirty = false
+
+		screen.Fill(colorGrass)
 
 		//center of screen, center of sprite, charpos
 		for _, player := range playerList {
@@ -31,7 +34,6 @@ func (g *Game) Draw(screen *ebiten.Image) {
 			screen.DrawImage(getCharFrame(player).(*ebiten.Image), &op)
 		}
 
-		dataDirty = false
 	} else {
 		ebitenutil.DebugPrint(screen, "Connecting.")
 	}
