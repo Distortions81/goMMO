@@ -146,6 +146,7 @@ func readNet() {
 					playerList[nid] = &playerData{id: nid, pos: XY{X: nx, Y: ny}}
 					doLog(false, "Player added: %v", nid)
 				} else {
+					playerList[nid].lastPos = playerList[nid].pos
 					playerList[nid].pos.X = nx
 					playerList[nid].pos.Y = ny
 				}
