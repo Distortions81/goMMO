@@ -11,7 +11,7 @@ var (
 
 	walkframe    int
 	updateCount  int
-	goDir        int
+	goDir        DIR
 	isWalking    bool
 	localCharPos XY = xyCenter
 

@@ -74,7 +74,7 @@ const FrameSpeedNS = 66666666
 
 var lastUpdateOut time.Time
 
-func MoveDir(dir int) {
+func MoveDir(dir DIR) {
 
 	switch dir {
 	case DIR_N:

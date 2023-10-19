@@ -23,8 +23,9 @@ type playerData struct {
 	context context.Context
 	cancel  context.CancelFunc
 
-	pos     XY
-	lastPos XY
+	pos       XY
+	lastPos   XY
+	direction DIR
 
 	unmark bool
 

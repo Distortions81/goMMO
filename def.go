@@ -11,9 +11,12 @@ const (
 	cLoadEmbedSprites = true
 )
 
+/* Directions */
+type DIR uint8
+
 const (
 	/* Directions */
-	DIR_S = iota
+	DIR_S DIR = iota
 	DIR_SW
 	DIR_W
 	DIR_NW

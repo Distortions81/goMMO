@@ -4,6 +4,7 @@ go 1.21.1
 
 require (
 	github.com/hajimehoshi/ebiten/v2 v2.6.2
+	github.com/twpayne/go-geom v1.5.2
 	nhooyr.io/websocket v1.8.7
 )
 

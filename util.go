@@ -5,9 +5,13 @@ import (
 	"compress/zlib"
 	"image"
 	"io"
+	"math"
+
+	"github.com/twpayne/go-geom"
+	"github.com/twpayne/go-geom/xy"
 )
 
-func dirToCharOffset(dir int) int {
+func dirToCharOffset(dir DIR) int {
 	switch dir {
 	case DIR_S:
 		return charSpriteSize * 0
@@ -29,9 +33,31 @@ func dirToCharOffset(dir int) int {
 	return 0
 }
 
-func getCharFrame(dir int) image.Image {
+const segment float64 = 0.7853981634
+const angleOffset = -(math.Pi / 1.6)
 
-	dirOff := dirToCharOffset(dir)
+func radToDir(angle float64) DIR {
+	amount := (angle - angleOffset) / segment
+	//doLog(false, "amount: %2.2f", amount)
+
+	if amount < 0 {
+		return DIR_SE
+	}
+	return DIR(amount)
+}
+
+func getCharFrame(player *playerData) image.Image {
+
+	if player.pos.X != player.lastPos.X || player.pos.Y != player.lastPos.Y {
+
+		p1 := geom.Coord{float64(player.pos.X), float64(player.pos.Y), 0}
+		p2 := geom.Coord{float64(player.lastPos.X), float64(player.lastPos.Y), 0}
+		angle := xy.Angle(p1, p2)
+
+		player.direction = radToDir(angle)
+	}
+
+	dirOff := dirToCharOffset(player.direction)
 
 	rect := image.Rectangle{}
 	rect.Min.X = (0 * charSpriteSize)
