@@ -2,19 +2,26 @@ package main
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
 
 /* Ebiten: Draw everything */
 func (g *Game) Draw(screen *ebiten.Image) {
-	screen.Fill(colorGrass)
 
-	op := ebiten.DrawImageOptions{}
+	if gameMode == MODE_PLAYING {
+		screen.Fill(colorGrass)
 
-	//center of screen, center of sprite, charpos
-	op.GeoM.Translate(128-26+float64(charPos.X), 128-26+float64(charPos.Y))
-	//Upscale
-	op.GeoM.Scale(2, 2)
+		op := ebiten.DrawImageOptions{}
 
-	//Draw sub-image
-	screen.DrawImage(getCharFrame(goDir).(*ebiten.Image), &op)
+		//center of screen, center of sprite, charpos
+		op.GeoM.Translate(quarterWindowStartX-26+float64(charPos.X), quarterWindowStartY-26+float64(charPos.Y))
+		//Upscale
+		op.GeoM.Scale(2, 2)
+
+		//Draw sub-image
+		screen.DrawImage(getCharFrame(goDir).(*ebiten.Image), &op)
+	} else {
+		ebitenutil.DebugPrint(screen, "Connecting.")
+	}
+
 }
