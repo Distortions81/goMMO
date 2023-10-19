@@ -23,6 +23,9 @@ const windowStartY = 800
 const halfWindowStartX = windowStartX / 2
 const halfWindowStartY = windowStartY / 2
 
+const quarterWindowStartX = windowStartX / 4
+const quarterWindowStartY = windowStartY / 4
+
 func main() {
 	StartLog()
 	LogDaemon()
