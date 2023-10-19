@@ -26,7 +26,7 @@ func sendCommand(header CMD, data []byte) bool {
 	if cmdName == "" {
 		doLog(true, "Sent: 0x%02X", header)
 	} else {
-		doLog(true, "Sent: %v", cmdName)
+		//doLog(true, "Sent: %v", cmdName)
 	}
 
 	var err error
