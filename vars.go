@@ -8,11 +8,12 @@ import (
 var (
 	WASMMode bool = false
 
-	walkframe   int
-	updateCount int
-	goDir       int
-	isWalking   bool
-	charPos     XY = xyCenter
+	walkframe    int
+	updateCount  int
+	goDir        int
+	isWalking    bool
+	localCharPos XY = xyCenter
+	netPos       XY = xyCenter
 
 	/* Game Mode */
 	gameMode = MODE_START

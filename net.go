@@ -130,7 +130,7 @@ func readNet() {
 }
 
 func cmd_login(data []byte) {
-	//Start playing
+	localPlayer.id = byteArrayToUint32(data)
 	changeGameMode(MODE_PLAYING, 0)
 }
 

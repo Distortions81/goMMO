@@ -84,28 +84,28 @@ func MoveDir(dir int) {
 
 	switch dir {
 	case DIR_N:
-		charPos.Y--
+		localCharPos.Y--
 	case DIR_NE:
-		charPos.Y--
-		charPos.X++
+		localCharPos.Y--
+		localCharPos.X++
 	case DIR_E:
-		charPos.X++
+		localCharPos.X++
 	case DIR_SE:
-		charPos.X++
-		charPos.Y++
+		localCharPos.X++
+		localCharPos.Y++
 	case DIR_S:
-		charPos.Y++
+		localCharPos.Y++
 	case DIR_SW:
-		charPos.Y++
-		charPos.X--
+		localCharPos.Y++
+		localCharPos.X--
 	case DIR_W:
-		charPos.X--
+		localCharPos.X--
 	case DIR_NW:
-		charPos.Y--
-		charPos.X--
+		localCharPos.Y--
+		localCharPos.X--
 	}
 
 	if updateCount%5 == 0 {
-		sendCommand(CMD_MOVE, xyToByteArray(charPos))
+		sendCommand(CMD_MOVE, xyToByteArray(localCharPos))
 	}
 }
