@@ -21,7 +21,7 @@ var (
 	/* Local player */
 	localPlayer *playerData
 
-	playerList     []playerData
+	playerList     map[uint32]*playerData
 	playerListLock sync.Mutex
 
 	/* Test BG Color */

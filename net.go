@@ -115,7 +115,7 @@ func readNet() {
 		if cmdName == "" {
 			doLog(true, "Received: 0x%02X (%vb)", d, inputLen)
 		} else {
-			doLog(true, "Received: %v (%vb)", cmdName, inputLen)
+			//doLog(true, "Received: %v (%vb)", cmdName, inputLen)
 		}
 
 		switch d {
@@ -129,7 +129,9 @@ func readNet() {
 
 			playerListLock.Lock()
 
-			playerList = []playerData{}
+			for _, player := range playerList {
+				player.unmark = true
+			}
 
 			var x uint32
 			for x = 0; x < numPlayers; x++ {
@@ -140,8 +142,21 @@ func readNet() {
 				var ny uint32
 				binary.Read(inbuf, binary.BigEndian, &ny)
 
-				newPlayer := playerData{id: nid, pos: XY{X: nx, Y: ny}}
-				playerList = append(playerList, newPlayer)
+				if playerList[nid] == nil {
+					playerList[nid] = &playerData{id: nid, pos: XY{X: nx, Y: ny}}
+					doLog(false, "Player added: %v", nid)
+				} else {
+					playerList[nid].pos.X = nx
+					playerList[nid].pos.Y = ny
+				}
+				playerList[nid].unmark = false
+			}
+
+			for p, player := range playerList {
+				if player.unmark {
+					doLog(false, "Player removed: %v", p)
+					delete(playerList, p)
+				}
 			}
 
 			playerListLock.Unlock()

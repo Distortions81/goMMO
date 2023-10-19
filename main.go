@@ -27,6 +27,8 @@ const quarterWindowStartX = windowStartX / 4
 const quarterWindowStartY = windowStartY / 4
 
 func main() {
+	playerList = make(map[uint32]*playerData)
+
 	StartLog()
 	LogDaemon()
 
