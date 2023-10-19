@@ -105,5 +105,7 @@ func MoveDir(dir int) {
 		charPos.X--
 	}
 
-	sendCommand(CMD_MOVE, xyToByteArray(charPos))
+	if updateCount%5 == 0 {
+		sendCommand(CMD_MOVE, xyToByteArray(charPos))
+	}
 }

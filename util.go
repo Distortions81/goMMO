@@ -119,9 +119,9 @@ func byteArrayToUint64(i []byte) uint64 {
 	return binary.LittleEndian.Uint64(i)
 }
 func xyToByteArray(pos XY) []byte {
-	byteArray := make([]byte, 8)
-	binary.LittleEndian.PutUint32(byteArray, pos.X)
-	binary.LittleEndian.PutUint32(byteArray, pos.Y)
+	byteArray := make([]byte, 16)
+	binary.LittleEndian.PutUint32(byteArray[0:7], pos.X)
+	binary.LittleEndian.PutUint32(byteArray[8:16], pos.Y)
 	return byteArray
 }
 
@@ -135,4 +135,8 @@ func byteArrayToXY(pos *XY, i []byte) bool {
 	pos.X = binary.LittleEndian.Uint32(i[0:7])
 	pos.Y = binary.LittleEndian.Uint32(i[8:16])
 	return false
+}
+
+func convPos(pos XY) XYs {
+	return XYs{X: int32(pos.X - xyHalf), Y: int32(pos.Y - xyHalf)}
 }

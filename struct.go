@@ -10,6 +10,10 @@ type XY struct {
 	X uint32
 	Y uint32
 }
+type XYs struct {
+	X int32
+	Y int32
+}
 
 type Game struct {
 }
