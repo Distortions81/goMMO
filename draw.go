@@ -14,7 +14,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		op := ebiten.DrawImageOptions{}
 
 		//center of screen, center of sprite, charpos
-		convPos := convPos(localCharPos)
+		convPos := convPos(netPos)
 		op.GeoM.Translate(quarterWindowStartX-26+float64(convPos.X), quarterWindowStartY-26+float64(convPos.Y))
 		//Upscale
 		op.GeoM.Scale(2, 2)

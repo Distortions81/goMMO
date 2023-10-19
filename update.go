@@ -1,6 +1,9 @@
 package main
 
 import (
+	"bytes"
+	"encoding/binary"
+
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 )
@@ -106,6 +109,12 @@ func MoveDir(dir int) {
 	}
 
 	if updateCount%5 == 0 {
-		sendCommand(CMD_MOVE, xyToByteArray(localCharPos))
+
+		var buf []byte
+		outbuf := bytes.NewBuffer(buf)
+
+		binary.Write(outbuf, binary.BigEndian, localCharPos.X)
+		binary.Write(outbuf, binary.BigEndian, localCharPos.Y)
+		sendCommand(CMD_MOVE, outbuf.Bytes())
 	}
 }

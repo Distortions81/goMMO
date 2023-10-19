@@ -1,7 +1,10 @@
 package main
 
 import (
+	"bytes"
 	"context"
+	"encoding/binary"
+	"fmt"
 	"log"
 	"math/rand"
 	"sync"
@@ -106,34 +109,47 @@ func readNet() {
 		/* Separate command and data*/
 		d := CMD(input[0])
 		data := input[1:]
-
+		inbuf := bytes.NewReader(data)
 		cmdName := cmdNames[d]
 
 		/* Log event */
 		if cmdName == "" {
 			doLog(true, "Received: 0x%02X (%vb)", d, inputLen)
 		} else {
-			doLog(true, "Received: %v (%vb)", cmdName, inputLen)
+			//doLog(true, "Received: %v (%vb)", cmdName, inputLen)
 		}
 
 		switch d {
 		case CMD_LOGIN:
-			cmd_login(data)
+			binary.Read(inbuf, binary.BigEndian, &localPlayer.id)
+			doLog(true, "New local id: %v", localPlayer.id)
+			changeGameMode(MODE_PLAYING, 0)
 		case CMD_UPDATE:
-			cmd_update(data)
+			var numPlayers uint32
+			binary.Read(inbuf, binary.BigEndian, &numPlayers)
+			//fmt.Printf("Player Count: %v\n", numPlayers)
+
+			var x uint32
+			for x = 0; x < numPlayers; x++ {
+				var nid uint32
+				binary.Read(inbuf, binary.BigEndian, &nid)
+				var nx uint32
+				binary.Read(inbuf, binary.BigEndian, &nx)
+				var ny uint32
+				binary.Read(inbuf, binary.BigEndian, &ny)
+
+				if nid == localPlayer.id {
+					netPos.X = nx
+					netPos.Y = ny
+
+				}
+				fmt.Printf("netPos: %v: %v, %v\n", nid, netPos.X, netPos.Y)
+
+			}
 		default:
 			doLog(true, "Received invalid: 0x%02X\n", d)
 			localPlayer.conn.Close(websocket.StatusNormalClosure, "closed")
 			return
 		}
 	}
-}
-
-func cmd_login(data []byte) {
-	localPlayer.id = byteArrayToUint32(data)
-	changeGameMode(MODE_PLAYING, 0)
-}
-
-func cmd_update(data []byte) {
-	doLog(true, "meep")
 }
