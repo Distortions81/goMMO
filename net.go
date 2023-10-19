@@ -119,6 +119,8 @@ func readNet() {
 		switch d {
 		case CMD_LOGIN:
 			cmd_login(data)
+		case CMD_UPDATE:
+			cmd_update(data)
 		default:
 			doLog(true, "Received invalid: 0x%02X\n", d)
 			localPlayer.conn.Close(websocket.StatusNormalClosure, "closed")
@@ -130,4 +132,8 @@ func readNet() {
 func cmd_login(data []byte) {
 	//Start playing
 	changeGameMode(MODE_PLAYING, 0)
+}
+
+func cmd_update(data []byte) {
+	doLog(true, "meep")
 }

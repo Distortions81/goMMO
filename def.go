@@ -47,6 +47,7 @@ const (
 	CMD_LOGIN
 	CMD_PLAY
 	CMD_MOVE
+	CMD_UPDATE
 )
 
 /* Used for debug messages, this could be better */
@@ -58,6 +59,7 @@ func init() {
 	cmdNames[CMD_LOGIN] = "CMD_LOGIN"
 	cmdNames[CMD_PLAY] = "CMD_PLAY"
 	cmdNames[CMD_MOVE] = "CMD_MOVE"
+	cmdNames[CMD_UPDATE] = "CMD_UPDATE"
 }
 
 const xyHalf = 2147483648
