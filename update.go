@@ -64,21 +64,7 @@ func (g *Game) Update() error {
 	}
 	if newDir != DIR_NONE {
 		goDir = newDir
-		isWalking = true
-	} else {
-		isWalking = false
-	}
-
-	if isWalking {
-		if updateCount%6 == 0 {
-			walkframe++
-			if walkframe > 3 {
-				walkframe = 0
-			}
-		}
 		MoveDir(goDir)
-	} else {
-		walkframe = 0
 	}
 
 	return nil
