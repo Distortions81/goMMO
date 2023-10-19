@@ -105,4 +105,5 @@ func MoveDir(dir int) {
 		charPos.X--
 	}
 
+	sendCommand(CMD_MOVE, xyToByteArray(charPos))
 }

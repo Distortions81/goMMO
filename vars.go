@@ -12,7 +12,7 @@ var (
 	updateCount int
 	goDir       int
 	isWalking   bool
-	charPos     xy
+	charPos     XY
 
 	/* Game Mode */
 	gameMode = MODE_START

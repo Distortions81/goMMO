@@ -6,9 +6,9 @@ import (
 	"nhooyr.io/websocket"
 )
 
-type xy struct {
-	X int
-	Y int
+type XY struct {
+	X uint32
+	Y uint32
 }
 
 type Game struct {
