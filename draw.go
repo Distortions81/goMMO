@@ -9,6 +9,9 @@ import (
 func (g *Game) Draw(screen *ebiten.Image) {
 
 	if gameMode == MODE_PLAYING {
+		if !dataDirty {
+			return
+		}
 		screen.Fill(colorGrass)
 
 		playerListLock.Lock()
@@ -27,6 +30,8 @@ func (g *Game) Draw(screen *ebiten.Image) {
 			//Draw sub-image
 			screen.DrawImage(getCharFrame(player).(*ebiten.Image), &op)
 		}
+
+		dataDirty = false
 	} else {
 		ebitenutil.DebugPrint(screen, "Connecting.")
 	}

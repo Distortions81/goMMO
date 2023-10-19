@@ -12,7 +12,8 @@ var (
 	walkframe    int
 	updateCount  int
 	goDir        DIR
-	localCharPos XY = xyCenter
+	dataDirty    bool = true
+	localCharPos XY   = xyCenter
 
 	/* Game Mode */
 	gameMode = MODE_START

@@ -170,6 +170,7 @@ func readNet() {
 				}
 			}
 
+			dataDirty = true
 			playerListLock.Unlock()
 		default:
 			doLog(true, "Received invalid: 0x%02X\n", d)
