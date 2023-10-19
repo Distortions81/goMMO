@@ -84,7 +84,7 @@ func (g *Game) Update() error {
 	return nil
 }
 
-const FrameSpeedMS = 166
+const FrameSpeedNS = 66666666
 
 var lastUpdateOut time.Time
 
@@ -113,7 +113,7 @@ func MoveDir(dir int) {
 		localCharPos.X--
 	}
 
-	if time.Since(lastUpdateOut) >= (time.Millisecond * FrameSpeedMS) {
+	if time.Since(lastUpdateOut) >= (time.Nanosecond * FrameSpeedNS) {
 		var buf []byte
 		outbuf := bytes.NewBuffer(buf)
 
