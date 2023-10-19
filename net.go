@@ -40,7 +40,7 @@ func connectServer() {
 		time.Sleep(time.Duration(delay) * time.Second)
 	}
 	time.Sleep(time.Millisecond * 500)
-	changeGameMode(MODE_PLAY_GAME, 0)
+	changeGameMode(MODE_PLAYING, 0)
 }
 
 func doConnect() bool {
@@ -74,54 +74,60 @@ func doConnect() bool {
 var gameLock sync.Mutex
 
 func readNet() {
+
 	if localPlayer == nil ||
 		localPlayer.conn == nil ||
 		localPlayer.context == nil {
+		doLog(true, "readNet: Player not initialized.")
 		return
 	}
 
 	for {
 
 		_, input, err := localPlayer.conn.Read(localPlayer.context)
-		gameLock.Lock()
 
+		/* Read error, reconnect */
 		if err != nil {
 			doLog(true, "readNet error: %v", err)
 
-			doLog(true, "Connection lost.")
-			changeGameMode(MODE_ERROR, 0)
+			//TODO: Notify player here
 			changeGameMode(MODE_BOOT, time.Second)
-			gameLock.Unlock()
 
 			connectServer()
 			return
 		}
+
+		/* Check data length */
 		inputLen := len(input)
 		if inputLen <= 0 {
-			gameLock.Unlock()
 			return
 		}
-		d := CMD(input[0])
-		//data := input[1:]
 
-		//cmdName := cmdNames[d]
-		cmdName := "???"
-		if d != RECV_PLAYERUPDATE {
-			if cmdName == "" {
-				doLog(true, "Received: 0x%02X (%vb)", d, inputLen)
-			} else {
-				doLog(true, "Received: %v (%vb)", cmdName, inputLen)
-			}
+		/* Separate command and data*/
+		d := CMD(input[0])
+		data := input[1:]
+
+		cmdName := cmdNames[d]
+
+		/* Log event */
+		if cmdName == "" {
+			doLog(true, "Received: 0x%02X (%vb)", d, inputLen)
+		} else {
+			doLog(true, "Received: %v (%vb)", cmdName, inputLen)
 		}
 
 		switch d {
+		case CMD_LOGIN:
+			cmd_login(data)
 		default:
 			doLog(true, "Received invalid: 0x%02X\n", d)
 			localPlayer.conn.Close(websocket.StatusNormalClosure, "closed")
-			gameLock.Unlock()
 			return
 		}
-		gameLock.Unlock()
 	}
+}
 
+func cmd_login(data []byte) {
+	//Start playing
+	changeGameMode(MODE_PLAYING, 0)
 }

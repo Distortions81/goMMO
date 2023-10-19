@@ -33,7 +33,9 @@ const (
 	MODE_CONNECT
 	MODE_RECONNECT
 	MODE_CONNECTED
-	MODE_PLAY_GAME
+	MODE_LOGIN
+	MODE_PLAYING
+	MODE_LOGOFF
 	MODE_ERROR
 )
 
@@ -42,16 +44,17 @@ type CMD uint8
 
 const (
 	CMD_INIT CMD = iota
-	CMD_PINGPONG
-
-	CMD_GETLOBBIES
-	CMD_JOINLOBBY
-	CMD_CREATELOBBY
-
-	CMD_GODIR
-
-	RECV_LOCALPLAYER
-	RECV_LOBBYLIST
-	RECV_KEYFRAME
-	RECV_PLAYERUPDATE
+	CMD_LOGIN
+	CMD_PLAY
 )
+
+/* Used for debug messages, this could be better */
+var cmdNames map[CMD]string
+
+func init() {
+	cmdNames = make(map[CMD]string)
+	cmdNames[CMD_INIT] = "CMD_INIT"
+	cmdNames[CMD_LOGIN] = "CMD_LOGIN"
+	cmdNames[CMD_PLAY] = "CMD_PLAY"
+
+}

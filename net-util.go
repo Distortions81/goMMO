@@ -9,11 +9,6 @@ func changeGameMode(newMode MODE, delay time.Duration) {
 		return
 	}
 
-	if newMode == MODE_CONNECTED {
-		//Send INIT
-
-	}
-
 	time.Sleep(delay)
 	gameMode = newMode
 }
