@@ -26,6 +26,8 @@ type playerData struct {
 	pos       XY
 	lastPos   XY
 	direction DIR
+	walkFrame int
+	isWalking bool
 
 	unmark bool
 

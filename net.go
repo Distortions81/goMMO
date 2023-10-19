@@ -147,8 +147,18 @@ func readNet() {
 					doLog(false, "Player added: %v", nid)
 				} else {
 					playerList[nid].lastPos = playerList[nid].pos
+
 					playerList[nid].pos.X = nx
 					playerList[nid].pos.Y = ny
+
+					if playerList[nid].lastPos.X != playerList[nid].pos.X || playerList[nid].lastPos.Y != playerList[nid].pos.Y {
+						playerList[nid].walkFrame++
+						playerList[nid].isWalking = true
+
+					} else {
+						playerList[nid].isWalking = false
+						playerList[nid].walkFrame = 0
+					}
 				}
 				playerList[nid].unmark = false
 			}

@@ -59,9 +59,16 @@ func getCharFrame(player *playerData) image.Image {
 
 	dirOff := dirToCharOffset(player.direction)
 
+	var newFrame int
+	if player.isWalking {
+		newFrame = (player.walkFrame % 3) + 1
+	} else {
+		newFrame = 0
+	}
+
 	rect := image.Rectangle{}
-	rect.Min.X = (0 * charSpriteSize)
-	rect.Max.X = (0 * charSpriteSize) + charSpriteSize
+	rect.Min.X = (newFrame * charSpriteSize)
+	rect.Max.X = (newFrame * charSpriteSize) + charSpriteSize
 	rect.Min.Y = dirOff
 	rect.Max.Y = charSpriteSize + dirOff
 
