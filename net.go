@@ -115,7 +115,7 @@ func readNet() {
 		if cmdName == "" {
 			doLog(true, "Received: 0x%02X (%vb)", d, inputLen)
 		} else {
-			//doLog(true, "Received: %v (%vb)", cmdName, inputLen)
+			doLog(true, "Received: %v (%vb)", cmdName, inputLen)
 		}
 
 		switch d {
@@ -126,7 +126,6 @@ func readNet() {
 		case CMD_UPDATE:
 			var numPlayers uint32
 			binary.Read(inbuf, binary.BigEndian, &numPlayers)
-			//fmt.Printf("Player Count: %v\n", numPlayers)
 
 			playerListLock.Lock()
 
