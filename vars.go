@@ -2,6 +2,7 @@ package main
 
 import (
 	"image/color"
+	"sync"
 	"time"
 )
 
@@ -13,13 +14,15 @@ var (
 	goDir        int
 	isWalking    bool
 	localCharPos XY = xyCenter
-	netPos       XY = xyCenter
 
 	/* Game Mode */
 	gameMode = MODE_START
 
 	/* Local player */
 	localPlayer *playerData
+
+	playerList     []playerData
+	playerListLock sync.Mutex
 
 	/* Test BG Color */
 	colorGrass = color.RGBA{R: 132, G: 145, B: 65}

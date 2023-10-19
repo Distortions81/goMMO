@@ -34,8 +34,8 @@ func getCharFrame(dir int) image.Image {
 	dirOff := dirToCharOffset(dir)
 
 	rect := image.Rectangle{}
-	rect.Min.X = (walkframe * charSpriteSize)
-	rect.Max.X = (walkframe * charSpriteSize) + charSpriteSize
+	rect.Min.X = (0 * charSpriteSize)
+	rect.Max.X = (0 * charSpriteSize) + charSpriteSize
 	rect.Min.Y = dirOff
 	rect.Max.Y = charSpriteSize + dirOff
 

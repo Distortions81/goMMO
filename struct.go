@@ -23,5 +23,7 @@ type playerData struct {
 	context context.Context
 	cancel  context.CancelFunc
 
+	pos XY
+
 	id uint32
 }

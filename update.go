@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/binary"
+	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
@@ -83,6 +84,10 @@ func (g *Game) Update() error {
 	return nil
 }
 
+const FrameSpeedMS = 166
+
+var lastUpdateOut time.Time
+
 func MoveDir(dir int) {
 
 	switch dir {
@@ -108,13 +113,14 @@ func MoveDir(dir int) {
 		localCharPos.X--
 	}
 
-	if updateCount%5 == 0 {
-
+	if time.Since(lastUpdateOut) >= (time.Millisecond * FrameSpeedMS) {
 		var buf []byte
 		outbuf := bytes.NewBuffer(buf)
 
 		binary.Write(outbuf, binary.BigEndian, localCharPos.X)
 		binary.Write(outbuf, binary.BigEndian, localCharPos.Y)
 		sendCommand(CMD_MOVE, outbuf.Bytes())
+		lastUpdateOut = time.Now()
 	}
+
 }

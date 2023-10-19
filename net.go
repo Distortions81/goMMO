@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/binary"
-	"fmt"
 	"log"
 	"math/rand"
 	"sync"
@@ -129,6 +128,10 @@ func readNet() {
 			binary.Read(inbuf, binary.BigEndian, &numPlayers)
 			//fmt.Printf("Player Count: %v\n", numPlayers)
 
+			playerListLock.Lock()
+
+			playerList = []playerData{}
+
 			var x uint32
 			for x = 0; x < numPlayers; x++ {
 				var nid uint32
@@ -138,14 +141,11 @@ func readNet() {
 				var ny uint32
 				binary.Read(inbuf, binary.BigEndian, &ny)
 
-				if nid == localPlayer.id {
-					netPos.X = nx
-					netPos.Y = ny
-
-				}
-				fmt.Printf("netPos: %v: %v, %v\n", nid, netPos.X, netPos.Y)
-
+				newPlayer := playerData{id: nid, pos: XY{X: nx, Y: ny}}
+				playerList = append(playerList, newPlayer)
 			}
+
+			playerListLock.Unlock()
 		default:
 			doLog(true, "Received invalid: 0x%02X\n", d)
 			localPlayer.conn.Close(websocket.StatusNormalClosure, "closed")
