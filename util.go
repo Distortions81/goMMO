@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"compress/zlib"
-	"fmt"
 	"image"
 	"image/color"
 	"io"
@@ -49,7 +48,6 @@ func radToDir(in float64) DIR {
 		normal = 87.5
 	}
 	amount := int(math.Round(normal / 12.5))
-	fmt.Printf("normal: %v, dir: %v\n", normal, amount)
 	return DIR(amount)
 }
 
