@@ -2,3 +2,4 @@ log/
 panic.log
 heapDump.dat
 goMMO
+main.wasm.gz
