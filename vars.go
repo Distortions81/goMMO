@@ -25,6 +25,8 @@ var (
 
 	/* Test BG Color */
 	colorGrass = color.RGBA{R: 132, G: 145, B: 65}
+	/* Name BG Color */
+	colorNameBG = color.RGBA{R: 32, G: 32, B: 32, A: 128}
 
 	/* Networking */
 	authSite = "https://gommo.go-game.net/gs"

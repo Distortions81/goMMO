@@ -40,9 +40,9 @@ func (g *Game) Draw(screen *ebiten.Image) {
 			screen.DrawImage(getCharFrame(player).(*ebiten.Image), &op)
 			pname := fmt.Sprintf("Player-%v", player.id)
 			pos := XYf32{X: float32(quarterWindowStartX+convPos.X) * 2.0,
-				Y: float32(quarterWindowStartY+convPos.Y)*2.0 - 24}
-			drawText(pname, toolTipFont, color.White, color.Transparent,
-				pos, 0, screen, false, false, true)
+				Y: float32(quarterWindowStartY+convPos.Y)*2.0 + 40}
+			drawText(pname, toolTipFont, color.White, colorNameBG,
+				pos, 2, screen, false, false, true)
 		}
 		buf := fmt.Sprintf("%3.0f FPS, WASD to move.", ebiten.ActualFPS())
 		ebitenutil.DebugPrint(screen, buf)
