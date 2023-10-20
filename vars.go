@@ -9,11 +9,10 @@ import (
 var (
 	WASMMode bool = false
 
-	walkframe    int
 	updateCount  int
 	goDir        DIR
 	dataDirty    bool = true
-	localCharPos XY   = xyCenter
+	localCharPos XYf  = XYf{X: xyHalf, Y: xyHalf}
 
 	/* Game Mode */
 	gameMode = MODE_START

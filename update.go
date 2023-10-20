@@ -14,7 +14,6 @@ func (g *Game) Update() error {
 
 	pressedKeys := inpututil.AppendPressedKeys(nil)
 	if pressedKeys == nil {
-		walkframe = 0
 		return nil
 	}
 
@@ -76,29 +75,31 @@ func (g *Game) Update() error {
 	return nil
 }
 
+const diagSpeed = 0.707
+
 func moveDir(dir DIR) {
 
 	switch dir {
 	case DIR_N:
 		localCharPos.Y--
 	case DIR_NE:
-		localCharPos.Y--
-		localCharPos.X++
+		localCharPos.Y -= diagSpeed
+		localCharPos.X += diagSpeed
 	case DIR_E:
 		localCharPos.X++
 	case DIR_SE:
-		localCharPos.X++
-		localCharPos.Y++
+		localCharPos.X += diagSpeed
+		localCharPos.Y += diagSpeed
 	case DIR_S:
 		localCharPos.Y++
 	case DIR_SW:
-		localCharPos.Y++
-		localCharPos.X--
+		localCharPos.Y += diagSpeed
+		localCharPos.X -= diagSpeed
 	case DIR_W:
 		localCharPos.X--
 	case DIR_NW:
-		localCharPos.Y--
-		localCharPos.X--
+		localCharPos.Y -= diagSpeed
+		localCharPos.X -= diagSpeed
 	default:
 		return
 	}
@@ -108,8 +109,9 @@ func moveDir(dir DIR) {
 func sendMove() {
 	var buf []byte
 	outbuf := bytes.NewBuffer(buf)
+	pos := XY{X: uint32(localCharPos.X), Y: uint32(localCharPos.Y)}
 
-	binary.Write(outbuf, binary.BigEndian, localCharPos.X)
-	binary.Write(outbuf, binary.BigEndian, localCharPos.Y)
+	binary.Write(outbuf, binary.BigEndian, pos.X)
+	binary.Write(outbuf, binary.BigEndian, pos.Y)
 	sendCommand(CMD_MOVE, outbuf.Bytes())
 }
