@@ -30,8 +30,7 @@ var (
 	authSite = "https://gommo.go-game.net/gs"
 
 	/* Ping */
-	statusTime    time.Time
-	lastRoundTrip time.Duration
+	statusTime time.Time
 
 	/* Reconnect */
 	ReconnectCount     = 0

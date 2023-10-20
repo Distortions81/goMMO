@@ -65,6 +65,7 @@ func main() {
 
 func newGame() *Game {
 	go connectServer()
+	updateFonts()
 
 	return &Game{}
 }

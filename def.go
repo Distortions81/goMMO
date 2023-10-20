@@ -3,7 +3,7 @@ package main
 const (
 	/* Files and directories */
 	dataDir     = "data/"
-	gfxDir      = dataDir + "sprites/"
+	gfxDir      = dataDir + "gfx/"
 	testAreaDir = "testArea"
 	testCharDir = "chars/"
 

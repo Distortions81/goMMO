@@ -24,6 +24,15 @@ func loadTest() {
 	}
 }
 
+func getFont(name string) []byte {
+	data, err := f.ReadFile(gfxDir + "fonts/" + name)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return data
+
+}
+
 func getSpriteImage(name string, unmanaged bool) (*ebiten.Image, error) {
 
 	if cLoadEmbedSprites {
