@@ -168,7 +168,7 @@ func drawDebugInfo(screen *ebiten.Image) {
 
 	var pad float32 = 4 * float32(uiScale)
 	drawText(buf, monoFont, color.White, colorNameBG,
-		XYf32{X: (pad * 1.5), Y: 24 + (pad * 2)},
+		XYf32{X: (pad * 1.5), Y: 38 + (pad * 2)},
 		pad, screen, true, true, false)
 
 }
