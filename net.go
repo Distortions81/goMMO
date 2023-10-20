@@ -154,6 +154,8 @@ func readNet() {
 				if playerList[nid] == nil {
 					playerList[nid] = &playerData{id: nid, pos: XY{X: nx, Y: ny}}
 					doLog(false, "Player added: %v", nid)
+					buf := fmt.Sprintf("Player-%v joined.", nid)
+					chat(buf)
 				} else {
 					playerList[nid].lastPos = playerList[nid].pos
 
@@ -175,6 +177,8 @@ func readNet() {
 			for p, player := range playerList {
 				if player.unmark {
 					doLog(false, "Player removed: %v", p)
+					buf := fmt.Sprintf("Player-%v left.", p)
+					chat(buf)
 					delete(playerList, p)
 				}
 			}
