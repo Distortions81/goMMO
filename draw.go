@@ -50,6 +50,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		}
 		drawDebugInfo(screen)
 		drawChatLines(screen)
+		drawChatBar(screen)
 
 	} else {
 		drawChatLines(screen)
@@ -167,6 +168,20 @@ func drawDebugInfo(screen *ebiten.Image) {
 
 	var pad float32 = 4 * float32(uiScale)
 	drawText(buf, monoFont, color.White, colorNameBG,
+		XYf32{X: (pad * 1.5), Y: 24 + (pad * 2)},
+		pad, screen, true, true, false)
+
+}
+
+func drawChatBar(screen *ebiten.Image) {
+	defer reportPanic("drawDebugInfo")
+
+	if !ChatMode {
+		return
+	}
+
+	var pad float32 = 4 * float32(uiScale)
+	drawText(ChatText, monoFont, color.White, colorNameBG,
 		XYf32{X: (pad * 1.5), Y: float32(screenHeight) + (pad * 2)},
 		pad, screen, true, true, false)
 

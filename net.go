@@ -53,6 +53,9 @@ func doConnect() bool {
 
 	changeGameMode(MODE_CONNECT, 0)
 	doLog(true, "Connecting...")
+	chatLines = []chatLineData{}
+	chatLinesTop = 0
+	netCount = 0
 	chat("Connecting to server...")
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -75,6 +78,7 @@ func doConnect() bool {
 	chat("Connected!")
 	time.Sleep(time.Millisecond * 100)
 	chatDetailed("Use WASD keys to walk!", color.White, time.Second*30)
+	chatDetailed("Press return to open chat bar, press return to send.", color.White, time.Second*30)
 
 	changeGameMode(MODE_CONNECTED, 0)
 	go readNet()
@@ -83,6 +87,7 @@ func doConnect() bool {
 }
 
 var gameLock sync.Mutex
+var netCount int
 
 func readNet() {
 
@@ -132,7 +137,10 @@ func readNet() {
 			binary.Read(inbuf, binary.BigEndian, &localPlayer.id)
 			doLog(true, "New local id: %v", localPlayer.id)
 			changeGameMode(MODE_PLAYING, 0)
+		case CMD_CHAT:
+			chat(string(data))
 		case CMD_UPDATE:
+
 			var numPlayers uint32
 			binary.Read(inbuf, binary.BigEndian, &numPlayers)
 
@@ -154,8 +162,10 @@ func readNet() {
 				if playerList[nid] == nil {
 					playerList[nid] = &playerData{id: nid, pos: XY{X: nx, Y: ny}}
 					doLog(false, "Player added: %v", nid)
-					buf := fmt.Sprintf("Player-%v joined.", nid)
-					chat(buf)
+					if netCount != 0 {
+						buf := fmt.Sprintf("Player-%v joined.", nid)
+						chat(buf)
+					}
 				} else {
 					playerList[nid].lastPos = playerList[nid].pos
 
@@ -177,12 +187,15 @@ func readNet() {
 			for p, player := range playerList {
 				if player.unmark {
 					doLog(false, "Player removed: %v", p)
-					buf := fmt.Sprintf("Player-%v left.", p)
-					chat(buf)
+					if netCount != 0 {
+						buf := fmt.Sprintf("Player-%v left.", p)
+						chat(buf)
+					}
 					delete(playerList, p)
 				}
 			}
 
+			netCount++
 			dataDirty = true
 			playerListLock.Unlock()
 		default:

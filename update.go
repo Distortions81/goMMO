@@ -3,14 +3,44 @@ package main
 import (
 	"bytes"
 	"encoding/binary"
+	"fmt"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 )
 
+var (
+	ChatMode bool
+	ChatText string
+)
+
 /* Input interface handler */
 func (g *Game) Update() error {
 	updateCount++
+
+	if ChatMode {
+		start := []rune{}
+		runes := ebiten.AppendInputChars(start[:0])
+		ChatText += string(runes)
+
+		if repeatingKeyPressed(ebiten.KeyEnter) {
+			ChatMode = false
+			if ChatText != "" {
+				buf := fmt.Sprintf("Player-%v says: %v", localPlayer.id, ChatText)
+				sendCommand(CMD_CHAT, []byte(buf))
+				ChatText = ""
+			}
+		} else if repeatingKeyPressed(ebiten.KeyBackspace) {
+			if len(ChatText) >= 1 {
+				ChatText = ChatText[:len(ChatText)-1]
+			}
+
+		}
+		return nil
+	} else if repeatingKeyPressed(ebiten.KeyEnter) {
+		ChatMode = true
+		ChatText = ""
+	}
 
 	pressedKeys := inpututil.AppendPressedKeys(nil)
 	if pressedKeys == nil {
@@ -19,47 +49,50 @@ func (g *Game) Update() error {
 
 	newDir := DIR_NONE
 	for _, key := range pressedKeys {
-		if key == ebiten.KeyW ||
-			key == ebiten.KeyArrowUp {
-			if newDir == DIR_NONE {
-				newDir = DIR_N
-			} else if newDir == DIR_E {
-				newDir = DIR_NE
-			} else if newDir == DIR_W {
-				newDir = DIR_NW
+		if !ChatMode {
+			if key == ebiten.KeyW ||
+				key == ebiten.KeyArrowUp {
+				if newDir == DIR_NONE {
+					newDir = DIR_N
+				} else if newDir == DIR_E {
+					newDir = DIR_NE
+				} else if newDir == DIR_W {
+					newDir = DIR_NW
+				}
 			}
-		}
-		if key == ebiten.KeyA ||
-			key == ebiten.KeyArrowLeft {
-			if newDir == DIR_NONE {
-				newDir = DIR_W
-			} else if newDir == DIR_N {
-				newDir = DIR_NW
-			} else if newDir == DIR_S {
-				newDir = DIR_SW
+			if key == ebiten.KeyA ||
+				key == ebiten.KeyArrowLeft {
+				if newDir == DIR_NONE {
+					newDir = DIR_W
+				} else if newDir == DIR_N {
+					newDir = DIR_NW
+				} else if newDir == DIR_S {
+					newDir = DIR_SW
+				}
 			}
-		}
-		if key == ebiten.KeyS ||
-			key == ebiten.KeyArrowDown {
-			if newDir == DIR_NONE {
-				newDir = DIR_S
-			} else if newDir == DIR_E {
-				newDir = DIR_SE
-			} else if newDir == DIR_W {
-				newDir = DIR_SW
+			if key == ebiten.KeyS ||
+				key == ebiten.KeyArrowDown {
+				if newDir == DIR_NONE {
+					newDir = DIR_S
+				} else if newDir == DIR_E {
+					newDir = DIR_SE
+				} else if newDir == DIR_W {
+					newDir = DIR_SW
+				}
 			}
-		}
-		if key == ebiten.KeyD ||
-			key == ebiten.KeyArrowRight {
-			if newDir == DIR_NONE {
-				newDir = DIR_E
-			} else if newDir == DIR_N {
-				newDir = DIR_NE
-			} else if newDir == DIR_S {
-				newDir = DIR_SE
+			if key == ebiten.KeyD ||
+				key == ebiten.KeyArrowRight {
+				if newDir == DIR_NONE {
+					newDir = DIR_E
+				} else if newDir == DIR_N {
+					newDir = DIR_NE
+				} else if newDir == DIR_S {
+					newDir = DIR_SE
+				}
 			}
 		}
 	}
+
 	if newDir != DIR_NONE {
 
 		goDir = newDir
@@ -76,6 +109,22 @@ func (g *Game) Update() error {
 }
 
 const diagSpeed = 0.707
+
+// repeatingKeyPressed return true when key is pressed considering the repeat state.
+func repeatingKeyPressed(key ebiten.Key) bool {
+	const (
+		delay    = 30
+		interval = 3
+	)
+	d := inpututil.KeyPressDuration(key)
+	if d == 1 {
+		return true
+	}
+	if d >= delay && (d-delay)%interval == 0 {
+		return true
+	}
+	return false
+}
 
 func moveDir(dir DIR) {
 
