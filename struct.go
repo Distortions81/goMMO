@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"image/color"
+	"time"
 
 	"nhooyr.io/websocket"
 )
@@ -40,4 +42,15 @@ type playerData struct {
 	unmark bool
 
 	id uint32
+}
+
+/* Chat line data */
+type chatLineData struct {
+	text string
+
+	color   color.Color
+	bgColor color.Color
+
+	timestamp time.Time
+	lifetime  time.Duration
 }

@@ -4,8 +4,11 @@ import (
 	"bytes"
 	"compress/zlib"
 	"image"
+	"image/color"
 	"io"
 	"math"
+	"strings"
+	"time"
 
 	"github.com/twpayne/go-geom"
 	"github.com/twpayne/go-geom/xy"
@@ -101,4 +104,45 @@ func CompressZip(data []byte) []byte {
 
 func convPos(pos XY) XYs {
 	return XYs{X: int32(pos.X - xyHalf), Y: int32(pos.Y - xyHalf)}
+}
+
+/* Trim lines from chat */
+func deleteOldLines() {
+	defer reportPanic("deleteOldLines")
+	var newLines []chatLineData
+	var newTop int
+
+	/* Delete 1 excess line each time */
+	for l, line := range chatLines {
+		if l < 1000 {
+			newLines = append(newLines, line)
+			newTop++
+		}
+	}
+	chatLines = newLines
+	chatLinesTop = newTop
+}
+
+/* Default add lines to chat */
+func chat(text string) {
+	chatDetailed(text, color.White, time.Second*15)
+}
+
+/* Add to chat with options */
+func chatDetailed(text string, color color.Color, life time.Duration) {
+
+	doLog(false, "Chat: "+text)
+
+	go func(text string) {
+		chatLinesLock.Lock()
+		deleteOldLines()
+
+		sepLines := strings.Split(text, "\n")
+		for _, sep := range sepLines {
+			chatLines = append(chatLines, chatLineData{text: sep, color: color, bgColor: colorNameBG, lifetime: life, timestamp: time.Now()})
+			chatLinesTop++
+		}
+
+		chatLinesLock.Unlock()
+	}(text)
 }

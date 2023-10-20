@@ -17,15 +17,8 @@ var (
 	}
 	client *http.Client = &http.Client{Transport: transport}
 )
-
-const windowStartX = 512
-const windowStartY = 512
-
-const halfWindowStartX = windowStartX / 2
-const halfWindowStartY = windowStartY / 2
-
-const quarterWindowStartX = windowStartX / 4
-const quarterWindowStartY = windowStartY / 4
+var screenWidth = 512
+var screenHeight = 512
 
 func main() {
 	playerList = make(map[uint32]*playerData)
@@ -53,7 +46,7 @@ func main() {
 	ebiten.SetTPS(60)
 	ebiten.SetScreenClearedEveryFrame(false)
 	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeDisabled)
-	ebiten.SetWindowSize(windowStartX, windowStartY)
+	ebiten.SetWindowSize(screenWidth, screenHeight)
 	ebiten.SetWindowTitle("goMMO")
 
 	loadTest()
@@ -67,10 +60,13 @@ func newGame() *Game {
 	go connectServer()
 	updateFonts()
 
+	chat("Use WASD keys to walk. This is a very early prototype!")
 	return &Game{}
 }
 
 /* Ebiten resize handling */
 func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
+	screenWidth = outsideWidth
+	screenHeight = outsideHeight
 	return int(outsideWidth), int(outsideHeight)
 }
