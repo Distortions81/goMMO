@@ -18,8 +18,8 @@ var (
 	client *http.Client = &http.Client{Transport: transport}
 )
 
-const windowStartX = 1500
-const windowStartY = 800
+const windowStartX = 512
+const windowStartY = 512
 
 const halfWindowStartX = windowStartX / 2
 const halfWindowStartY = windowStartY / 2
