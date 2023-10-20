@@ -11,8 +11,8 @@ import (
 const (
 	hdFileName = "heapDump.dat"
 	pLogName   = "panic.log"
-	version    = "0.0.2"
-	buildInfo  = "dev"
+
+	buildInfo = "dev"
 )
 
 func reportPanic(format string, args ...interface{}) {
