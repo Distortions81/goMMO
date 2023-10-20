@@ -14,9 +14,13 @@ type XYs struct {
 	X int32
 	Y int32
 }
-type XYf struct {
+type XYf64 struct {
 	X float64
 	Y float64
+}
+type XYf32 struct {
+	X float32
+	Y float32
 }
 
 type Game struct {
