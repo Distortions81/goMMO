@@ -21,7 +21,12 @@ func (g *Game) Update() error {
 	if ChatMode {
 		start := []rune{}
 		runes := ebiten.AppendInputChars(start[:0])
-		ChatText += string(runes)
+		if len(ChatText) < 256 {
+			ChatText += string(runes)
+		} else {
+			chat("Sorry, that is the max message length!")
+			return nil
+		}
 
 		if repeatingKeyPressed(ebiten.KeyEnter) {
 			ChatMode = false

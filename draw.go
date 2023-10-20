@@ -181,7 +181,7 @@ func drawChatBar(screen *ebiten.Image) {
 	}
 
 	var pad float32 = 4 * float32(uiScale)
-	drawText(ChatText, monoFont, color.White, colorNameBG,
+	drawText("> "+ChatText, monoFont, color.White, colorNameBG,
 		XYf32{X: (pad * 1.5), Y: float32(screenHeight) + (pad * 2)},
 		pad, screen, true, true, false)
 
