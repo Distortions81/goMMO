@@ -32,8 +32,9 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 		screen.Fill(colorGrass)
 
+		//Make camera position
 		camPos.X = (uint32(screenWidth / 2)) + ourPos.X
-		camPos.Y = (uint32(screenWidth / 2)) + ourPos.Y
+		camPos.Y = (uint32(screenHeight / 2)) + ourPos.Y
 
 		//center of screen, center of sprite, charpos
 		for _, player := range playerList {
@@ -41,7 +42,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 			op.GeoM.Scale(2, 2)
 
-			/* camera + object */
+			//camera - object, TODO: get sprite size
 			op.GeoM.Translate(float64(camPos.X-player.pos.X)-48, float64(camPos.Y-player.pos.Y)-48)
 
 			//Draw sub-image
@@ -49,9 +50,8 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 			//Draw name
 			pname := fmt.Sprintf("Player-%v", player.id)
-			charPos := XYtoXYf32(player.pos)
 			drawText(pname, toolTipFont, color.White, colorNameBG,
-				charPos, 2, screen, false, false, true)
+				XYf32{X: float32(camPos.X - player.pos.X), Y: float32(camPos.Y-player.pos.Y) + 48}, 2, screen, false, false, true)
 		}
 		drawDebugInfo(screen)
 		drawChatLines(screen)
