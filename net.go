@@ -167,12 +167,19 @@ func readNet() {
 						chat(buf)
 					}
 				} else {
+					/* Update local player pos */
+					if localPlayer.id == nid {
+						ourPos.X = nx
+						ourPos.Y = ny
+					}
+
 					playerList[nid].lastPos = playerList[nid].pos
 
 					playerList[nid].pos.X = nx
 					playerList[nid].pos.Y = ny
 
-					if playerList[nid].lastPos.X != playerList[nid].pos.X || playerList[nid].lastPos.Y != playerList[nid].pos.Y {
+					if playerList[nid].lastPos.X != playerList[nid].pos.X ||
+						playerList[nid].lastPos.Y != playerList[nid].pos.Y {
 						playerList[nid].walkFrame++
 						playerList[nid].isWalking = true
 

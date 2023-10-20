@@ -16,14 +16,14 @@ type DIR uint8
 
 const (
 	/* Directions */
-	DIR_S DIR = iota
-	DIR_SW
-	DIR_W
-	DIR_NW
-	DIR_N
+	DIR_N DIR = iota
 	DIR_NE
 	DIR_E
 	DIR_SE
+	DIR_S
+	DIR_SW
+	DIR_W
+	DIR_NW
 	DIR_NONE
 )
 

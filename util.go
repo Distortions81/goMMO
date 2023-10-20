@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"compress/zlib"
+	"fmt"
 	"image"
 	"image/color"
 	"io"
@@ -36,16 +37,19 @@ func dirToCharOffset(dir DIR) int {
 	return 0
 }
 
-const segment float64 = 0.7853981634
-const angleOffset = -(math.Pi / 1.6)
+const twoPi = math.Pi * 2.0
+const offset = math.Pi / 2.0
 
-func radToDir(angle float64) DIR {
-	amount := (angle - angleOffset) / segment
-	//doLog(false, "amount: %2.2f", amount)
+func radToDir(in float64) DIR {
+	rads := math.Mod(in+offset, twoPi)
+	normal := (rads / twoPi) * 100.0
 
-	if amount < 0 {
-		return DIR_SE
+	//Lame hack, TODO FIXME
+	if normal < 0 {
+		normal = 87.5
 	}
+	amount := int(math.Round(normal / 12.5))
+	fmt.Printf("normal: %v, dir: %v\n", normal, amount)
 	return DIR(amount)
 }
 
@@ -145,4 +149,20 @@ func chatDetailed(text string, color color.Color, life time.Duration) {
 
 		chatLinesLock.Unlock()
 	}(text)
+}
+
+func XYtoXYf64(pos XY) XYf64 {
+	return XYf64{X: float64(pos.X), Y: float64(pos.Y)}
+}
+
+func XYtoXYf32(pos XY) XYf32 {
+	return XYf32{X: float32(pos.X), Y: float32(pos.Y)}
+}
+
+func XYf64toXY(pos XYf64) XY {
+	return XY{X: uint32(pos.X), Y: uint32(pos.Y)}
+}
+
+func XYf32toXY(pos XYf32) XY {
+	return XY{X: uint32(pos.X), Y: uint32(pos.Y)}
 }

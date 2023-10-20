@@ -135,25 +135,25 @@ func moveDir(dir DIR) {
 
 	switch dir {
 	case DIR_N:
-		localCharPos.Y--
-	case DIR_NE:
-		localCharPos.Y -= diagSpeed
-		localCharPos.X += diagSpeed
-	case DIR_E:
-		localCharPos.X++
-	case DIR_SE:
-		localCharPos.X += diagSpeed
-		localCharPos.Y += diagSpeed
-	case DIR_S:
 		localCharPos.Y++
-	case DIR_SW:
+	case DIR_NE:
 		localCharPos.Y += diagSpeed
 		localCharPos.X -= diagSpeed
-	case DIR_W:
+	case DIR_E:
 		localCharPos.X--
-	case DIR_NW:
-		localCharPos.Y -= diagSpeed
+	case DIR_SE:
 		localCharPos.X -= diagSpeed
+		localCharPos.Y -= diagSpeed
+	case DIR_S:
+		localCharPos.Y--
+	case DIR_SW:
+		localCharPos.Y -= diagSpeed
+		localCharPos.X += diagSpeed
+	case DIR_W:
+		localCharPos.X++
+	case DIR_NW:
+		localCharPos.Y += diagSpeed
+		localCharPos.X += diagSpeed
 	default:
 		return
 	}

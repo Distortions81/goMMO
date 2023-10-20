@@ -15,6 +15,8 @@ import (
 
 const tempOff = 128
 
+var camPos XY = xyCenter
+
 /* Ebiten: Draw everything */
 func (g *Game) Draw(screen *ebiten.Image) {
 
@@ -30,23 +32,26 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 		screen.Fill(colorGrass)
 
+		camPos.X = (uint32(screenWidth / 2)) + ourPos.X
+		camPos.Y = (uint32(screenWidth / 2)) + ourPos.Y
+
 		//center of screen, center of sprite, charpos
 		for _, player := range playerList {
 			op := ebiten.DrawImageOptions{}
 
-			convPos := convPos(player.pos)
-
-			op.GeoM.Translate(tempOff-26+float64(convPos.X), tempOff-26+float64(convPos.Y))
-			//Upscale
 			op.GeoM.Scale(2, 2)
+
+			/* camera + object */
+			op.GeoM.Translate(float64(camPos.X-player.pos.X)-48, float64(camPos.Y-player.pos.Y)-48)
 
 			//Draw sub-image
 			screen.DrawImage(getCharFrame(player).(*ebiten.Image), &op)
+
+			//Draw name
 			pname := fmt.Sprintf("Player-%v", player.id)
-			pos := XYf32{X: float32(tempOff+convPos.X) * 2.0,
-				Y: float32(tempOff+convPos.Y)*2.0 + 40}
+			charPos := XYtoXYf32(player.pos)
 			drawText(pname, toolTipFont, color.White, colorNameBG,
-				pos, 2, screen, false, false, true)
+				charPos, 2, screen, false, false, true)
 		}
 		drawDebugInfo(screen)
 		drawChatLines(screen)

@@ -19,6 +19,7 @@ var (
 
 	/* Local player */
 	localPlayer *playerData
+	ourPos      XY
 
 	playerList     map[uint32]*playerData
 	playerListLock sync.Mutex
