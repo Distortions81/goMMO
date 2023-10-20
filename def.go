@@ -1,6 +1,8 @@
 package main
 
 const (
+	version = "0.0.3"
+
 	/* Files and directories */
 	dataDir     = "data/"
 	gfxDir      = dataDir + "gfx/"
