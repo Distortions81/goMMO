@@ -8,6 +8,7 @@ const (
 	gfxDir      = dataDir + "gfx/"
 	testAreaDir = "testArea"
 	testCharDir = "chars/"
+	testTerrain = "terrain/"
 
 	charSpriteSize    = 52
 	cLoadEmbedSprites = true

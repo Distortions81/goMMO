@@ -26,15 +26,23 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		defer playerListLock.Unlock()
 
 		if !dataDirty {
-			return
+			//return
 		}
 		dataDirty = false
 
-		screen.Fill(colorGrass)
-
 		//Make camera position
-		camPos.X = (uint32(screenWidth / 2)) + ourPos.X
-		camPos.Y = (uint32(screenHeight / 2)) + ourPos.Y
+		camPos.X = (uint32(HscreenWidth)) + ourPos.X
+		camPos.Y = (uint32(HscreenHeight)) + ourPos.Y
+
+		for x := -16; x <= HscreenWidth; x += 16 {
+			for y := -16; y <= HscreenHeight; y += 16 {
+				op := ebiten.DrawImageOptions{}
+				op.GeoM.Translate(float64(x+int(camPos.X%16)), float64(y+int(camPos.Y%16)))
+				op.GeoM.Scale(2, 2)
+				screen.DrawImage(testGrass, &op)
+			}
+
+		}
 
 		//center of screen, center of sprite, charpos
 		for _, player := range playerList {

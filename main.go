@@ -20,6 +20,9 @@ var (
 var screenWidth = 512
 var screenHeight = 512
 
+var HscreenWidth int
+var HscreenHeight int
+
 func main() {
 	playerList = make(map[uint32]*playerData)
 
@@ -44,7 +47,7 @@ func main() {
 	/* Set up ebiten and window */
 	ebiten.SetVsyncEnabled(true)
 	ebiten.SetTPS(60)
-	ebiten.SetScreenClearedEveryFrame(false)
+	ebiten.SetScreenClearedEveryFrame(true)
 	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeDisabled)
 	ebiten.SetWindowSize(screenWidth, screenHeight)
 	ebiten.SetWindowTitle("goMMO")
@@ -67,5 +70,8 @@ func newGame() *Game {
 func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 	screenWidth = outsideWidth
 	screenHeight = outsideHeight
+
+	HscreenWidth = outsideWidth / 2
+	HscreenHeight = outsideHeight / 2
 	return int(outsideWidth), int(outsideHeight)
 }

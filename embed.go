@@ -13,12 +13,18 @@ var (
 	//go:embed data
 	f embed.FS
 
-	testChar *ebiten.Image
+	testChar  *ebiten.Image
+	testGrass *ebiten.Image
 )
 
 func loadTest() {
 	var err error
 	testChar, err = getSpriteImage(testCharDir+"Civilian1(black)_Move.png", false)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	testGrass, err = getSpriteImage(testTerrain+"grass1.png", false)
 	if err != nil {
 		log.Fatalln(err)
 	}
