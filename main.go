@@ -2,6 +2,7 @@ package main
 
 import (
 	"crypto/tls"
+	"flag"
 	"net/http"
 	"runtime"
 
@@ -32,9 +33,14 @@ func main() {
 	StartLog()
 	LogDaemon()
 
+	devMode := flag.Bool("dev", false, "dev mode enable")
+	flag.Parse()
+
 	/* Temporary for testing */
-	authSite = "https://127.0.0.1/gs"
-	transport.TLSClientConfig.InsecureSkipVerify = true
+	if *devMode {
+		authSite = "https://127.0.0.1/gs"
+		transport.TLSClientConfig.InsecureSkipVerify = true
+	}
 
 	/* TODO: use compile flag instead */
 	if runtime.GOARCH == "wasm" {
