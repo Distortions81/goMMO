@@ -8,7 +8,7 @@ import (
 	"golang.org/x/image/font/opentype"
 )
 
-const fpx = 96.0
+const fpx = 120.0
 
 var (
 	fontDPI float64 = fpx

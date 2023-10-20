@@ -3,11 +3,11 @@ package main
 import (
 	"fmt"
 	"image/color"
+	"runtime"
 	"sync"
 	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/hajimehoshi/ebiten/v2/text"
 	"github.com/hajimehoshi/ebiten/v2/vector"
 	"golang.org/x/image/font"
@@ -48,13 +48,11 @@ func (g *Game) Draw(screen *ebiten.Image) {
 			drawText(pname, toolTipFont, color.White, colorNameBG,
 				pos, 2, screen, false, false, true)
 		}
-		buf := fmt.Sprintf("%3.0f FPS", ebiten.ActualFPS())
-		ebitenutil.DebugPrint(screen, buf)
-
+		drawDebugInfo(screen)
 		drawChatLines(screen)
 
 	} else {
-		ebitenutil.DebugPrint(screen, "Connecting.")
+		drawChatLines(screen)
 	}
 
 }
@@ -113,7 +111,7 @@ const (
 
 	padding     = 8
 	scaleFactor = 1.5
-	linePad     = 1
+	linePad     = 2
 )
 
 func drawChatLines(screen *ebiten.Image) {
@@ -152,8 +150,24 @@ func drawChatLines(screen *ebiten.Image) {
 		tempBGColor.A = byte(faded)
 
 		drawText(line.text, generalFont,
-			color.NRGBA{R: uint8(r >> 8), G: uint8(g >> 8), B: uint8(b >> 8), A: byte(newAlpha)},
-			tempBGColor, XYf32{X: padding, Y: float32(screenHeight) - (float32(lineNum) * (float32(generalFontH) * 1.2)) - chatVertSpace},
-			2, screen, true, false, false)
+			color.RGBA{R: uint8(r >> 8), G: uint8(g >> 8), B: uint8(b >> 8), A: byte(newAlpha)},
+			tempBGColor, XYf32{X: padding, Y: float32(screenHeight) - (float32(lineNum) * (float32(generalFontH) * 1.66)) - chatVertSpace},
+			4, screen, true, false, false)
 	}
+}
+
+func drawDebugInfo(screen *ebiten.Image) {
+	defer reportPanic("drawDebugInfo")
+
+	/* Draw debug info */
+	buf := fmt.Sprintf("FPS: %-4v Arch: %v Build: v%v",
+		int(ebiten.ActualFPS()),
+		runtime.GOARCH, version,
+	)
+
+	var pad float32 = 4 * float32(uiScale)
+	drawText(buf, monoFont, color.White, colorNameBG,
+		XYf32{X: (pad * 1.5), Y: float32(screenHeight) + (pad * 2)},
+		pad, screen, true, true, false)
+
 }

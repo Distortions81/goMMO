@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"context"
 	"encoding/binary"
+	"fmt"
+	"image/color"
 	"log"
 	"math/rand"
 	"sync"
@@ -38,7 +40,9 @@ func connectServer() {
 		statusTime = time.Now().Add(time.Duration(delay) * time.Second)
 
 		changeGameMode(MODE_RECONNECT, time.Millisecond*500)
-		doLog(true, "Connect %v failed, retrying in %v ...", ReconnectCount, time.Until(statusTime).Round(time.Second).String())
+		buf := fmt.Sprintf("Connect %v failed, retrying in %v ...", ReconnectCount, time.Until(statusTime).Round(time.Second).String())
+		doLog(true, buf)
+		chat(buf)
 		time.Sleep(time.Duration(delay) * time.Second)
 	}
 	time.Sleep(time.Millisecond * 500)
@@ -49,6 +53,7 @@ func doConnect() bool {
 
 	changeGameMode(MODE_CONNECT, 0)
 	doLog(true, "Connecting...")
+	chat("Connecting to server...")
 
 	ctx, cancel := context.WithCancel(context.Background())
 
@@ -66,6 +71,10 @@ func doConnect() bool {
 	localPlayer = &playerData{conn: c, context: ctx, cancel: cancel, id: 0}
 	c.Write(ctx, websocket.MessageBinary, []byte{byte(CMD_INIT)})
 	doLog(true, "Connected!")
+
+	chat("Connected!")
+	time.Sleep(time.Millisecond * 100)
+	chatDetailed("Use WASD keys to walk!", color.White, time.Second*30)
 
 	changeGameMode(MODE_CONNECTED, 0)
 	go readNet()

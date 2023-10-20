@@ -60,7 +60,6 @@ func newGame() *Game {
 	go connectServer()
 	updateFonts()
 
-	chat("Use WASD keys to walk. This is a very early prototype!")
 	return &Game{}
 }
 
