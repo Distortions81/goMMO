@@ -39,8 +39,14 @@ func sendCommand(header CMD, data []byte) bool {
 
 		doLog(true, "sendCommand error: %v", err)
 
-		changeGameMode(MODE_BOOT, time.Second)
+		changeGameMode(MODE_RECONNECT, time.Second)
+
+		chatLines = []chatLineData{}
+		chatLinesTop = 0
+		chat("Connection lost!")
+
 		connectServer()
+
 		return false
 	}
 

@@ -53,8 +53,7 @@ func doConnect() bool {
 
 	changeGameMode(MODE_CONNECT, 0)
 	doLog(true, "Connecting...")
-	chatLines = []chatLineData{}
-	chatLinesTop = 0
+
 	netCount = 0
 	chat("Connecting to server...")
 
@@ -107,7 +106,11 @@ func readNet() {
 			doLog(true, "readNet error: %v", err)
 
 			//TODO: Notify player here
-			changeGameMode(MODE_BOOT, time.Second)
+			changeGameMode(MODE_RECONNECT, time.Second)
+
+			chatLines = []chatLineData{}
+			chatLinesTop = 0
+			chat("Connection lost!")
 
 			connectServer()
 			return
