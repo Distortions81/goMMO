@@ -34,11 +34,13 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		camPos.X = (uint32(HscreenWidth)) + ourPos.X
 		camPos.Y = (uint32(HscreenHeight)) + ourPos.Y
 
-		for x := -16; x <= HscreenWidth; x += 16 {
-			for y := -16; y <= HscreenHeight; y += 16 {
+		for x := -32; x <= screenWidth; x += 32 {
+			for y := -32; y <= screenHeight; y += 32 {
 				op := ebiten.DrawImageOptions{}
-				op.GeoM.Translate(float64(x+int(camPos.X%16)), float64(y+int(camPos.Y%16)))
+
 				op.GeoM.Scale(2, 2)
+				op.GeoM.Translate(float64(x+int(camPos.X%32)), float64(y+int(camPos.Y%32)))
+
 				screen.DrawImage(testGrass, &op)
 			}
 
