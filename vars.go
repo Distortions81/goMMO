@@ -24,8 +24,6 @@ var (
 	playerList     map[uint32]*playerData
 	playerListLock sync.Mutex
 
-	/* Test BG Color */
-	colorGrass = color.RGBA{R: 132, G: 145, B: 65}
 	/* Name BG Color */
 	colorNameBG = color.RGBA{R: 32, G: 32, B: 32, A: 160}
 

@@ -22,12 +22,14 @@ func sendCommand(header CMD, data []byte) bool {
 		return false
 	}
 
-	cmdName := cmdNames[header]
-	if cmdName == "" {
-		doLog(true, "Sent: 0x%02X", header)
-	} else {
-		//doLog(true, "Sent: %v", cmdName)
-	}
+	/*
+		cmdName := cmdNames[header]
+		if cmdName == "" {
+			doLog(true, "Sent: 0x%02X", header)
+		} else {
+			doLog(true, "Sent: %v", cmdName)
+		}
+	*/
 
 	var err error
 	if data == nil {

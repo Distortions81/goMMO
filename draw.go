@@ -13,8 +13,6 @@ import (
 	"golang.org/x/image/font"
 )
 
-const tempOff = 128
-
 var camPos XY = xyCenter
 
 /* Ebiten: Draw everything */
@@ -26,7 +24,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		defer playerListLock.Unlock()
 
 		if !dataDirty {
-			//return
+			return
 		}
 		dataDirty = false
 

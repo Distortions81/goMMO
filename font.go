@@ -13,23 +13,13 @@ const fpx = 120.0
 var (
 	fontDPI float64 = fpx
 	uiScale         = 1.0
-	magnify         = true
 
 	/* Fonts */
-	bootFont  font.Face
-	bootFontH int
-
 	toolTipFont  font.Face
 	toolTipFontH int
 
 	monoFont  font.Face
 	monoFontH int
-
-	logoFont  font.Face
-	logoFontH int
-
-	introFont  font.Face
-	introFontH int
 
 	generalFont  font.Face
 	generalFontH int

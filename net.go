@@ -8,7 +8,6 @@ import (
 	"image/color"
 	"log"
 	"math/rand"
-	"sync"
 	"time"
 
 	"nhooyr.io/websocket"
@@ -85,7 +84,6 @@ func doConnect() bool {
 	return true
 }
 
-var gameLock sync.Mutex
 var netCount int
 
 func readNet() {
@@ -126,14 +124,17 @@ func readNet() {
 		d := CMD(input[0])
 		data := input[1:]
 		inbuf := bytes.NewReader(data)
-		cmdName := cmdNames[d]
 
-		/* Log event */
-		if cmdName == "" {
-			doLog(true, "Received: 0x%02X (%vb)", d, inputLen)
-		} else {
-			//doLog(true, "Received: %v (%vb)", cmdName, inputLen)
-		}
+		/*
+			cmdName := cmdNames[d]
+
+				// Log event
+				if cmdName == "" {
+					doLog(true, "Received: 0x%02X (%vb)", d, inputLen)
+				} else {
+					doLog(true, "Received: %v (%vb)", cmdName, inputLen)
+				}
+		*/
 
 		switch d {
 		case CMD_LOGIN:
