@@ -16,17 +16,11 @@ import (
 
 var camPos XY = xyCenter
 
-type vertSort []*playerData
+type xySort []*playerData
 
-type horSort []*playerData
-
-func (v vertSort) Len() int           { return len(v) }
-func (v vertSort) Swap(i, j int)      { v[i], v[j] = v[j], v[i] }
-func (v vertSort) Less(i, j int) bool { return v[i].pos.Y > v[j].pos.Y }
-
-func (v horSort) Len() int           { return len(v) }
-func (v horSort) Swap(i, j int)      { v[i], v[j] = v[j], v[i] }
-func (v horSort) Less(i, j int) bool { return v[i].pos.X > v[j].pos.X }
+func (v xySort) Len() int           { return len(v) }
+func (v xySort) Swap(i, j int)      { v[i], v[j] = v[j], v[i] }
+func (v xySort) Less(i, j int) bool { return v[i].pos.Y+v[i].pos.X > v[j].pos.Y+v[j].pos.X }
 
 /* Ebiten: Draw everything */
 func (g *Game) Draw(screen *ebiten.Image) {
@@ -47,6 +41,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		camPos.Y = (uint32(HscreenHeight)) + ourPos.Y
 		posLock.Unlock()
 
+		/* Draw grass */
 		for x := -32; x <= screenWidth; x += 32 {
 			for y := -32; y <= screenHeight; y += 32 {
 				op := ebiten.DrawImageOptions{}
@@ -59,33 +54,50 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 		}
 
-		var pList []*playerData = make([]*playerData, len(playerList))
+		var pList []*playerData
 
-		var p int
 		for _, player := range playerList {
-			pList[p] = player
-			p++
+			xPos := float64(int(camPos.X) - int(player.pos.X))
+			yPos := float64(int(camPos.Y) - int(player.pos.Y))
+
+			//Sprite on screen?
+			if xPos-charSpriteSize > float64(screenWidth) {
+				continue
+			} else if xPos < -charSpriteSize {
+				continue
+			} else if yPos-charSpriteSize > float64(screenHeight) {
+				continue
+			} else if yPos < -charSpriteSize {
+				continue
+			}
+			pList = append(pList, player)
 		}
-		sort.Sort(horSort(pList))
-		sort.Sort(vertSort(pList))
+		sort.Sort(xySort(pList))
 
 		//Draw other players
+
 		for _, player := range pList {
+			// Draw name
+			pname := fmt.Sprintf("Player-%v", player.id)
+			drawText(pname, toolTipFont, color.White, colorNameBG,
+				XYf32{X: float32(int(camPos.X) - int(player.pos.X)), Y: float32(int(camPos.Y)-int(player.pos.Y)) + 48}, 2, screen, false, false, true)
+
+		}
+
+		for _, player := range pList {
+
+			xPos := float64(int(camPos.X) - int(player.pos.X))
+			yPos := float64(int(camPos.Y) - int(player.pos.Y))
 
 			op := ebiten.DrawImageOptions{}
 
 			op.GeoM.Scale(2, 2)
 
 			//camera - object, TODO: get sprite size
-			op.GeoM.Translate(float64(camPos.X-player.pos.X)-48, float64(camPos.Y-player.pos.Y)-48)
+			op.GeoM.Translate(xPos-48.0, yPos-48.0)
 
 			//Draw sub-image
 			screen.DrawImage(getCharFrame(player).(*ebiten.Image), &op)
-
-			//Draw name
-			pname := fmt.Sprintf("Player-%v", player.id)
-			drawText(pname, toolTipFont, color.White, colorNameBG,
-				XYf32{X: float32(camPos.X - player.pos.X), Y: float32(camPos.Y-player.pos.Y) + 48}, 2, screen, false, false, true)
 		}
 
 		drawDebugInfo(screen)
