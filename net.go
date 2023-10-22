@@ -13,7 +13,7 @@ import (
 	"nhooyr.io/websocket"
 )
 
-const netReadLimit = 8192
+const netReadLimit = 1024 * 100
 
 func connectServer() {
 
