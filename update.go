@@ -103,7 +103,7 @@ func (g *Game) Update() error {
 		goDir = newDir
 		moveDir(goDir)
 
-		if updateCount%4 == 0 {
+		if updateCount%8 == 0 {
 			sendMove()
 		}
 	} else {
@@ -135,25 +135,25 @@ func moveDir(dir DIR) {
 
 	switch dir {
 	case DIR_N:
-		localCharPos.Y++
+		curCharPos.Y++
 	case DIR_NE:
-		localCharPos.Y += diagSpeed
-		localCharPos.X -= diagSpeed
+		curCharPos.Y += diagSpeed
+		curCharPos.X -= diagSpeed
 	case DIR_E:
-		localCharPos.X--
+		curCharPos.X--
 	case DIR_SE:
-		localCharPos.X -= diagSpeed
-		localCharPos.Y -= diagSpeed
+		curCharPos.X -= diagSpeed
+		curCharPos.Y -= diagSpeed
 	case DIR_S:
-		localCharPos.Y--
+		curCharPos.Y--
 	case DIR_SW:
-		localCharPos.Y -= diagSpeed
-		localCharPos.X += diagSpeed
+		curCharPos.Y -= diagSpeed
+		curCharPos.X += diagSpeed
 	case DIR_W:
-		localCharPos.X++
+		curCharPos.X++
 	case DIR_NW:
-		localCharPos.Y += diagSpeed
-		localCharPos.X += diagSpeed
+		curCharPos.Y += diagSpeed
+		curCharPos.X += diagSpeed
 	default:
 		return
 	}
@@ -161,12 +161,13 @@ func moveDir(dir DIR) {
 }
 
 func sendMove() {
+
 	var buf []byte
 	outbuf := bytes.NewBuffer(buf)
 
-	binary.Write(outbuf, binary.LittleEndian, int8(localCharPos.X-lastCharPos.X))
-	binary.Write(outbuf, binary.LittleEndian, int8(localCharPos.Y-lastCharPos.Y))
+	binary.Write(outbuf, binary.LittleEndian, int8(curCharPos.X-lastCharPos.X))
+	binary.Write(outbuf, binary.LittleEndian, int8(curCharPos.Y-lastCharPos.Y))
 	sendCommand(CMD_MOVE, outbuf.Bytes())
 
-	lastCharPos = localCharPos
+	lastCharPos = curCharPos
 }

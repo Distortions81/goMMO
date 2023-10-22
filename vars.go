@@ -9,11 +9,11 @@ import (
 var (
 	WASMMode bool = false
 
-	updateCount  int
-	goDir        DIR
-	dataDirty    bool  = true
-	localCharPos XYf64 = XYf64{X: xyHalf, Y: xyHalf}
-	lastCharPos  XYf64 = XYf64{X: xyHalf, Y: xyHalf}
+	updateCount int
+	goDir       DIR
+	dataDirty   bool  = true
+	curCharPos  XYf64 = XYf64{X: xyHalf, Y: xyHalf}
+	lastCharPos XYf64 = XYf64{X: xyHalf, Y: xyHalf}
 
 	/* Game Mode */
 	gameMode = MODE_START
@@ -21,6 +21,7 @@ var (
 	/* Local player */
 	localPlayer *playerData
 	ourPos      XY
+	posLock     sync.Mutex
 
 	playerList     map[uint32]*playerData
 	playerListLock sync.Mutex

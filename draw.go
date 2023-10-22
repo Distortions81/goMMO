@@ -29,8 +29,10 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		dataDirty = false
 
 		//Make camera position
+		posLock.Lock()
 		camPos.X = (uint32(HscreenWidth)) + ourPos.X
 		camPos.Y = (uint32(HscreenHeight)) + ourPos.Y
+		posLock.Unlock()
 
 		for x := -32; x <= screenWidth; x += 32 {
 			for y := -32; y <= screenHeight; y += 32 {
