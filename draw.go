@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"image/color"
 	"runtime"
+	"sort"
 	"sync"
 	"time"
 
@@ -14,6 +15,18 @@ import (
 )
 
 var camPos XY = xyCenter
+
+type vertSort []*playerData
+
+type horSort []*playerData
+
+func (v vertSort) Len() int           { return len(v) }
+func (v vertSort) Swap(i, j int)      { v[i], v[j] = v[j], v[i] }
+func (v vertSort) Less(i, j int) bool { return v[i].pos.Y > v[j].pos.Y }
+
+func (v horSort) Len() int           { return len(v) }
+func (v horSort) Swap(i, j int)      { v[i], v[j] = v[j], v[i] }
+func (v horSort) Less(i, j int) bool { return v[i].pos.X > v[j].pos.X }
 
 /* Ebiten: Draw everything */
 func (g *Game) Draw(screen *ebiten.Image) {
@@ -46,8 +59,16 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 		}
 
-		//center of screen, center of sprite, charpos
+		var pList []*playerData
 		for _, player := range playerList {
+			pList = append(pList, player)
+		}
+		sort.Sort(horSort(pList))
+		sort.Sort(vertSort(pList))
+
+		//center of screen, center of sprite, charpos
+		for _, player := range pList {
+
 			op := ebiten.DrawImageOptions{}
 
 			op.GeoM.Scale(2, 2)
