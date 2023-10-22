@@ -48,7 +48,7 @@ func main() {
 	ebiten.SetVsyncEnabled(true)
 	ebiten.SetTPS(120)
 	ebiten.SetScreenClearedEveryFrame(false)
-	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeDisabled)
+	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeEnabled)
 	ebiten.SetWindowSize(screenWidth, screenHeight)
 	ebiten.SetWindowTitle("goMMO")
 
