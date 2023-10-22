@@ -59,9 +59,12 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 		}
 
-		var pList []*playerData
+		var pList []*playerData = make([]*playerData, len(playerList))
+
+		var p int
 		for _, player := range playerList {
-			pList = append(pList, player)
+			pList[p] = player
+			p++
 		}
 		sort.Sort(horSort(pList))
 		sort.Sort(vertSort(pList))
