@@ -13,6 +13,8 @@ var (
 	ChatText string
 )
 
+const maxChat = 256
+
 /* Input interface handler */
 func (g *Game) Update() error {
 	updateCount++
@@ -20,7 +22,7 @@ func (g *Game) Update() error {
 	if ChatMode {
 		start := []rune{}
 		runes := ebiten.AppendInputChars(start[:0])
-		if len(ChatText) < 256 {
+		if len(ChatText) < maxChat {
 			ChatText += string(runes)
 		} else {
 			chat("Sorry, that is the max message length!")
