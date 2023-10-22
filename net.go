@@ -70,7 +70,13 @@ func doConnect() bool {
 	c.SetReadLimit(netReadLimit)
 
 	localPlayer = &playerData{conn: c, context: ctx, cancel: cancel, id: 0}
-	c.Write(ctx, websocket.MessageBinary, []byte{byte(CMD_INIT)})
+
+	var buf []byte
+	outbuf := bytes.NewBuffer(buf)
+
+	binary.Write(outbuf, binary.LittleEndian, &protoVersion)
+
+	sendCommand(CMD_INIT, outbuf.Bytes())
 	doLog(true, "Connected!")
 
 	chat("Connected!")
@@ -137,8 +143,12 @@ func readNet() {
 		*/
 
 		switch d {
+		case CMD_INIT:
+			chat("Server rejected connection: invalid version.")
+			changeGameMode(MODE_ERROR, 0)
+			return
 		case CMD_LOGIN:
-			binary.Read(inbuf, binary.BigEndian, &localPlayer.id)
+			binary.Read(inbuf, binary.LittleEndian, &localPlayer.id)
 			doLog(true, "New local id: %v", localPlayer.id)
 			changeGameMode(MODE_PLAYING, 0)
 		case CMD_CHAT:
@@ -146,7 +156,7 @@ func readNet() {
 		case CMD_UPDATE:
 
 			var numPlayers uint32
-			binary.Read(inbuf, binary.BigEndian, &numPlayers)
+			binary.Read(inbuf, binary.LittleEndian, &numPlayers)
 
 			playerListLock.Lock()
 
@@ -157,11 +167,11 @@ func readNet() {
 			var x uint32
 			for x = 0; x < numPlayers; x++ {
 				var nid uint32
-				binary.Read(inbuf, binary.BigEndian, &nid)
+				binary.Read(inbuf, binary.LittleEndian, &nid)
 				var nx uint32
-				binary.Read(inbuf, binary.BigEndian, &nx)
+				binary.Read(inbuf, binary.LittleEndian, &nx)
 				var ny uint32
-				binary.Read(inbuf, binary.BigEndian, &ny)
+				binary.Read(inbuf, binary.LittleEndian, &ny)
 
 				if playerList[nid] == nil {
 					playerList[nid] = &playerData{id: nid, pos: XY{X: nx, Y: ny}}

@@ -1,5 +1,7 @@
 package main
 
+var protoVersion uint16 = 2
+
 const (
 	version = "0.0.4"
 

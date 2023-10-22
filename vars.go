@@ -13,6 +13,7 @@ var (
 	goDir        DIR
 	dataDirty    bool  = true
 	localCharPos XYf64 = XYf64{X: xyHalf, Y: xyHalf}
+	lastCharPos  XYf64 = XYf64{X: xyHalf, Y: xyHalf}
 
 	/* Game Mode */
 	gameMode = MODE_START

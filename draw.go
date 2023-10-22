@@ -66,6 +66,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		drawChatBar(screen)
 
 	} else {
+		screen.Fill(color.Black)
 		drawChatLines(screen)
 	}
 

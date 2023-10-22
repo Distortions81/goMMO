@@ -163,9 +163,10 @@ func moveDir(dir DIR) {
 func sendMove() {
 	var buf []byte
 	outbuf := bytes.NewBuffer(buf)
-	pos := XY{X: uint32(localCharPos.X), Y: uint32(localCharPos.Y)}
 
-	binary.Write(outbuf, binary.BigEndian, pos.X)
-	binary.Write(outbuf, binary.BigEndian, pos.Y)
+	binary.Write(outbuf, binary.LittleEndian, int8(localCharPos.X-lastCharPos.X))
+	binary.Write(outbuf, binary.LittleEndian, int8(localCharPos.Y-lastCharPos.Y))
 	sendCommand(CMD_MOVE, outbuf.Bytes())
+
+	lastCharPos = localCharPos
 }
