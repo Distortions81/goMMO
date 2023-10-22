@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"encoding/binary"
-	"fmt"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
@@ -31,8 +30,7 @@ func (g *Game) Update() error {
 		if repeatingKeyPressed(ebiten.KeyEnter) {
 			ChatMode = false
 			if ChatText != "" {
-				buf := fmt.Sprintf("Player-%v says: %v", localPlayer.id, ChatText)
-				sendCommand(CMD_CHAT, []byte(buf))
+				sendCommand(CMD_CHAT, []byte(ChatText))
 				ChatText = ""
 			}
 		} else if repeatingKeyPressed(ebiten.KeyBackspace) {
