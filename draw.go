@@ -69,7 +69,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		sort.Sort(horSort(pList))
 		sort.Sort(vertSort(pList))
 
-		//center of screen, center of sprite, charpos
+		//Draw other players
 		for _, player := range pList {
 
 			op := ebiten.DrawImageOptions{}
@@ -87,6 +87,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 			drawText(pname, toolTipFont, color.White, colorNameBG,
 				XYf32{X: float32(camPos.X - player.pos.X), Y: float32(camPos.Y-player.pos.Y) + 48}, 2, screen, false, false, true)
 		}
+
 		drawDebugInfo(screen)
 		drawChatLines(screen)
 		drawChatBar(screen)
