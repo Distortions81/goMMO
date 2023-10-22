@@ -157,6 +157,7 @@ func readNet() {
 
 			var numPlayers uint32
 			binary.Read(inbuf, binary.LittleEndian, &numPlayers)
+			//fmt.Printf("%v items.\n", numPlayers)
 
 			playerListLock.Lock()
 
@@ -175,11 +176,6 @@ func readNet() {
 
 				if playerList[nid] == nil {
 					playerList[nid] = &playerData{id: nid, pos: XY{X: nx, Y: ny}}
-					doLog(false, "Player added: %v", nid)
-					if netCount != 0 {
-						buf := fmt.Sprintf("Player-%v joined.", nid)
-						chat(buf)
-					}
 				} else {
 					/* Update local player pos */
 					if localPlayer.id == nid {
@@ -209,11 +205,6 @@ func readNet() {
 
 			for p, player := range playerList {
 				if player.unmark {
-					doLog(false, "Player removed: %v", p)
-					if netCount != 0 {
-						buf := fmt.Sprintf("Player-%v left.", p)
-						chat(buf)
-					}
 					delete(playerList, p)
 				}
 			}
