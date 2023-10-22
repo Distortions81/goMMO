@@ -1,7 +1,7 @@
 package main
 
 const (
-	version = "0.0.3"
+	version = "0.0.4"
 
 	/* Files and directories */
 	dataDir     = "data/"
