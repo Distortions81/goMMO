@@ -7,11 +7,6 @@
 
 version 1
 
-types:
-1:characters:characters
-2:terrain:terrain
-3:world objects:world-objects
-
 characters:
 1:player:test-player.png
 
@@ -19,7 +14,7 @@ terrain:
 1:grass:grass.png
 2:grass-1:grass1.png
 
-world objects:
+world-objects:
 1:blue mushroom:blue-mush.png
 2:red mushroom:red-mush.png
 3:tiny rock:tiny-rock.png

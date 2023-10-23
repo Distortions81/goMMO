@@ -4,25 +4,29 @@ import (
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/hajimehoshi/ebiten/v2"
 )
 
 const indexFileName = "index.dat"
 
 type sectionData struct {
 	name     string
+	filePath string
 	items    []sectionItemData
-	numItems uint32
 }
 
 type sectionItemData struct {
 	name     string
 	fileName string
 	id       uint32
+	image    *ebiten.Image
 }
 
-var sections []*sectionData
+var itemTypesList map[string]*sectionData
 
 func readIndex() bool {
+
 	data, err := os.ReadFile(dataDir + indexFileName)
 	if err != nil {
 		doLog(true, "Unable to read %v", indexFileName)
@@ -60,8 +64,9 @@ func readIndex() bool {
 			}
 
 			//Reset data
-			sections = []*sectionData{}
 			currentSection = nil
+			itemTypesList = map[string]*sectionData{}
+
 			if gDevMode {
 				doLog(true, "version header found.")
 			}
@@ -72,10 +77,11 @@ func readIndex() bool {
 		if strings.HasSuffix(line, ":") {
 			sectionName := strings.TrimSuffix(line, ":")
 			newSection := &sectionData{name: sectionName}
-			sections = append(sections, newSection)
+			itemTypesList[newSection.name] = newSection
 			currentSection = newSection
 
 			if gDevMode {
+				doLog(false, "")
 				doLog(true, "section found: %v", sectionName)
 			}
 			continue

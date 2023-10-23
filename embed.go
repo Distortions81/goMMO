@@ -18,16 +18,19 @@ var (
 )
 
 func loadTest() {
-	var err error
-	testChar, err = getSpriteImage(testCharDir+"test-player.png", false)
-	if err != nil {
-		log.Fatalln(err)
+
+	for typeNum, itemType := range itemTypesList {
+		for itemNum, item := range itemType.items {
+			imageData, err := getSpriteImage(itemType.name+"/"+item.fileName, false)
+			if err != nil {
+				log.Fatalln(err)
+			}
+			itemTypesList[typeNum].items[itemNum].image = imageData
+		}
 	}
 
-	testGrass, err = getSpriteImage(testTerrain+"grass1.png", false)
-	if err != nil {
-		log.Fatalln(err)
-	}
+	testGrass = itemTypesList["terrain"].items[1].image
+	testChar = itemTypesList["characters"].items[0].image
 }
 
 func getFont(name string) []byte {
