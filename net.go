@@ -20,8 +20,11 @@ func connectServer() {
 	changeGameMode(MODE_BOOT, 0)
 
 	if localPlayer != nil {
-		if localPlayer.conn != nil {
+		if localPlayer.context != nil {
+			localPlayer.context.Done()
 			localPlayer.cancel()
+		}
+		if localPlayer.conn != nil {
 			localPlayer.conn.Close(websocket.StatusNormalClosure, "Write failed.")
 		}
 
@@ -66,7 +69,6 @@ func doConnect() bool {
 		return false
 	}
 
-	//10MB limit
 	c.SetReadLimit(netReadLimit)
 
 	localPlayer = &playerData{conn: c, context: ctx, cancel: cancel, id: 0}
@@ -115,7 +117,6 @@ func readNet() {
 			chatLines = []chatLineData{}
 			chatLinesTop = 0
 			chat("Connection lost!")
-
 			connectServer()
 			return
 		}
