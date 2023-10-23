@@ -216,6 +216,7 @@ func readNet() {
 		default:
 			doLog(true, "Received invalid: 0x%02X\n", d)
 			localPlayer.conn.Close(websocket.StatusNormalClosure, "closed")
+			changeGameMode(MODE_ERROR, 0)
 			return
 		}
 	}
