@@ -176,7 +176,7 @@ func readNet() {
 				binary.Read(inbuf, binary.LittleEndian, &ny)
 
 				if playerList[nid] == nil {
-					playerList[nid] = &playerData{id: nid, pos: XY{X: nx, Y: ny}}
+					playerList[nid] = &playerData{id: nid, pos: XY{X: nx, Y: ny}, direction: DIR_S}
 				} else {
 					/* Update local player pos */
 					if localPlayer.id == nid {
