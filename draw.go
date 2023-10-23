@@ -137,9 +137,8 @@ func drawText(input string, face font.Face, color color.Color, bgcolor color.Col
 	_, _, _, alpha := bgcolor.RGBA()
 
 	if alpha > 0 {
-		fHeight := text.BoundString(face, "gpqabcABC!|_,;^*`")
 		vector.DrawFilledRect(
-			screen, tmx-pad, tmy-float32(fHeight.Dy())-(float32(pad)/2.0),
+			screen, tmx-pad, tmy-float32(tRect.Dy())-(float32(pad)/2.0),
 			float32(tRect.Dx())+pad*2, float32(tRect.Dy())+pad*2, bgcolor, false,
 		)
 	}
