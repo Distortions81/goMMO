@@ -214,7 +214,7 @@ func drawDebugInfo(screen *ebiten.Image) {
 	defer reportPanic("drawDebugInfo")
 
 	/* Draw debug info */
-	buf := fmt.Sprintf("FPS: %-4v Arch: %v Build: v%v",
+	buf := fmt.Sprintf("FPS: %3v  Arch: %v  Build: v%v",
 		int(ebiten.ActualFPS()),
 		runtime.GOARCH, gameVersion,
 	)
