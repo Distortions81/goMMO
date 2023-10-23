@@ -9,8 +9,9 @@ import (
 )
 
 var (
-	ChatMode bool
-	ChatText string
+	ChatMode    bool
+	CommandMode bool
+	ChatText    string
 )
 
 const maxChat = 256
@@ -19,7 +20,7 @@ const maxChat = 256
 func (g *Game) Update() error {
 	updateCount++
 
-	if ChatMode {
+	if ChatMode || CommandMode {
 		start := []rune{}
 		runes := ebiten.AppendInputChars(start[:0])
 		if len(ChatText) < maxChat {
@@ -31,8 +32,13 @@ func (g *Game) Update() error {
 
 		if repeatingKeyPressed(ebiten.KeyEnter) {
 			ChatMode = false
+			CommandMode = false
 			if ChatText != "" {
-				sendCommand(CMD_CHAT, []byte(ChatText))
+				if CommandMode {
+					sendCommand(CMD_COMMAND, []byte(ChatText))
+				} else if ChatMode {
+					sendCommand(CMD_CHAT, []byte(ChatText))
+				}
 				ChatText = ""
 			}
 		} else if repeatingKeyPressed(ebiten.KeyBackspace) {
@@ -42,8 +48,11 @@ func (g *Game) Update() error {
 
 		}
 		return nil
-	} else if repeatingKeyPressed(ebiten.KeyEnter) {
+	} else if repeatingKeyPressed(ebiten.KeyEnter) && !CommandMode {
 		ChatMode = true
+		ChatText = ""
+	} else if repeatingKeyPressed(ebiten.KeyGraveAccent) && !ChatMode {
+		CommandMode = true
 		ChatText = ""
 	}
 

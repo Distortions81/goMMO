@@ -80,7 +80,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 			// Draw name
 			pname := fmt.Sprintf("Player-%v", player.id)
 			drawText(pname, toolTipFont, color.White, colorNameBG,
-				XYf32{X: float32(int(camPos.X) - int(player.pos.X)), Y: float32(int(camPos.Y)-int(player.pos.Y)) + 48}, 2, screen, false, false, true)
+				XYf32{X: float32(int(camPos.X)-int(player.pos.X)) + 4, Y: float32(int(camPos.Y)-int(player.pos.Y)) + 48}, 2, screen, false, false, true)
 
 		}
 
@@ -228,13 +228,16 @@ func drawDebugInfo(screen *ebiten.Image) {
 func drawChatBar(screen *ebiten.Image) {
 	defer reportPanic("drawDebugInfo")
 
-	if !ChatMode {
-		return
+	if ChatMode {
+		var pad float32 = 4 * float32(uiScale)
+		drawText("say: "+ChatText, monoFont, color.White, colorNameBG,
+			XYf32{X: (pad * 1.5), Y: float32(screenHeight) + (pad * 2)},
+			pad, screen, true, true, false)
+	} else if CommandMode {
+		var pad float32 = 4 * float32(uiScale)
+		drawText("> "+ChatText, monoFont, color.White, colorNameBG,
+			XYf32{X: (pad * 1.5), Y: float32(screenHeight) + (pad * 2)},
+			pad, screen, true, true, false)
 	}
-
-	var pad float32 = 4 * float32(uiScale)
-	drawText("> "+ChatText, monoFont, color.White, colorNameBG,
-		XYf32{X: (pad * 1.5), Y: float32(screenHeight) + (pad * 2)},
-		pad, screen, true, true, false)
 
 }
