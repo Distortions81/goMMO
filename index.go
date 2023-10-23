@@ -25,7 +25,7 @@ var sections []*sectionData
 func readIndex() bool {
 	data, err := os.ReadFile(dataDir + indexFileName)
 	if err != nil {
-		doLog(true, "Unable to read index.dat")
+		doLog(true, "Unable to read %v", indexFileName)
 		return false
 	}
 	doLog(true, "Reading %v", indexFileName)
@@ -33,7 +33,7 @@ func readIndex() bool {
 	lines := strings.Split(string(data), "\n")
 	var l int
 	var currentSection *sectionData
-	for _, line := range lines {
+	for lnum, line := range lines {
 
 		//Ignore comments and blank lines
 		if strings.HasPrefix(line, "#") || line == "" {
@@ -47,15 +47,15 @@ func readIndex() bool {
 			words := strings.Split(line, " ")
 			numWords := len(words)
 			if numWords != 2 {
-				doLog(true, "version header doesn't have two words.")
+				doLog(true, "Version header doesn't have two words, line: %v", lnum)
 				return false
 			}
-			if words[0] != "version" {
-				doLog(true, "no version header found.")
+			if !strings.EqualFold("version", words[0]) {
+				doLog(true, "No version header found, line: %v: '%v %v'", lnum, words[0], words[1])
 				return false
 			}
-			if words[1] != "1" {
-				doLog(true, "index version not supported.")
+			if !strings.EqualFold("1", words[1]) {
+				doLog(true, "Index version not supported, line: %v", lnum)
 				return false
 			}
 
@@ -86,7 +86,7 @@ func readIndex() bool {
 			words := strings.Split(line, ":")
 			numWords := len(words)
 			if numWords != 3 {
-				doLog(true, "Item doesn't have correct number of entries.")
+				doLog(true, "Item doesn't have correct number of entries on line %v.", lnum)
 				return false
 			}
 			idNum, _ := strconv.ParseUint(words[0], 10, 32)
@@ -94,7 +94,7 @@ func readIndex() bool {
 
 			for _, item := range currentSection.items {
 				if item.id == newItem.id {
-					doLog(true, "Duplicate ID! Section: %v, item1: %v, item2: %v id: %v", currentSection.name, item.name, newItem.name, newItem.id)
+					doLog(true, "Duplicate ID! Section: %v, item1: %v, item2: %v id: %v, line: %v", currentSection.name, item.name, newItem.name, newItem.id, lnum)
 					return false
 				}
 			}

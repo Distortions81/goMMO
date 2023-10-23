@@ -70,6 +70,7 @@ func LogDaemon() {
 	if WASMMode {
 		return
 	}
+
 	go func() {
 		for {
 			logBufLock.Lock()

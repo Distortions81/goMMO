@@ -7,6 +7,7 @@ import (
 	"flag"
 	"net/http"
 	"runtime"
+	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
 )
@@ -26,6 +27,8 @@ var HscreenWidth int
 var HscreenHeight int
 
 func main() {
+	defer time.Sleep(time.Second * 2) //Wait for log to close
+
 	playerList = make(map[uint32]*playerData)
 
 	StartLog()
@@ -43,11 +46,12 @@ func main() {
 
 	/* TODO: use compile flag instead */
 	if runtime.GOARCH == "wasm" {
-		//doLog(false, "WASM mode")
 		WASMMode = true
 	}
 
-	readIndex()
+	if !readIndex() {
+		return
+	}
 
 	/* Set up ebiten and window */
 	ebiten.SetVsyncEnabled(true)

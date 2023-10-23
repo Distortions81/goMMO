@@ -1,5 +1,4 @@
 # Modified 10-23-2023
-# This file is used so objects can have IDs that do not change.
 #Format:
 # type:
 # id:name:fileName
