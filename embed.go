@@ -11,7 +11,7 @@ import (
 
 var (
 	//go:embed data
-	f embed.FS
+	efs embed.FS
 
 	testChar  *ebiten.Image
 	testGrass *ebiten.Image
@@ -34,7 +34,7 @@ func loadTest() {
 }
 
 func getFont(name string) []byte {
-	data, err := f.ReadFile(gfxDir + "fonts/" + name)
+	data, err := efs.ReadFile(gfxDir + "fonts/" + name)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -45,7 +45,7 @@ func getFont(name string) []byte {
 func getSpriteImage(name string, unmanaged bool) (*ebiten.Image, error) {
 
 	if cLoadEmbedSprites {
-		gpng, err := f.Open(gfxDir + name)
+		gpng, err := efs.Open(gfxDir + name)
 		if err != nil {
 			doLog(true, "GetSpriteImage: Embedded: %v", err)
 			return nil, err

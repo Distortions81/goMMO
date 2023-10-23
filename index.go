@@ -1,7 +1,6 @@
 package main
 
 import (
-	"os"
 	"strconv"
 	"strings"
 
@@ -27,7 +26,7 @@ var itemTypesList map[string]*sectionData
 
 func readIndex() bool {
 
-	data, err := os.ReadFile(dataDir + indexFileName)
+	data, err := efs.ReadFile(dataDir + indexFileName)
 	if err != nil {
 		doLog(true, "Unable to read %v", indexFileName)
 		return false
