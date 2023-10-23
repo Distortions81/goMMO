@@ -36,6 +36,7 @@ func main() {
 
 	/* Temporary for testing */
 	if *devMode {
+		gDevMode = true
 		authSite = "https://127.0.0.1/gs"
 		transport.TLSClientConfig.InsecureSkipVerify = true
 	}
@@ -45,6 +46,8 @@ func main() {
 		//doLog(false, "WASM mode")
 		WASMMode = true
 	}
+
+	readIndex()
 
 	/* Set up ebiten and window */
 	ebiten.SetVsyncEnabled(true)

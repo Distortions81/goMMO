@@ -76,7 +76,7 @@ func doConnect() bool {
 	var buf []byte
 	outbuf := bytes.NewBuffer(buf)
 
-	binary.Write(outbuf, binary.LittleEndian, &protoVersion)
+	binary.Write(outbuf, binary.LittleEndian, &netProtoVersion)
 
 	sendCommand(CMD_INIT, outbuf.Bytes())
 	doLog(true, "Connected!")

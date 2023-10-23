@@ -1,0 +1,29 @@
+# Modified 10-23-2023
+# This file is used so objects can have IDs that do not change.
+#Format:
+# type:
+# id:name:fileName
+# blank lines, or lines starting with # are ignored
+
+version 1
+
+types:
+1:characters:characters
+2:terrain:terrain
+3:world objects:world-objects
+
+characters:
+1:player:test-player.png
+
+terrain:
+1:grass:grass.png
+2:grass-1:grass1.png
+
+world objects:
+1:blue mushroom:blue-mush.png
+2:red mushroom:red-mush.png
+3:tiny rock:tiny-rock.png
+4:tiny shrub:tiny-shrub.png
+5:tiny tree stump:tiny-tree-stump.png
+6:tree-1:tree1.png
+7:tree-2:tree2.png

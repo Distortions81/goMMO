@@ -32,7 +32,7 @@ func reportPanic(format string, args ...interface{}) {
 		input := fmt.Sprintf(format, args...)
 		buf := fmt.Sprintf(
 			"(GAME CRASH)\nBUILD:v%v-%v\nLabel:%v File: %v Line: %v\nError:%v\n\nStack Trace:\n%v\n",
-			version, buildInfo, input, filepath.Base(filename), line, r, string(debug.Stack()))
+			gameVersion, buildInfo, input, filepath.Base(filename), line, r, string(debug.Stack()))
 
 		os.WriteFile(pLogName, []byte(buf), 0660)
 		doLog(true, "wrote %v", pLogName)

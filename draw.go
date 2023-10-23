@@ -216,7 +216,7 @@ func drawDebugInfo(screen *ebiten.Image) {
 	/* Draw debug info */
 	buf := fmt.Sprintf("FPS: %-4v Arch: %v Build: v%v",
 		int(ebiten.ActualFPS()),
-		runtime.GOARCH, version,
+		runtime.GOARCH, gameVersion,
 	)
 
 	var pad float32 = 4 * float32(uiScale)

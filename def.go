@@ -1,15 +1,16 @@
 package main
 
-var protoVersion uint16 = 2
+var netProtoVersion uint16 = 2
 
 const (
-	version = "0.0.4"
+	gameVersion = "0.0.5"
 
 	/* Files and directories */
-	dataDir     = "data/"
-	gfxDir      = dataDir + "gfx/"
-	testAreaDir = "testArea"
-	testCharDir = "chars/"
+	dataDir         = "data/"
+	gfxDir          = dataDir + "gfx/"
+	testCharDir     = "characters/"
+	worldObjectsDir = "world objects/"
+
 	testTerrain = "terrain/"
 
 	charSpriteSize    = 52

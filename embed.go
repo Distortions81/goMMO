@@ -19,7 +19,7 @@ var (
 
 func loadTest() {
 	var err error
-	testChar, err = getSpriteImage(testCharDir+"Civilian1(black)_Move.png", false)
+	testChar, err = getSpriteImage(testCharDir+"test-player.png", false)
 	if err != nil {
 		log.Fatalln(err)
 	}

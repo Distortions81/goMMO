@@ -15,6 +15,8 @@ var (
 	curCharPos  XYf64 = XYf64{X: xyHalf, Y: xyHalf}
 	lastCharPos XYf64 = XYf64{X: xyHalf, Y: xyHalf}
 
+	gDevMode bool
+
 	/* Game Mode */
 	gameMode = MODE_START
 
