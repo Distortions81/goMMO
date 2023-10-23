@@ -3,6 +3,7 @@
 #Format:
 # type:
 # id:name:fileName
+# duplicate IDs in the same section will cause an error
 # blank lines, or lines starting with # are ignored
 
 version 1
