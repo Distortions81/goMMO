@@ -12,7 +12,7 @@ const indexFileName = "index.dat"
 type sectionData struct {
 	name     string
 	filePath string
-	items    []sectionItemData
+	items    map[string]*sectionItemData
 }
 
 type sectionItemData struct {
@@ -76,8 +76,13 @@ func readIndex() bool {
 		if strings.HasSuffix(line, ":") {
 			sectionName := strings.TrimSuffix(line, ":")
 			newSection := &sectionData{name: sectionName}
+
 			itemTypesList[newSection.name] = newSection
 			currentSection = newSection
+
+			if itemTypesList[newSection.name].items == nil {
+				itemTypesList[newSection.name].items = make(map[string]*sectionItemData)
+			}
 
 			if gDevMode {
 				doLog(false, "")
@@ -95,7 +100,7 @@ func readIndex() bool {
 				return false
 			}
 			idNum, _ := strconv.ParseUint(words[0], 10, 32)
-			newItem := sectionItemData{name: words[1], fileName: words[2], id: uint32(idNum)}
+			newItem := &sectionItemData{name: words[1], fileName: words[2], id: uint32(idNum)}
 
 			for _, item := range currentSection.items {
 				if item.id == newItem.id {
@@ -103,7 +108,7 @@ func readIndex() bool {
 					return false
 				}
 			}
-			currentSection.items = append(currentSection.items, newItem)
+			currentSection.items[newItem.name] = newItem
 
 			if gDevMode {
 				doLog(true, "item found: %v:%v", newItem.id, newItem.name)

@@ -19,18 +19,37 @@ var (
 
 func loadTest() {
 
-	for typeNum, itemType := range itemTypesList {
-		for itemNum, item := range itemType.items {
+	for typeName, itemType := range itemTypesList {
+		for itemName, item := range itemType.items {
 			imageData, err := getSpriteImage(itemType.name+"/"+item.fileName, false)
 			if err != nil {
 				log.Fatalln(err)
 			}
-			itemTypesList[typeNum].items[itemNum].image = imageData
+			itemTypesList[typeName].items[itemName].image = imageData
 		}
 	}
 
-	testGrass = itemTypesList["terrain"].items[1].image
-	testChar = itemTypesList["characters"].items[0].image
+	testGrass = getItemImage("terrain", "grass-1")
+	testChar = getItemImage("characters", "player")
+}
+
+func getItemImage(itemType string, name string) *ebiten.Image {
+	iType := itemTypesList[itemType]
+	if iType == nil {
+		doLog(true, "Item type not found: %v", itemType)
+		return nil
+	}
+	item := iType.items[name]
+	if item == nil {
+		doLog(true, "Item not found: %v", name)
+		return nil
+	}
+	if item.image == nil {
+		doLog(true, "Item has no image: %v", name)
+		return nil
+	}
+
+	return item.image
 }
 
 func getFont(name string) []byte {
