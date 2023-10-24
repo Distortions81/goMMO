@@ -76,6 +76,44 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 		//Draw other players
 
+		/* Draw player */
+		for _, player := range pList {
+
+			xPos := float64(int(camPos.X) - int(player.pos.X))
+			yPos := float64(int(camPos.Y) - int(player.pos.Y))
+
+			op := ebiten.DrawImageOptions{}
+
+			op.GeoM.Scale(2, 2)
+
+			//camera - object, TODO: get sprite size
+			op.GeoM.Translate(xPos-48.0, yPos-48.0)
+
+			//Draw sub-image
+			screen.DrawImage(getCharFrame(player).(*ebiten.Image), &op)
+		}
+
+		op := ebiten.DrawImageOptions{}
+		var screenSize int
+		if screenHeight > screenWidth {
+			screenSize = screenHeight
+		} else {
+			screenSize = screenWidth
+		}
+		var sc float64
+		if screenSize > 1024 {
+			sc = (float64(screenSize) / 1024.0) + 0.01
+		} else {
+			sc = 1.01
+		}
+
+		xPos := float64(int(camPos.X)-int(ourPos.X)) - (512 * sc)
+		yPos := float64(int(camPos.Y)-int(ourPos.Y)) - (512 * sc)
+		op.GeoM.Translate(float64(xPos), float64(yPos))
+		op.GeoM.Scale(sc, sc)
+
+		screen.DrawImage(testlight, &op)
+
 		/* Draw name */
 		for _, player := range pList {
 
@@ -93,23 +131,6 @@ func (g *Game) Draw(screen *ebiten.Image) {
 					Y: float32(int(camPos.Y)-int(player.pos.Y)) + 48},
 				2, screen, false, false, true)
 
-		}
-
-		/* Draw player */
-		for _, player := range pList {
-
-			xPos := float64(int(camPos.X) - int(player.pos.X))
-			yPos := float64(int(camPos.Y) - int(player.pos.Y))
-
-			op := ebiten.DrawImageOptions{}
-
-			op.GeoM.Scale(2, 2)
-
-			//camera - object, TODO: get sprite size
-			op.GeoM.Translate(xPos-48.0, yPos-48.0)
-
-			//Draw sub-image
-			screen.DrawImage(getCharFrame(player).(*ebiten.Image), &op)
 		}
 
 		/* Draw health */
