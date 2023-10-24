@@ -22,7 +22,7 @@ var (
 
 	/* Local player */
 	localPlayer     *playerData
-	playerNames     []pNameData
+	playerNames     map[uint32]pNameData
 	playerNamesLock sync.Mutex
 
 	ourPos  XY
