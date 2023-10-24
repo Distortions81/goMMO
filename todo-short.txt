@@ -1,0 +1,3 @@
+
+Add item placement, either save locally or via network to server?
+Possibly on characters marked mod or on dev mode only?
