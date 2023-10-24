@@ -154,6 +154,8 @@ func readNet() {
 			changeGameMode(MODE_PLAYING, 0)
 		case CMD_CHAT:
 			chat(string(data))
+		case CMD_COMMAND:
+			chat("> " + string(data))
 		case CMD_UPDATE:
 
 			var numPlayers uint32

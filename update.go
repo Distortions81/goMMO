@@ -31,14 +31,15 @@ func (g *Game) Update() error {
 		}
 
 		if repeatingKeyPressed(ebiten.KeyEnter) {
-			ChatMode = false
-			CommandMode = false
+
 			if ChatText != "" {
 				if CommandMode {
 					sendCommand(CMD_COMMAND, []byte(ChatText))
 				} else if ChatMode {
 					sendCommand(CMD_CHAT, []byte(ChatText))
 				}
+				ChatMode = false
+				CommandMode = false
 				ChatText = ""
 			}
 		} else if repeatingKeyPressed(ebiten.KeyBackspace) {
