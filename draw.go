@@ -77,8 +77,16 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		//Draw other players
 
 		for _, player := range pList {
+
+			var pname string
+			pnameStr := getName(player.id)
+			if pnameStr != "" {
+				pname = pnameStr
+			} else {
+				pname = fmt.Sprintf("Player-%v", player.id)
+			}
+
 			// Draw name
-			pname := fmt.Sprintf("Player-%v", player.id)
 			drawText(pname, toolTipFont, color.White, colorNameBG,
 				XYf32{X: float32(int(camPos.X)-int(player.pos.X)) + 4, Y: float32(int(camPos.Y)-int(player.pos.Y)) + 48}, 2, screen, false, false, true)
 

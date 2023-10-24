@@ -92,6 +92,20 @@ func doConnect() bool {
 	return true
 }
 
+func getName(id uint32) string {
+
+	for _, pname := range playerNames {
+		if pname.id == id {
+			if pname.name == "" {
+				continue
+			}
+			return pname.name
+		}
+	}
+
+	return ""
+}
+
 var netCount int
 
 func readNet() {
@@ -152,12 +166,37 @@ func readNet() {
 			binary.Read(inbuf, binary.LittleEndian, &localPlayer.id)
 			doLog(true, "New local id: %v", localPlayer.id)
 			changeGameMode(MODE_PLAYING, 0)
+			return
 		case CMD_CHAT:
 			chat(string(data))
+			return
 		case CMD_COMMAND:
 			chat("> " + string(data))
+			return
 		case CMD_PLAYERNAMES:
-			//
+			return
+			var numNames uint32
+			binary.Read(inbuf, binary.LittleEndian, &numNames)
+
+			playerNames = []pNameData{}
+			for x := 0; x < int(numNames); x++ {
+				var id uint32
+				binary.Read(inbuf, binary.LittleEndian, &id)
+				var nameLen uint32
+				binary.Read(inbuf, binary.LittleEndian, &nameLen)
+
+				var name string
+				for y := 0; y < int(nameLen); y++ {
+					var nameRune rune
+					binary.Read(inbuf, binary.LittleEndian, &nameRune)
+					name += string(nameRune)
+				}
+
+				playerNames = append(playerNames, pNameData{name: name, id: id})
+				fmt.Println(name)
+			}
+			fmt.Printf("%v names found.\n", numNames)
+			return
 		case CMD_UPDATE:
 
 			var numPlayers uint32
@@ -217,6 +256,7 @@ func readNet() {
 			netCount++
 			dataDirty = true
 			playerListLock.Unlock()
+			return
 		default:
 			doLog(true, "Received invalid: 0x%02X\n", d)
 			localPlayer.conn.Close(websocket.StatusNormalClosure, "closed")

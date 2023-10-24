@@ -22,6 +22,7 @@ var (
 
 	/* Local player */
 	localPlayer *playerData
+	playerNames []pNameData
 	ourPos      XY
 	posLock     sync.Mutex
 

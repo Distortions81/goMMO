@@ -28,6 +28,11 @@ type XYf32 struct {
 type Game struct {
 }
 
+type pNameData struct {
+	name string
+	id   uint32
+}
+
 type playerData struct {
 	conn    *websocket.Conn
 	context context.Context
