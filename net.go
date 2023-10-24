@@ -156,6 +156,8 @@ func readNet() {
 			chat(string(data))
 		case CMD_COMMAND:
 			chat("> " + string(data))
+		case CMD_PLAYERNAMES:
+			//
 		case CMD_UPDATE:
 
 			var numPlayers uint32
