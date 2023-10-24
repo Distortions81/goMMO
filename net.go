@@ -224,6 +224,10 @@ func readNet() {
 				var ny uint32
 				binary.Read(inbuf, binary.LittleEndian, &ny)
 
+				//Eventually move me to an event
+				var health int16
+				binary.Read(inbuf, binary.LittleEndian, &health)
+
 				if playerList[nid] == nil {
 					playerList[nid] = &playerData{id: nid, pos: XY{X: nx, Y: ny}, direction: DIR_S}
 				} else {
@@ -239,6 +243,8 @@ func readNet() {
 
 					playerList[nid].pos.X = nx
 					playerList[nid].pos.Y = ny
+
+					playerList[nid].health = health
 
 					if playerList[nid].lastPos.X != playerList[nid].pos.X ||
 						playerList[nid].lastPos.Y != playerList[nid].pos.Y {

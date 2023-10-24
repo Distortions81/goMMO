@@ -1,9 +1,9 @@
 package main
 
-var netProtoVersion uint16 = 2
+var netProtoVersion uint16 = 3
 
 const (
-	gameVersion = "0.0.6"
+	gameVersion = "0.0.7"
 
 	/* Files and directories */
 	dataDir         = "data/"

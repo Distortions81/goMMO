@@ -76,6 +76,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 		//Draw other players
 
+		/* Draw name */
 		for _, player := range pList {
 
 			var pname string
@@ -88,10 +89,13 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 			// Draw name
 			drawText(pname, toolTipFont, color.White, colorNameBG,
-				XYf32{X: float32(int(camPos.X)-int(player.pos.X)) + 4, Y: float32(int(camPos.Y)-int(player.pos.Y)) + 48}, 2, screen, false, false, true)
+				XYf32{X: float32(int(camPos.X)-int(player.pos.X)) + 4,
+					Y: float32(int(camPos.Y)-int(player.pos.Y)) + 48},
+				2, screen, false, false, true)
 
 		}
 
+		/* Draw player */
 		for _, player := range pList {
 
 			xPos := float64(int(camPos.X) - int(player.pos.X))
@@ -106,6 +110,34 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 			//Draw sub-image
 			screen.DrawImage(getCharFrame(player).(*ebiten.Image), &op)
+		}
+
+		/* Draw health */
+		for _, player := range pList {
+			if player.health < 100 {
+
+				var healthColor color.RGBA
+				r := int(float32(100-player.health) * 5)
+				if r > 255 {
+					r = 255
+				}
+				healthColor.R = uint8(r)
+				healthColor.G = uint8(float32(player.health) * 1.5)
+
+				vector.DrawFilledRect(
+					screen,
+					float32(int(camPos.X)-int(player.pos.X))-25+4,
+					float32(int(camPos.Y)-int(player.pos.Y))-25,
+					50, 5, colorNameBG,
+					false)
+
+				vector.DrawFilledRect(
+					screen,
+					float32(int(camPos.X)-int(player.pos.X))-25+4+1,
+					float32(int(camPos.Y)-int(player.pos.Y))-25+1,
+					46-((100-float32(player.health))/2), 3, healthColor,
+					false)
+			}
 		}
 
 		drawDebugInfo(screen)

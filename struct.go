@@ -38,6 +38,8 @@ type playerData struct {
 	context context.Context
 	cancel  context.CancelFunc
 
+	health int16
+
 	pos       XY
 	lastPos   XY
 	direction DIR
