@@ -10,7 +10,7 @@ import (
 
 var (
 	EditMode bool
-	EditID   int
+	EditID   uint32
 	editPos  XY = xyCenter
 
 	ChatMode    bool

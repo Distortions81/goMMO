@@ -18,7 +18,7 @@ var (
 	testlight *ebiten.Image
 
 	spritelist []*sectionItemData
-	numSprites int
+	numSprites uint32
 )
 
 func loadTest() {

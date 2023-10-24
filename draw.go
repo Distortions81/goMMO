@@ -306,8 +306,8 @@ func drawDebugEdit(screen *ebiten.Image) {
 
 	op.GeoM.Scale(2, 2)
 
-	//Draw sub-image
-	if EditID < numSprites && EditID >= 0 {
+	//Draw edit sprite
+	if EditID < numSprites {
 		op.GeoM.Translate(xPos, yPos)
 		screen.DrawImage(spritelist[EditID].image, &op)
 	}
