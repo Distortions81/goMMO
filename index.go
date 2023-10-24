@@ -36,7 +36,8 @@ func readIndex() bool {
 	lines := strings.Split(string(data), "\n")
 	var l int
 	var currentSection *sectionData
-	for lnum, line := range lines {
+	for ln, line := range lines {
+		lnum := ln + 1
 
 		//Ignore comments and blank lines
 		if strings.HasPrefix(line, "#") || line == "" {
