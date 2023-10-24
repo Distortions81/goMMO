@@ -93,6 +93,8 @@ func doConnect() bool {
 }
 
 func getName(id uint32) string {
+	playerNamesLock.Lock()
+	defer playerNamesLock.Unlock()
 
 	for _, pname := range playerNames {
 		if pname.id == id {
@@ -138,7 +140,7 @@ func readNet() {
 		/* Check data length */
 		inputLen := len(input)
 		if inputLen <= 0 {
-			return
+			continue
 		}
 
 		/* Separate command and data*/
@@ -161,29 +163,35 @@ func readNet() {
 		case CMD_INIT:
 			chat("Server rejected connection: invalid version.")
 			changeGameMode(MODE_ERROR, 0)
-			return
+
 		case CMD_LOGIN:
 			binary.Read(inbuf, binary.LittleEndian, &localPlayer.id)
 			doLog(true, "New local id: %v", localPlayer.id)
 			changeGameMode(MODE_PLAYING, 0)
-			return
+
 		case CMD_CHAT:
 			chat(string(data))
-			return
+
 		case CMD_COMMAND:
 			chat("> " + string(data))
-			return
 		case CMD_PLAYERNAMES:
-			return
 			var numNames uint32
 			binary.Read(inbuf, binary.LittleEndian, &numNames)
+
+			if numNames == 0 {
+				continue
+			}
+
+			playerNamesLock.Lock()
 
 			playerNames = []pNameData{}
 			for x := 0; x < int(numNames); x++ {
 				var id uint32
 				binary.Read(inbuf, binary.LittleEndian, &id)
-				var nameLen uint32
+				var nameLen uint16
 				binary.Read(inbuf, binary.LittleEndian, &nameLen)
+
+				fmt.Printf("Namelen: %v\n", nameLen)
 
 				var name string
 				for y := 0; y < int(nameLen); y++ {
@@ -195,13 +203,13 @@ func readNet() {
 				playerNames = append(playerNames, pNameData{name: name, id: id})
 				fmt.Println(name)
 			}
+			playerNamesLock.Unlock()
 			fmt.Printf("%v names found.\n", numNames)
-			return
+
 		case CMD_UPDATE:
 
 			var numPlayers uint32
 			binary.Read(inbuf, binary.LittleEndian, &numPlayers)
-			//fmt.Printf("%v items.\n", numPlayers)
 
 			playerListLock.Lock()
 
@@ -256,7 +264,7 @@ func readNet() {
 			netCount++
 			dataDirty = true
 			playerListLock.Unlock()
-			return
+
 		default:
 			doLog(true, "Received invalid: 0x%02X\n", d)
 			localPlayer.conn.Close(websocket.StatusNormalClosure, "closed")

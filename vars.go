@@ -21,10 +21,12 @@ var (
 	gameMode = MODE_START
 
 	/* Local player */
-	localPlayer *playerData
-	playerNames []pNameData
-	ourPos      XY
-	posLock     sync.Mutex
+	localPlayer     *playerData
+	playerNames     []pNameData
+	playerNamesLock sync.Mutex
+
+	ourPos  XY
+	posLock sync.Mutex
 
 	playerList     map[uint32]*playerData
 	playerListLock sync.Mutex
