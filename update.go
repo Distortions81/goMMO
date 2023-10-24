@@ -38,10 +38,11 @@ func (g *Game) Update() error {
 				} else if ChatMode {
 					sendCommand(CMD_CHAT, []byte(ChatText))
 				}
-				ChatMode = false
-				CommandMode = false
-				ChatText = ""
+
 			}
+			ChatMode = false
+			CommandMode = false
+			ChatText = ""
 		} else if repeatingKeyPressed(ebiten.KeyBackspace) {
 			if len(ChatText) >= 1 {
 				ChatText = ChatText[:len(ChatText)-1]
