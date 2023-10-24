@@ -15,6 +15,7 @@ var (
 
 	testChar  *ebiten.Image
 	testGrass *ebiten.Image
+	testlight *ebiten.Image
 )
 
 func loadTest() {
@@ -31,6 +32,7 @@ func loadTest() {
 
 	testGrass = getItemImage("terrain", "grass-1")
 	testChar = getItemImage("characters", "player")
+	testlight = getItemImage("effects", "light")
 }
 
 func getItemImage(itemType string, name string) *ebiten.Image {

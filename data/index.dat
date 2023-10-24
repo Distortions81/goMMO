@@ -22,3 +22,6 @@ world-objects:
 5:tiny tree stump:tiny-tree-stump.png
 6:tree-1:tree1.png
 7:tree-2:tree2.png
+
+effects:
+1:light:light.png
