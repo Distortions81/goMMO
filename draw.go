@@ -126,16 +126,16 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 				vector.DrawFilledRect(
 					screen,
-					float32(int(camPos.X)-int(player.pos.X))-25+4,
-					float32(int(camPos.Y)-int(player.pos.Y))-25,
-					52, 5, colorNameBG,
+					float32(int(camPos.X)-int(player.pos.X))-12+4-1,
+					float32(int(camPos.Y)-int(player.pos.Y))+24-1,
+					27, 4, colorNameBG,
 					false)
 
 				vector.DrawFilledRect(
 					screen,
-					float32(int(camPos.X)-int(player.pos.X))-25+4+1,
-					float32(int(camPos.Y)-int(player.pos.Y))-25+1,
-					50-((100-float32(player.health))/2), 3, healthColor,
+					float32(int(camPos.X)-int(player.pos.X))-12+4,
+					float32(int(camPos.Y)-int(player.pos.Y))+24,
+					25-((100.0-float32(player.health))/4.0), 2, healthColor,
 					false)
 			}
 		}
