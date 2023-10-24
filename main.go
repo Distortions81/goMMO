@@ -82,14 +82,15 @@ const maxScreenSize = 1024
 
 /* Ebiten resize handling */
 func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
-	if outsideWidth != screenWidth || outsideHeight != screenHeight {
-		if outsideWidth > maxScreenSize {
-			outsideWidth = maxScreenSize
-		}
-		if outsideHeight > maxScreenSize {
-			outsideHeight = maxScreenSize
-		}
 
+	if outsideWidth > maxScreenSize {
+		outsideWidth = maxScreenSize
+	}
+	if outsideHeight > maxScreenSize {
+		outsideHeight = maxScreenSize
+	}
+
+	if outsideWidth != screenWidth || outsideHeight != screenHeight {
 		screenWidth = outsideWidth
 		screenHeight = outsideHeight
 
