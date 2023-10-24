@@ -53,6 +53,8 @@ func connectServer() {
 
 func doConnect() bool {
 
+	playerNames = make(map[uint32]pNameData)
+
 	changeGameMode(MODE_CONNECT, 0)
 	doLog(true, "Connecting...")
 
@@ -184,14 +186,11 @@ func readNet() {
 
 			playerNamesLock.Lock()
 
-			playerNames = []pNameData{}
 			for x := 0; x < int(numNames); x++ {
 				var id uint32
 				binary.Read(inbuf, binary.LittleEndian, &id)
 				var nameLen uint16
 				binary.Read(inbuf, binary.LittleEndian, &nameLen)
-
-				fmt.Printf("Namelen: %v\n", nameLen)
 
 				var name string
 				for y := 0; y < int(nameLen); y++ {
@@ -200,11 +199,9 @@ func readNet() {
 					name += string(nameRune)
 				}
 
-				playerNames = append(playerNames, pNameData{name: name, id: id})
-				fmt.Println(name)
+				playerNames[id] = pNameData{name: name, id: id}
 			}
 			playerNamesLock.Unlock()
-			fmt.Printf("%v names found.\n", numNames)
 
 		case CMD_UPDATE:
 
