@@ -86,7 +86,8 @@ func doConnect() bool {
 	chat("Connected!")
 	time.Sleep(time.Millisecond * 100)
 	chatDetailed("Use WASD keys to walk!", color.White, time.Second*30)
-	chatDetailed("Press return to open chat bar, press return to send.", color.White, time.Second*30)
+	chatDetailed("Press [RETURN] to open chat bar", color.White, time.Second*30)
+	chatDetailed("Press ` to open command bar", color.White, time.Second*30)
 
 	changeGameMode(MODE_CONNECTED, 0)
 	go readNet()

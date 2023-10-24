@@ -30,6 +30,11 @@ func (g *Game) Update() error {
 			return nil
 		}
 
+		if repeatingKeyPressed(ebiten.KeyEscape) {
+			ChatMode = false
+			CommandMode = false
+			ChatText = ""
+		}
 		if repeatingKeyPressed(ebiten.KeyEnter) {
 
 			if ChatText != "" {

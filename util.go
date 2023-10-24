@@ -135,18 +135,17 @@ func chatDetailed(text string, color color.Color, life time.Duration) {
 
 	doLog(false, "Chat: "+text)
 
-	go func(text string) {
-		chatLinesLock.Lock()
-		deleteOldLines()
+	chatLinesLock.Lock()
+	deleteOldLines()
 
-		sepLines := strings.Split(text, "\n")
-		for _, sep := range sepLines {
-			chatLines = append(chatLines, chatLineData{text: sep, color: color, bgColor: colorNameBG, lifetime: life, timestamp: time.Now()})
-			chatLinesTop++
-		}
+	sepLines := strings.Split(text, "\n")
+	for _, sep := range sepLines {
+		chatLines = append(chatLines, chatLineData{text: sep, color: color, bgColor: colorNameBG, lifetime: life, timestamp: time.Now()})
+		chatLinesTop++
+	}
 
-		chatLinesLock.Unlock()
-	}(text)
+	chatLinesLock.Unlock()
+
 }
 
 func XYtoXYf64(pos XY) XYf64 {
