@@ -236,14 +236,29 @@ func drawDebugInfo(screen *ebiten.Image) {
 func drawChatBar(screen *ebiten.Image) {
 	defer reportPanic("drawDebugInfo")
 
+	text := ""
+	if ChatText == "" {
+		if ChatMode {
+			text = "say: _"
+		} else if CommandMode {
+			text = "(/h for help.)> _"
+		}
+	} else {
+		if ChatMode {
+			text = "say: " + ChatText
+		} else if CommandMode {
+			text = "> " + ChatText
+		}
+	}
+
 	if ChatMode {
 		var pad float32 = 4 * float32(uiScale)
-		drawText("say: "+ChatText, monoFont, color.White, colorNameBG,
+		drawText(text, monoFont, color.White, colorNameBG,
 			XYf32{X: (pad * 1.5), Y: float32(screenHeight) + (pad * 2)},
 			pad, screen, true, true, false)
 	} else if CommandMode {
 		var pad float32 = 4 * float32(uiScale)
-		drawText("> "+ChatText, monoFont, color.White, colorNameBG,
+		drawText(text, monoFont, color.White, colorNameBG,
 			XYf32{X: (pad * 1.5), Y: float32(screenHeight) + (pad * 2)},
 			pad, screen, true, true, false)
 	}
