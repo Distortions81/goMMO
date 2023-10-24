@@ -225,7 +225,7 @@ func readNet() {
 				binary.Read(inbuf, binary.LittleEndian, &ny)
 
 				//Eventually move me to an event
-				var health int16
+				var health int8
 				binary.Read(inbuf, binary.LittleEndian, &health)
 
 				if playerList[nid] == nil {
