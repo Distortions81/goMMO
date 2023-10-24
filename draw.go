@@ -161,6 +161,10 @@ func (g *Game) Draw(screen *ebiten.Image) {
 			}
 		}
 
+		if EditMode {
+			drawDebugEdit(screen)
+		}
+
 		drawDebugInfo(screen)
 		drawChatLines(screen)
 		drawChatBar(screen)
@@ -279,10 +283,21 @@ func drawDebugInfo(screen *ebiten.Image) {
 		runtime.GOARCH, gameVersion,
 	)
 
-	var pad float32 = 4 * float32(uiScale)
 	drawText(buf, monoFont, color.White, colorNameBG,
-		XYf32{X: (pad * 1.5), Y: 38 + (pad * 2)},
-		pad, screen, true, true, false)
+		XYf32{X: 4, Y: 24},
+		1, screen, true, false, false)
+
+}
+
+func drawDebugEdit(screen *ebiten.Image) {
+	defer reportPanic("drawDebugEdit")
+
+	/* Draw debug info */
+	buf := "EDIT MODE:"
+
+	drawText(buf, monoFont, color.White, colorNameBG,
+		XYf32{X: 1, Y: 1},
+		1, screen, true, false, false)
 
 }
 

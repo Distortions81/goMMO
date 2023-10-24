@@ -9,6 +9,8 @@ import (
 )
 
 var (
+	EditMode bool
+
 	ChatMode    bool
 	CommandMode bool
 	ChatText    string
@@ -61,6 +63,14 @@ func (g *Game) Update() error {
 	} else if repeatingKeyPressed(ebiten.KeyGraveAccent) && !ChatMode {
 		CommandMode = true
 		ChatText = ""
+	}
+
+	if repeatingKeyPressed(ebiten.KeyBackslash) {
+		if EditMode {
+			EditMode = false
+		} else {
+			EditMode = true
+		}
 	}
 
 	pressedKeys := inpututil.AppendPressedKeys(nil)
