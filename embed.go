@@ -16,6 +16,9 @@ var (
 	testChar  *ebiten.Image
 	testGrass *ebiten.Image
 	testlight *ebiten.Image
+
+	spritelist []*sectionItemData
+	numSprites int
 )
 
 func loadTest() {
@@ -27,6 +30,8 @@ func loadTest() {
 				log.Fatalln(err)
 			}
 			itemTypesList[typeName].items[itemName].image = imageData
+			spritelist = append(spritelist, itemTypesList[typeName].items[itemName])
+			numSprites++
 		}
 	}
 

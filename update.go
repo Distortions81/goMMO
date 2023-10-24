@@ -10,6 +10,8 @@ import (
 
 var (
 	EditMode bool
+	EditID   int
+	editPos  XY = xyCenter
 
 	ChatMode    bool
 	CommandMode bool
@@ -71,6 +73,19 @@ func (g *Game) Update() error {
 		} else {
 			EditMode = true
 		}
+	}
+	if EditMode {
+		if repeatingKeyPressed(ebiten.KeyEqual) {
+			if EditID < numSprites {
+				EditID++
+			}
+		} else if repeatingKeyPressed(ebiten.KeyMinus) {
+			if EditID > 0 {
+				EditID--
+			}
+		}
+		mx, my := ebiten.CursorPosition()
+		editPos = XY{X: camPos.X - uint32(mx), Y: camPos.Y - uint32(my)}
 	}
 
 	pressedKeys := inpututil.AppendPressedKeys(nil)

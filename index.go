@@ -10,6 +10,7 @@ import (
 const indexFileName = "index.dat"
 
 type sectionData struct {
+	id       uint32
 	name     string
 	filePath string
 	items    map[string]*sectionItemData
@@ -20,6 +21,8 @@ type sectionItemData struct {
 	fileName string
 	id       uint32
 	image    *ebiten.Image
+
+	uid uint32
 }
 
 var itemTypesList map[string]*sectionData
@@ -76,7 +79,7 @@ func readIndex() bool {
 		//Section
 		if strings.HasSuffix(line, ":") {
 			sectionName := strings.TrimSuffix(line, ":")
-			newSection := &sectionData{name: sectionName}
+			newSection := &sectionData{name: sectionName, id: uint32(len(itemTypesList))}
 
 			itemTypesList[newSection.name] = newSection
 			currentSection = newSection

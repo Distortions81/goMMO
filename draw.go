@@ -54,115 +54,11 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 		}
 
-		var pList []*playerData
-
-		for _, player := range playerList {
-			xPos := float64(int(camPos.X) - int(player.pos.X))
-			yPos := float64(int(camPos.Y) - int(player.pos.Y))
-
-			//Sprite on screen?
-			if xPos-charSpriteSize > float64(screenWidth) {
-				continue
-			} else if xPos < -charSpriteSize {
-				continue
-			} else if yPos-charSpriteSize > float64(screenHeight) {
-				continue
-			} else if yPos < -charSpriteSize {
-				continue
-			}
-			pList = append(pList, player)
-		}
-		sort.Sort(xySort(pList))
-
-		//Draw other players
-
-		/* Draw player */
-		for _, player := range pList {
-
-			xPos := float64(int(camPos.X) - int(player.pos.X))
-			yPos := float64(int(camPos.Y) - int(player.pos.Y))
-
-			op := ebiten.DrawImageOptions{}
-
-			op.GeoM.Scale(2, 2)
-
-			//camera - object, TODO: get sprite size
-			op.GeoM.Translate(xPos-48.0, yPos-48.0)
-
-			//Draw sub-image
-			screen.DrawImage(getCharFrame(player).(*ebiten.Image), &op)
-		}
-
-		op := ebiten.DrawImageOptions{}
-		var screenSize int
-		if screenHeight > screenWidth {
-			screenSize = screenHeight
-		} else {
-			screenSize = screenWidth
-		}
-		var sc float64
-		if screenSize > 1024 {
-			sc = (float64(screenSize) / 1024.0) + 0.01
-		} else {
-			sc = 1.01
-		}
-
-		xPos := float64(int(camPos.X)-int(ourPos.X)) - (512 * sc)
-		yPos := float64(int(camPos.Y)-int(ourPos.Y)) - (512 * sc)
-		op.GeoM.Translate(float64(xPos), float64(yPos))
-		op.GeoM.Scale(sc, sc)
-
-		screen.DrawImage(testlight, &op)
-
-		/* Draw name */
-		for _, player := range pList {
-
-			var pname string
-			pnameStr := getName(player.id)
-			if pnameStr != "" {
-				pname = pnameStr
-			} else {
-				pname = fmt.Sprintf("Player-%v", player.id)
-			}
-
-			// Draw name
-			drawText(pname, toolTipFont, color.White, colorNameBG,
-				XYf32{X: float32(int(camPos.X)-int(player.pos.X)) + 4,
-					Y: float32(int(camPos.Y)-int(player.pos.Y)) + 48},
-				2, screen, false, false, true)
-
-		}
-
-		/* Draw health */
-		for _, player := range pList {
-			if player.health < 100 {
-
-				var healthColor color.RGBA
-				r := int(float32(100-player.health) * 5)
-				if r > 255 {
-					r = 255
-				}
-				healthColor.R = uint8(r)
-				healthColor.G = uint8(float32(player.health) * 1.5)
-
-				vector.DrawFilledRect(
-					screen,
-					float32(int(camPos.X)-int(player.pos.X))-12+4-1,
-					float32(int(camPos.Y)-int(player.pos.Y))+24-1,
-					27, 4, colorNameBG,
-					false)
-
-				vector.DrawFilledRect(
-					screen,
-					float32(int(camPos.X)-int(player.pos.X))-12+4,
-					float32(int(camPos.Y)-int(player.pos.Y))+24,
-					25-((100.0-float32(player.health))/4.0), 2, healthColor,
-					false)
-			}
-		}
-
 		if EditMode {
 			drawDebugEdit(screen)
+		} else {
+			drawPlayers(screen)
+			drawLight(screen)
 		}
 
 		drawDebugInfo(screen)
@@ -173,7 +69,118 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		screen.Fill(color.Black)
 		drawChatLines(screen)
 	}
+}
 
+func drawLight(screen *ebiten.Image) {
+	op := ebiten.DrawImageOptions{}
+	var screenSize int
+	if screenHeight > screenWidth {
+		screenSize = screenHeight
+	} else {
+		screenSize = screenWidth
+	}
+	var sc float64
+	if screenSize > 1024 {
+		sc = (float64(screenSize) / 1024.0) + 0.01
+	} else {
+		sc = 1.01
+	}
+
+	xPos := float64(int(camPos.X)-int(ourPos.X)) - (512 * sc)
+	yPos := float64(int(camPos.Y)-int(ourPos.Y)) - (512 * sc)
+	op.GeoM.Translate(float64(xPos), float64(yPos))
+	op.GeoM.Scale(sc, sc)
+
+	screen.DrawImage(testlight, &op)
+}
+
+func drawPlayers(screen *ebiten.Image) {
+
+	/* Find visible players and sort them */
+	var pList []*playerData
+	for _, player := range playerList {
+		xPos := float64(int(camPos.X) - int(player.pos.X))
+		yPos := float64(int(camPos.Y) - int(player.pos.Y))
+
+		//Sprite on screen?
+		if xPos-charSpriteSize > float64(screenWidth) {
+			continue
+		} else if xPos < -charSpriteSize {
+			continue
+		} else if yPos-charSpriteSize > float64(screenHeight) {
+			continue
+		} else if yPos < -charSpriteSize {
+			continue
+		}
+		pList = append(pList, player)
+	}
+	sort.Sort(xySort(pList))
+
+	//Draw other players
+
+	/* Draw player */
+	for _, player := range pList {
+
+		xPos := float64(int(camPos.X) - int(player.pos.X))
+		yPos := float64(int(camPos.Y) - int(player.pos.Y))
+
+		op := ebiten.DrawImageOptions{}
+
+		op.GeoM.Scale(2, 2)
+
+		//camera - object, TODO: get sprite size
+		op.GeoM.Translate(xPos-48.0, yPos-48.0)
+
+		//Draw sub-image
+		screen.DrawImage(getCharFrame(player).(*ebiten.Image), &op)
+	}
+
+	/* Draw name */
+	for _, player := range pList {
+
+		var pname string
+		pnameStr := getName(player.id)
+		if pnameStr != "" {
+			pname = pnameStr
+		} else {
+			pname = fmt.Sprintf("Player-%v", player.id)
+		}
+
+		// Draw name
+		drawText(pname, toolTipFont, color.White, colorNameBG,
+			XYf32{X: float32(int(camPos.X)-int(player.pos.X)) + 4,
+				Y: float32(int(camPos.Y)-int(player.pos.Y)) + 48},
+			2, screen, false, false, true)
+
+	}
+
+	/* Draw health */
+	for _, player := range pList {
+		if player.health < 100 {
+
+			var healthColor color.RGBA
+			r := int(float32(100-player.health) * 5)
+			if r > 255 {
+				r = 255
+			}
+			healthColor.R = uint8(r)
+			healthColor.G = uint8(float32(player.health) * 1.5)
+
+			vector.DrawFilledRect(
+				screen,
+				float32(int(camPos.X)-int(player.pos.X))-12+4-1,
+				float32(int(camPos.Y)-int(player.pos.Y))+24-1,
+				27, 4, colorNameBG,
+				false)
+
+			vector.DrawFilledRect(
+				screen,
+				float32(int(camPos.X)-int(player.pos.X))-12+4,
+				float32(int(camPos.Y)-int(player.pos.Y))+24,
+				25-((100.0-float32(player.health))/4.0), 2, healthColor,
+				false)
+		}
+	}
 }
 
 func drawText(input string, face font.Face, color color.Color, bgcolor color.Color, pos XYf32,
@@ -292,8 +299,21 @@ func drawDebugInfo(screen *ebiten.Image) {
 func drawDebugEdit(screen *ebiten.Image) {
 	defer reportPanic("drawDebugEdit")
 
+	xPos := float64(int(camPos.X) - int(editPos.X))
+	yPos := float64(int(camPos.Y) - int(editPos.Y))
+
+	op := ebiten.DrawImageOptions{}
+
+	op.GeoM.Scale(2, 2)
+
+	//Draw sub-image
+	if EditID < numSprites && EditID >= 0 {
+		op.GeoM.Translate(xPos, yPos)
+		screen.DrawImage(spritelist[EditID].image, &op)
+	}
+
 	/* Draw debug info */
-	buf := "EDIT MODE:"
+	buf := fmt.Sprintf("EDIT MODE ON: ID: %v", EditID)
 
 	drawText(buf, monoFont, color.White, colorNameBG,
 		XYf32{X: 1, Y: 1},
