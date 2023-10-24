@@ -6,10 +6,8 @@ const (
 	gameVersion = "0.0.7"
 
 	/* Files and directories */
-	dataDir         = "data/"
-	gfxDir          = dataDir + "gfx/"
-	testCharDir     = "characters/"
-	worldObjectsDir = "world objects/"
+	dataDir = "data/"
+	gfxDir  = dataDir + "gfx/"
 
 	charSpriteSize    = 52
 	cLoadEmbedSprites = true
