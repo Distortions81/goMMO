@@ -11,8 +11,6 @@ const (
 	testCharDir     = "characters/"
 	worldObjectsDir = "world objects/"
 
-	testTerrain = "terrain/"
-
 	charSpriteSize    = 52
 	cLoadEmbedSprites = true
 )
