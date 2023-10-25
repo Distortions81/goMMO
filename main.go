@@ -20,8 +20,8 @@ var (
 	}
 	client *http.Client = &http.Client{Transport: transport}
 )
-var screenWidth int = 512
-var screenHeight int = 512
+var screenWidth int = 1024
+var screenHeight int = 1024
 
 var HscreenWidth int
 var HscreenHeight int
