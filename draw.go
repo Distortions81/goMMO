@@ -16,6 +16,8 @@ import (
 
 var camPos XY = xyCenter
 
+var nightLevel uint8 = 0
+
 type xySort []*playerData
 
 func (v xySort) Len() int           { return len(v) }
@@ -72,6 +74,11 @@ func (g *Game) Draw(screen *ebiten.Image) {
 }
 
 func drawLight(screen *ebiten.Image) {
+
+	if nightLevel == 0 {
+		return
+	}
+
 	op := ebiten.DrawImageOptions{}
 	var screenSize int
 	if screenHeight > screenWidth {
@@ -90,6 +97,7 @@ func drawLight(screen *ebiten.Image) {
 	yPos := float64(int(camPos.Y)-int(ourPos.Y)) - (512 * sc)
 	op.GeoM.Translate(float64(xPos), float64(yPos))
 	op.GeoM.Scale(sc, sc)
+	op.ColorScale.ScaleAlpha(float32(nightLevel) / 255.0)
 
 	screen.DrawImage(testlight, &op)
 }
