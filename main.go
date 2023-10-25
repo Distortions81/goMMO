@@ -20,8 +20,8 @@ var (
 	}
 	client *http.Client = &http.Client{Transport: transport}
 )
-var screenWidth int = 1080
-var screenHeight int = 1080
+var screenWidth int = 1024
+var screenHeight int = 1024
 
 var HscreenWidth int
 var HscreenHeight int
@@ -78,7 +78,7 @@ func newGame() *Game {
 	return &Game{}
 }
 
-const maxScreenSize = 1080
+const maxScreenSize = 1024
 
 /* Ebiten resize handling */
 func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
