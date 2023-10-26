@@ -1,20 +1,20 @@
 # Modified 10-23-2023
 #Format:
-# type:
+# id:type:
 # id:name:fileName
 # duplicate IDs in the same section will cause an error
 # blank lines, or lines starting with # are ignored
 
 version 1
 
-characters:
+1:characters:
 1:player:test-player.png
 
-terrain:
+2:terrain:
 1:grass:grass.png
 2:grass-1:grass1.png
 
-world-objects:
+3:world-objects:
 1:blue mushroom:blue-mush.png
 2:red mushroom:red-mush.png
 3:tiny rock:tiny-rock.png
@@ -23,5 +23,5 @@ world-objects:
 6:tree-1:tree1.png
 7:tree-2:tree2.png
 
-effects:
+4:effects:
 1:light:light.png

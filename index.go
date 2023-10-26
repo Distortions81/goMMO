@@ -19,10 +19,10 @@ type sectionData struct {
 type sectionItemData struct {
 	name     string
 	fileName string
+	itemType uint32
 	id       uint32
-	image    *ebiten.Image
 
-	uid uint32
+	image *ebiten.Image
 }
 
 var itemTypesList map[string]*sectionData
@@ -78,8 +78,14 @@ func readIndex() bool {
 
 		//Section
 		if strings.HasSuffix(line, ":") {
-			sectionName := strings.TrimSuffix(line, ":")
-			newSection := &sectionData{name: sectionName, id: uint32(len(itemTypesList))}
+			words := strings.Split(line, ":")
+			numWords := len(words)
+			if numWords < 2 {
+				doLog(true, "section: Not enough words.")
+				continue
+			}
+			sectionId, _ := strconv.ParseUint(words[0], 10, 32)
+			newSection := &sectionData{name: words[1], id: uint32(sectionId)}
 
 			itemTypesList[newSection.name] = newSection
 			currentSection = newSection
@@ -90,7 +96,7 @@ func readIndex() bool {
 
 			if gDevMode {
 				doLog(false, "")
-				doLog(true, "section found: %v", sectionName)
+				doLog(true, "section found: %v", words[1])
 			}
 			continue
 		}
@@ -104,7 +110,7 @@ func readIndex() bool {
 				return false
 			}
 			idNum, _ := strconv.ParseUint(words[0], 10, 32)
-			newItem := &sectionItemData{name: words[1], fileName: words[2], id: uint32(idNum)}
+			newItem := &sectionItemData{name: words[1], fileName: words[2], id: uint32(idNum), itemType: currentSection.id}
 
 			for _, item := range currentSection.items {
 				if item.id == newItem.id {

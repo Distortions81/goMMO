@@ -2,6 +2,7 @@ package main
 
 type areaData struct {
 	version uint16
+	id      uint16
 
 	wObjects []wObjectData
 	terrain  uint8
