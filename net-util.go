@@ -20,9 +20,8 @@ func changeGameMode(newMode MODE, delay time.Duration) {
 }
 
 func sendCommand(header CMD, data []byte) bool {
-	if localPlayer == nil || localPlayer.context == nil || localPlayer.conn == nil {
-		return false
-	}
+	localPlayer.plock.Lock()
+	defer localPlayer.plock.Unlock()
 
 	/*
 		cmdName := cmdNames[header]

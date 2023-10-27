@@ -5,6 +5,7 @@ import (
 	"image/color"
 	"time"
 
+	"github.com/sasha-s/go-deadlock"
 	"nhooyr.io/websocket"
 )
 
@@ -49,6 +50,8 @@ type playerData struct {
 	unmark bool
 
 	id uint32
+
+	plock deadlock.Mutex
 }
 
 /* Chat line data */

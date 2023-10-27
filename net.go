@@ -19,18 +19,6 @@ func connectServer() {
 
 	changeGameMode(MODE_BOOT, 0)
 
-	if localPlayer != nil {
-		if localPlayer.context != nil {
-			localPlayer.context.Done()
-			localPlayer.cancel()
-		}
-		if localPlayer.conn != nil {
-			localPlayer.conn.Close(websocket.StatusNormalClosure, "Write failed.")
-		}
-
-		localPlayer = nil
-	}
-
 	for !doConnect() {
 		ReconnectCount++
 		offset := ReconnectCount
@@ -52,6 +40,8 @@ func connectServer() {
 }
 
 func doConnect() bool {
+	localPlayer.plock.Lock()
+	defer localPlayer.plock.Unlock()
 
 	playerNames = make(map[uint32]pNameData)
 
@@ -62,25 +52,26 @@ func doConnect() bool {
 	chat("Connecting to server...")
 
 	ctx, cancel := context.WithCancel(context.Background())
+	localPlayer.context = ctx
+	localPlayer.cancel = cancel
 
-	c, err := platformDial(ctx)
+	conn, err := platformDial(localPlayer.context)
 
 	if err != nil {
 		log.Printf("dial failed: %v\n", err)
-		cancel()
+		localPlayer.cancel()
 		return false
 	}
+	localPlayer.conn = conn
 
-	c.SetReadLimit(netReadLimit)
-
-	localPlayer = &playerData{conn: c, context: ctx, cancel: cancel, id: 0}
+	localPlayer.conn.SetReadLimit(netReadLimit)
 
 	var buf []byte
 	outbuf := bytes.NewBuffer(buf)
 
 	binary.Write(outbuf, binary.LittleEndian, &netProtoVersion)
 
-	sendCommand(CMD_INIT, outbuf.Bytes())
+	go sendCommand(CMD_INIT, outbuf.Bytes())
 	doLog(true, "Connected!")
 
 	chat("Connected!")
@@ -114,13 +105,6 @@ func getName(id uint32) string {
 var netCount int
 
 func readNet() {
-
-	if localPlayer == nil ||
-		localPlayer.conn == nil ||
-		localPlayer.context == nil {
-		doLog(true, "readNet: Player not initialized.")
-		return
-	}
 
 	for {
 

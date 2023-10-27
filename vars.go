@@ -24,7 +24,7 @@ var (
 	gameModeLock sync.Mutex
 
 	/* Local player */
-	localPlayer     *playerData
+	localPlayer     playerData
 	playerNames     map[uint32]pNameData
 	playerNamesLock deadlock.Mutex
 
