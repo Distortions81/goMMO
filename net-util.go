@@ -14,7 +14,9 @@ func changeGameMode(newMode MODE, delay time.Duration) {
 	}
 
 	time.Sleep(delay)
+	gameModeLock.Lock()
 	gameMode = newMode
+	gameModeLock.Unlock()
 }
 
 func sendCommand(header CMD, data []byte) bool {

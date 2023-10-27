@@ -5,12 +5,12 @@ import (
 	"image/color"
 	"runtime"
 	"sort"
-	"sync"
 	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/text"
 	"github.com/hajimehoshi/ebiten/v2/vector"
+	"github.com/sasha-s/go-deadlock"
 	"golang.org/x/image/font"
 )
 
@@ -26,6 +26,9 @@ func (v xySort) Less(i, j int) bool { return v[i].pos.Y+v[i].pos.X > v[j].pos.Y+
 
 /* Ebiten: Draw everything */
 func (g *Game) Draw(screen *ebiten.Image) {
+
+	gameModeLock.Lock()
+	defer gameModeLock.Unlock()
 
 	if gameMode == MODE_PLAYING {
 
@@ -232,7 +235,7 @@ var chatVertSpace float32 = 24.0 * float32(uiScale)
 var (
 	chatLinesTop  int
 	chatLines     []chatLineData
-	chatLinesLock sync.Mutex
+	chatLinesLock deadlock.Mutex
 	consoleActive bool
 )
 
