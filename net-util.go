@@ -20,17 +20,21 @@ func changeGameMode(newMode MODE, delay time.Duration) {
 }
 
 func sendCommand(header CMD, data []byte) bool {
+
 	localPlayer.plock.Lock()
 	defer localPlayer.plock.Unlock()
+	if localPlayer.conn == nil {
+		return false
+	}
 
-	/*
-		cmdName := cmdNames[header]
+	cmdName := cmdNames[header]
+	if header != CMD_MOVE {
 		if cmdName == "" {
 			doLog(true, "Sent: 0x%02X", header)
 		} else {
 			doLog(true, "Sent: %v", cmdName)
 		}
-	*/
+	}
 
 	var err error
 	if data == nil {
@@ -48,7 +52,7 @@ func sendCommand(header CMD, data []byte) bool {
 
 		chat("Connection lost!")
 
-		connectServer()
+		go connectServer()
 
 		return false
 	}
