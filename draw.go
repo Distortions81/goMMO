@@ -61,10 +61,9 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 		if EditMode {
 			drawDebugEdit(screen)
-		} else {
-			drawPlayers(screen)
-			drawLight(screen)
 		}
+		drawPlayers(screen)
+		drawLight(screen)
 
 		drawDebugInfo(screen)
 		drawChatLines(screen)
