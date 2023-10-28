@@ -153,7 +153,8 @@ func readNet() {
 
 		case CMD_LOGIN:
 			binary.Read(inbuf, binary.LittleEndian, &localPlayer.id)
-			doLog(true, "New local id: %v", localPlayer.id)
+			binary.Read(inbuf, binary.LittleEndian, &localPlayer.areaid)
+			doLog(true, "New local id: %v, area: %v", localPlayer.id, localPlayer.areaid)
 			changeGameMode(MODE_PLAYING, 0)
 
 		case CMD_CHAT:

@@ -41,7 +41,9 @@ type playerData struct {
 
 	health int8
 
-	pos       XY
+	pos    XY
+	areaid uint16
+
 	lastPos   XY
 	direction DIR
 	walkFrame int
