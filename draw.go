@@ -62,6 +62,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		if EditMode {
 			drawDebugEdit(screen)
 		}
+		drawWorld(screen)
 		drawPlayers(screen)
 		drawLight(screen)
 
@@ -73,6 +74,10 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		screen.Fill(color.Black)
 		drawChatLines(screen)
 	}
+}
+
+func drawWorld(screen *ebiten.Image) {
+
 }
 
 func drawLight(screen *ebiten.Image) {

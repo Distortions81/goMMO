@@ -64,3 +64,20 @@ type chatLineData struct {
 	timestamp time.Time
 	lifetime  time.Duration
 }
+
+type areaData struct {
+	arealock deadlock.RWMutex
+	chunks   map[XY]*chunkData
+}
+
+type chunkData struct {
+	worldObjects []*worldObject
+	players      []*playerData
+	chunkLock    deadlock.RWMutex
+}
+
+type worldObject struct {
+	itemId uint32
+	pos    XY
+	uid    uint32
+}

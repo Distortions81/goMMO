@@ -231,4 +231,9 @@ func editPlaceItem() {
 	binary.Write(outbuf, binary.LittleEndian, editPos.X)
 	binary.Write(outbuf, binary.LittleEndian, editPos.Y)
 	sendCommand(CMD_EDITPLACEITEM, outbuf.Bytes())
+
+	outbuf.Reset()
+	binary.Write(outbuf, binary.LittleEndian, editPos.X/chunkDiv)
+	binary.Write(outbuf, binary.LittleEndian, editPos.Y/chunkDiv)
+	sendCommand(CMD_GETCHUNK, outbuf.Bytes())
 }
