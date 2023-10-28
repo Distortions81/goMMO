@@ -9,9 +9,10 @@ import (
 )
 
 var (
-	EditMode bool
-	EditID   uint32
-	editPos  XY = xyCenter
+	LeftMousePressed bool
+	EditMode         bool
+	EditID           uint32
+	editPos          XY = xyCenter
 
 	ChatMode    bool
 	CommandMode bool
@@ -75,6 +76,14 @@ func (g *Game) Update() error {
 		}
 	}
 	if EditMode {
+		if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
+			if !LeftMousePressed {
+				editPlaceItem()
+			}
+			LeftMousePressed = true
+		} else {
+			LeftMousePressed = false
+		}
 		if repeatingKeyPressed(ebiten.KeyEqual) {
 			if EditID < numSprites {
 				EditID++
@@ -211,4 +220,15 @@ func sendMove() {
 	sendCommand(CMD_MOVE, outbuf.Bytes())
 
 	lastCharPos = curCharPos
+}
+
+func editPlaceItem() {
+
+	var buf []byte
+	outbuf := bytes.NewBuffer(buf)
+
+	binary.Write(outbuf, binary.LittleEndian, EditID)
+	binary.Write(outbuf, binary.LittleEndian, editPos.X)
+	binary.Write(outbuf, binary.LittleEndian, editPos.Y)
+	sendCommand(CMD_EDITPLACEITEM, outbuf.Bytes())
 }
