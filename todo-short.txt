@@ -17,3 +17,6 @@ Maybe a command at connect to download new items, and to all players connected w
 I think it would be best if we do this at X amount per frame to throttle the download (x segments, based on kb/sec?)... or on a different server.
 
 Chunk dirty flag, timer, lock, autosave.
+
+Mouse, Touch and controller inputs.
+forward HTTP to HTTPS.
