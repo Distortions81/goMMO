@@ -1,27 +1,27 @@
-# Modified 10-23-2023
+# Modified 10-28-2023
 #Format:
-# id:type:
-# id:name:fileName
-# duplicate IDs in the same section will cause an error
+# type:
+# name:fileName
 # blank lines, or lines starting with # are ignored
+# IDs are derived from order, do not remove old entries
 
 version 1
 
-1:characters:
-1:player:test-player.png
+characters:
+player:test-player.png
 
-2:terrain:
-1:grass:grass.png
-2:grass-1:grass1.png
+terrain:
+grass:grass.png
+grass-1:grass1.png
 
-3:world-objects:
-1:blue mushroom:blue-mush.png
-2:red mushroom:red-mush.png
-3:tiny rock:tiny-rock.png
-4:tiny shrub:tiny-shrub.png
-5:tiny tree stump:tiny-tree-stump.png
-6:tree-1:tree1.png
-7:tree-2:tree2.png
+world-objects:
+blue mushroom:blue-mush.png
+red mushroom:red-mush.png
+tiny rock:tiny-rock.png
+tiny shrub:tiny-shrub.png
+tiny tree stump:tiny-tree-stump.png
+tree-1:tree1.png
+tree-2:tree2.png
 
-4:effects:
-1:light:light.png
+effects:
+light:light.png

@@ -25,11 +25,11 @@ func loadTest() {
 
 	var x, y uint32
 	numTypes := uint32(len(itemTypesList))
-	for x = 1; x <= numTypes; x++ {
+	for x = 0; x < numTypes; x++ {
 		typeData := itemTypesList[x]
 
 		numItems := uint32(len(typeData.items))
-		for y = 1; y <= numItems; y++ {
+		for y = 0; y < numItems; y++ {
 			itemData := typeData.items[y]
 
 			doLog(true, "loading %v:%v", typeData.name, itemData.fileName)

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"strconv"
 	"strings"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -28,6 +27,9 @@ type sectionItemData struct {
 var itemTypesList map[uint32]*sectionData
 
 func readIndex() bool {
+
+	var sectionID uint32
+	var itemID uint32
 
 	data, err := efs.ReadFile(dataDir + indexFileName)
 	if err != nil {
@@ -78,14 +80,10 @@ func readIndex() bool {
 
 		//Section
 		if strings.HasSuffix(line, ":") {
-			words := strings.Split(line, ":")
-			numWords := len(words)
-			if numWords < 2 {
-				doLog(true, "section: Not enough words.")
-				continue
-			}
-			sectionId, _ := strconv.ParseUint(words[0], 10, 32)
-			newSection := &sectionData{name: words[1], id: uint32(sectionId)}
+			itemID = 0
+			sName := strings.TrimSuffix(line, ":")
+			newSection := &sectionData{name: sName, id: uint32(sectionID)}
+			sectionID++
 
 			itemTypesList[newSection.id] = newSection
 			currentSection = newSection
@@ -96,7 +94,7 @@ func readIndex() bool {
 
 			if gDevMode {
 				doLog(false, "")
-				doLog(true, "section found: %v", words[1])
+				doLog(true, "section found: (%v) %v", newSection.id, newSection.name)
 			}
 			continue
 		}
@@ -105,19 +103,12 @@ func readIndex() bool {
 		if currentSection != nil {
 			words := strings.Split(line, ":")
 			numWords := len(words)
-			if numWords != 3 {
+			if numWords != 2 {
 				doLog(true, "Item doesn't have correct number of entries on line %v.", lnum)
 				return false
 			}
-			idNum, _ := strconv.ParseUint(words[0], 10, 32)
-			newItem := &sectionItemData{name: words[1], fileName: words[2], id: uint32(idNum), itemType: currentSection.id}
-
-			for _, item := range currentSection.items {
-				if item.id == newItem.id {
-					doLog(true, "Duplicate ID! Section: %v, item1: %v, item2: %v id: %v, line: %v", currentSection.name, item.name, newItem.name, newItem.id, lnum)
-					return false
-				}
-			}
+			newItem := &sectionItemData{name: words[0], fileName: words[1], id: uint32(itemID), itemType: currentSection.id}
+			itemID++
 			currentSection.items[newItem.id] = newItem
 
 			if gDevMode {
