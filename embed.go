@@ -23,14 +23,22 @@ var (
 
 func loadTest() {
 
-	for typeid, typeData := range itemTypesList {
-		for itemid, itemData := range typeData.items {
+	var x, y uint32
+	numTypes := uint32(len(itemTypesList))
+	for x = 1; x <= numTypes; x++ {
+		typeData := itemTypesList[x]
+
+		numItems := uint32(len(typeData.items))
+		for y = 1; y <= numItems; y++ {
+			itemData := typeData.items[y]
+
+			doLog(true, "loading %v:%v", typeData.name, itemData.fileName)
 			imageData, err := getSpriteImage(typeData.name+"/"+itemData.fileName, false)
 			if err != nil {
 				log.Fatalln(err)
 			}
-			itemTypesList[typeid].items[itemid].image = imageData
-			spritelist = append(spritelist, itemTypesList[typeid].items[itemid])
+			itemTypesList[x].items[y].image = imageData
+			spritelist = append(spritelist, itemTypesList[x].items[y])
 			numSprites++
 		}
 	}

@@ -125,6 +125,7 @@ func readIndex() bool {
 			}
 			continue
 		}
+
 	}
 
 	return true
