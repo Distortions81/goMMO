@@ -13,7 +13,7 @@ type sectionData struct {
 	id       uint32
 	name     string
 	filePath string
-	items    map[string]*sectionItemData
+	items    map[uint32]*sectionItemData
 }
 
 type sectionItemData struct {
@@ -25,7 +25,7 @@ type sectionItemData struct {
 	image *ebiten.Image
 }
 
-var itemTypesList map[string]*sectionData
+var itemTypesList map[uint32]*sectionData
 
 func readIndex() bool {
 
@@ -68,7 +68,7 @@ func readIndex() bool {
 
 			//Reset data
 			currentSection = nil
-			itemTypesList = map[string]*sectionData{}
+			itemTypesList = map[uint32]*sectionData{}
 
 			if gDevMode {
 				doLog(true, "version header found.")
@@ -87,11 +87,11 @@ func readIndex() bool {
 			sectionId, _ := strconv.ParseUint(words[0], 10, 32)
 			newSection := &sectionData{name: words[1], id: uint32(sectionId)}
 
-			itemTypesList[newSection.name] = newSection
+			itemTypesList[newSection.id] = newSection
 			currentSection = newSection
 
-			if itemTypesList[newSection.name].items == nil {
-				itemTypesList[newSection.name].items = make(map[string]*sectionItemData)
+			if itemTypesList[newSection.id].items == nil {
+				itemTypesList[newSection.id].items = make(map[uint32]*sectionItemData)
 			}
 
 			if gDevMode {
@@ -118,7 +118,7 @@ func readIndex() bool {
 					return false
 				}
 			}
-			currentSection.items[newItem.name] = newItem
+			currentSection.items[newItem.id] = newItem
 
 			if gDevMode {
 				doLog(true, "item found: %v:%v", newItem.id, newItem.name)

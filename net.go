@@ -13,7 +13,7 @@ import (
 	"nhooyr.io/websocket"
 )
 
-const netReadLimit = 1024 * 100
+const netReadLimit = 1024 * 1000
 
 func connectServer() {
 
@@ -191,7 +191,7 @@ func readNet() {
 
 		case CMD_UPDATE:
 
-			var numPlayers uint32
+			var numPlayers uint16
 			binary.Read(inbuf, binary.LittleEndian, &numPlayers)
 
 			playerListLock.Lock()
@@ -200,54 +200,108 @@ func readNet() {
 				player.unmark = true
 			}
 
-			var x uint32
-			for x = 0; x < numPlayers; x++ {
-				var nid uint32
-				binary.Read(inbuf, binary.LittleEndian, &nid)
-				var nx uint32
-				binary.Read(inbuf, binary.LittleEndian, &nx)
-				var ny uint32
-				binary.Read(inbuf, binary.LittleEndian, &ny)
+			if numPlayers > 0 {
 
-				//Eventually move me to an event
-				var health int8
-				binary.Read(inbuf, binary.LittleEndian, &health)
-
-				if playerList[nid] == nil {
-					playerList[nid] = &playerData{id: nid, pos: XY{X: nx, Y: ny}, direction: DIR_S}
-				} else {
-					/* Update local player pos */
-					if localPlayer.id == nid {
-						posLock.Lock()
-						ourPos.X = nx
-						ourPos.Y = ny
-						posLock.Unlock()
+				var x uint16
+				for x = 0; x < numPlayers; x++ {
+					var nid uint32
+					err := binary.Read(inbuf, binary.LittleEndian, &nid)
+					if err != nil {
+						doLog(true, "%v", err.Error())
+						break
+					}
+					var nx uint32
+					err = binary.Read(inbuf, binary.LittleEndian, &nx)
+					if err != nil {
+						doLog(true, "%v", err.Error())
+						break
+					}
+					var ny uint32
+					err = binary.Read(inbuf, binary.LittleEndian, &ny)
+					if err != nil {
+						doLog(true, "%v", err.Error())
+						break
 					}
 
-					playerList[nid].lastPos = playerList[nid].pos
-
-					playerList[nid].pos.X = nx
-					playerList[nid].pos.Y = ny
-
-					playerList[nid].health = health
-
-					if playerList[nid].lastPos.X != playerList[nid].pos.X ||
-						playerList[nid].lastPos.Y != playerList[nid].pos.Y {
-						playerList[nid].walkFrame++
-						playerList[nid].isWalking = true
-
+					//Eventually move me to an event
+					var health int8
+					err = binary.Read(inbuf, binary.LittleEndian, &health)
+					if err != nil {
+						doLog(true, "%v", err.Error())
+						break
+					}
+					if playerList[nid] == nil {
+						playerList[nid] = &playerData{id: nid, pos: XY{X: nx, Y: ny}, direction: DIR_S}
 					} else {
-						playerList[nid].isWalking = false
-						playerList[nid].walkFrame = 0
+						/* Update local player pos */
+						if localPlayer.id == nid {
+							posLock.Lock()
+							ourPos.X = nx
+							ourPos.Y = ny
+							posLock.Unlock()
+						}
+
+						playerList[nid].lastPos = playerList[nid].pos
+
+						playerList[nid].pos.X = nx
+						playerList[nid].pos.Y = ny
+
+						playerList[nid].health = health
+
+						if playerList[nid].lastPos.X != playerList[nid].pos.X ||
+							playerList[nid].lastPos.Y != playerList[nid].pos.Y {
+							playerList[nid].walkFrame++
+							playerList[nid].isWalking = true
+
+						} else {
+							playerList[nid].isWalking = false
+							playerList[nid].walkFrame = 0
+						}
 					}
+					playerList[nid].unmark = false
 				}
-				playerList[nid].unmark = false
 			}
 
 			for p, player := range playerList {
 				if player.unmark {
 					delete(playerList, p)
 				}
+			}
+
+			var numObj uint16
+			err = binary.Read(inbuf, binary.LittleEndian, &numObj)
+			if err != nil {
+				doLog(true, "%v", err.Error())
+			}
+
+			if numObj > 0 {
+				//fmt.Printf("numObj: %v\n", numObj)
+
+				wObjLock.Lock()
+				wObjList = []*worldObject{}
+				for x := 0; x < int(numObj); x++ {
+					var itemId, posx, posy uint32
+					err = binary.Read(inbuf, binary.LittleEndian, &itemId)
+					if err != nil {
+						doLog(true, "%v", err.Error())
+						break
+					}
+					err = binary.Read(inbuf, binary.LittleEndian, &posx)
+					if err != nil {
+						doLog(true, "%v", err.Error())
+						break
+					}
+					err = binary.Read(inbuf, binary.LittleEndian, &posy)
+					if err != nil {
+						doLog(true, "%v", err.Error())
+						break
+					}
+
+					pos := XY{X: posx, Y: posy}
+					object := &worldObject{itemId: itemId, pos: pos}
+					wObjList = append(wObjList, object)
+				}
+				wObjLock.Unlock()
 			}
 
 			netCount++

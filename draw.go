@@ -77,7 +77,24 @@ func (g *Game) Draw(screen *ebiten.Image) {
 }
 
 func drawWorld(screen *ebiten.Image) {
+	/* Draw obj */
+	wObjLock.Lock()
+	for _, obj := range wObjList {
 
+		xPos := float64(int(camPos.X) - int(obj.pos.X))
+		yPos := float64(int(camPos.Y) - int(obj.pos.Y))
+
+		op := ebiten.DrawImageOptions{}
+
+		op.GeoM.Scale(2, 2)
+
+		//camera - object, TODO: get sprite size
+		op.GeoM.Translate(xPos-48.0, yPos-48.0)
+
+		//Draw sub-image
+		screen.DrawImage(spritelist[obj.itemId].image, &op)
+	}
+	wObjLock.Unlock()
 }
 
 func drawLight(screen *ebiten.Image) {

@@ -23,14 +23,14 @@ var (
 
 func loadTest() {
 
-	for typeName, itemType := range itemTypesList {
-		for itemName, item := range itemType.items {
-			imageData, err := getSpriteImage(itemType.name+"/"+item.fileName, false)
+	for typeid, typeData := range itemTypesList {
+		for itemid, itemData := range typeData.items {
+			imageData, err := getSpriteImage(typeData.name+"/"+itemData.fileName, false)
 			if err != nil {
 				log.Fatalln(err)
 			}
-			itemTypesList[typeName].items[itemName].image = imageData
-			spritelist = append(spritelist, itemTypesList[typeName].items[itemName])
+			itemTypesList[typeid].items[itemid].image = imageData
+			spritelist = append(spritelist, itemTypesList[typeid].items[itemid])
 			numSprites++
 		}
 	}
@@ -40,22 +40,37 @@ func loadTest() {
 	testlight = getItemImage("effects", "light")
 }
 
-func getItemImage(itemType string, name string) *ebiten.Image {
-	iType := itemTypesList[itemType]
+func getItemImage(typeName string, itemName string) *ebiten.Image {
+
+	var typeID uint32
+	for itemid, item := range itemTypesList {
+		if item.name == typeName {
+			typeID = itemid
+			break
+		}
+	}
+	iType := itemTypesList[typeID]
 	if iType == nil {
-		doLog(true, "Item type not found: %v", itemType)
-		return nil
-	}
-	item := iType.items[name]
-	if item == nil {
-		doLog(true, "Item not found: %v", name)
-		return nil
-	}
-	if item.image == nil {
-		doLog(true, "Item has no image: %v", name)
+		doLog(true, "Item type not found: %v", typeName)
 		return nil
 	}
 
+	var itemID uint32
+	for itemid, item := range iType.items {
+		if item.name == itemName {
+			itemID = itemid
+			break
+		}
+	}
+	item := iType.items[itemID]
+	if item == nil {
+		doLog(true, "Item not found: %v : %v", typeName, itemName)
+		return nil
+	}
+	if item.image == nil {
+		doLog(true, "Image not found: %v : %v", typeName, itemName)
+		return nil
+	}
 	return item.image
 }
 

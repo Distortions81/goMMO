@@ -34,6 +34,9 @@ var (
 	playerList     map[uint32]*playerData
 	playerListLock deadlock.Mutex
 
+	wObjList []*worldObject
+	wObjLock deadlock.Mutex
+
 	/* Name BG Color */
 	colorNameBG = color.RGBA{R: 32, G: 32, B: 32, A: 160}
 
