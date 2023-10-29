@@ -68,6 +68,7 @@ func main() {
 
 func newGame() *Game {
 	updateFonts()
+	go connectServer()
 
 	HscreenWidth = screenWidth / 2
 	HscreenHeight = screenHeight / 2

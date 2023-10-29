@@ -71,7 +71,15 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		drawChatBar(screen)
 
 	} else {
-		screen.Fill(color.Black)
+		op := &ebiten.DrawImageOptions{}
+		var imgSize float64 = 1024.0
+
+		scalew := 1.0 / (imgSize / float64(screenWidth))
+		scaleh := 1.0 / (imgSize / float64(screenHeight))
+
+		op.GeoM.Scale(scalew, scaleh)
+
+		screen.DrawImage(testLogin, op)
 		drawChatLines(screen)
 	}
 }

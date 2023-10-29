@@ -16,6 +16,7 @@ var (
 	testChar  *ebiten.Image
 	testGrass *ebiten.Image
 	testlight *ebiten.Image
+	testLogin *ebiten.Image
 
 	spritelist []*sectionItemData
 	numSprites uint32
@@ -46,6 +47,7 @@ func loadTest() {
 	testGrass = getItemImage("terrain", "grass-1")
 	testChar = getItemImage("characters", "player")
 	testlight = getItemImage("effects", "light")
+	testLogin = getItemImage("effects", "login")
 }
 
 func getItemImage(typeName string, itemName string) *ebiten.Image {
