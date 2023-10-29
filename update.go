@@ -153,7 +153,7 @@ func (g *Game) Update() error {
 		goDir = newDir
 		moveDir(goDir)
 
-		if updateCount%8 == 0 {
+		if updateCount%4 == 0 {
 			sendMove()
 		}
 	} else {

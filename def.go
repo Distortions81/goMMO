@@ -1,6 +1,6 @@
 package main
 
-var netProtoVersion uint16 = 5
+var netProtoVersion uint16 = 6
 
 const (
 	gameVersion = "0.0.8"

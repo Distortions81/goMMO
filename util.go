@@ -66,7 +66,7 @@ func getCharFrame(player *playerData) image.Image {
 
 	var newFrame int
 	if player.isWalking {
-		newFrame = ((player.walkFrame) % 3) + 1
+		newFrame = ((player.walkFrame / 2) % 3) + 1
 	} else {
 		newFrame = 0
 	}
