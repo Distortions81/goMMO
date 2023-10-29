@@ -4,8 +4,6 @@ import (
 	"image/color"
 	"sync"
 	"time"
-
-	"github.com/sasha-s/go-deadlock"
 )
 
 var (
@@ -26,16 +24,16 @@ var (
 	/* Local player */
 	localPlayer     playerData
 	playerNames     map[uint32]pNameData
-	playerNamesLock deadlock.Mutex
+	playerNamesLock sync.Mutex
 
 	ourPos  XY
-	posLock deadlock.Mutex
+	posLock sync.Mutex
 
 	playerList     map[uint32]*playerData
-	playerListLock deadlock.Mutex
+	playerListLock sync.Mutex
 
 	wObjList []*worldObject
-	wObjLock deadlock.Mutex
+	wObjLock sync.Mutex
 
 	/* Name BG Color */
 	colorNameBG = color.RGBA{R: 32, G: 32, B: 32, A: 160}

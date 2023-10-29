@@ -5,12 +5,12 @@ import (
 	"image/color"
 	"runtime"
 	"sort"
+	"sync"
 	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/text"
 	"github.com/hajimehoshi/ebiten/v2/vector"
-	"github.com/sasha-s/go-deadlock"
 	"golang.org/x/image/font"
 )
 
@@ -256,7 +256,7 @@ var chatVertSpace float32 = 24.0 * float32(uiScale)
 var (
 	chatLinesTop  int
 	chatLines     []chatLineData
-	chatLinesLock deadlock.Mutex
+	chatLinesLock sync.Mutex
 	consoleActive bool
 )
 

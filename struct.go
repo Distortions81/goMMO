@@ -3,9 +3,9 @@ package main
 import (
 	"context"
 	"image/color"
+	"sync"
 	"time"
 
-	"github.com/sasha-s/go-deadlock"
 	"nhooyr.io/websocket"
 )
 
@@ -53,7 +53,7 @@ type playerData struct {
 
 	id uint32
 
-	plock deadlock.Mutex
+	plock sync.Mutex
 }
 
 /* Chat line data */
@@ -68,14 +68,14 @@ type chatLineData struct {
 }
 
 type areaData struct {
-	arealock deadlock.RWMutex
+	arealock sync.RWMutex
 	chunks   map[XY]*chunkData
 }
 
 type chunkData struct {
 	worldObjects []*worldObject
 	players      []*playerData
-	chunkLock    deadlock.RWMutex
+	chunkLock    sync.RWMutex
 }
 
 type worldObject struct {
