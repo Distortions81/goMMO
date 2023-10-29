@@ -1,10 +1,17 @@
-Possibly on characters marked mod or on dev mode only?
+Edit mode:
+Characters marked mod or on dev mode only?
 Optimize CPU: cache each chunk's data serialization for one frame?
+Test bit-packed networking.
 
 Finish save/load world.
 
 Make flags for world objects:
-live (not in client data, but inteneded to be static),
-static (no momement), dynamic (can move), locked (confirm delete), dirty (unsaved)
+live (not in world file on client),
+physical (collisions)/(otherwise, draw on ground), radius (collision circle), rect (collision rect),
+locked (confirm delete), dirty (unsaved)
+
+Look into a system to convert live objects to standard...
+Maybe a command at connect to download new items, and to all players connected when changes are made.
+I think it would be best if we do this at X amount per frame to throttle the download (x segments, based on kb/sec?)... or on a different server.
 
 Chunk dirty flag, timer, lock, autosave.
