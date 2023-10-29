@@ -3,3 +3,5 @@ Add item placement, either save locally or via network to server?
 Possibly on characters marked mod or on dev mode only?
 
 Optimize CPU: cache each chunk's data serialization for one frame.
+
+todo: fix chat name on /name 
