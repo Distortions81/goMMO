@@ -17,7 +17,7 @@ const netReadLimit = 1024 * 1000
 
 func connectServer() {
 
-	changeGameMode(MODE_BOOT, 0)
+	changeGameMode(MODE_BOOT, 500*time.Millisecond)
 
 	for !doConnect() {
 		ReconnectCount++
