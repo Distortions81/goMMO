@@ -1,7 +1,10 @@
-
-Add item placement, either save locally or via network to server?
 Possibly on characters marked mod or on dev mode only?
+Optimize CPU: cache each chunk's data serialization for one frame?
 
-Optimize CPU: cache each chunk's data serialization for one frame.
+Finish save/load world.
 
-todo: fix chat name on /name 
+Make flags for world objects:
+live (not in client data, but inteneded to be static),
+static (no momement), dynamic (can move), locked (confirm delete), dirty (unsaved)
+
+Chunk dirty flag, timer, lock, autosave.
