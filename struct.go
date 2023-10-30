@@ -42,6 +42,7 @@ type playerData struct {
 	health int8
 
 	pos    XY
+	spos   XY
 	areaid uint16
 
 	lastPos    XY

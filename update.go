@@ -75,6 +75,18 @@ func (g *Game) Update() error {
 			EditMode = true
 		}
 	}
+	if repeatingKeyPressed(ebiten.KeyN) {
+		if !ChatMode && !CommandMode {
+
+			if nightLevel >= 250 {
+				nightLevel = 0
+			} else if nightLevel+42 >= 250 {
+				nightLevel = 255
+			} else {
+				nightLevel += 42
+			}
+		}
+	}
 	if EditMode {
 		if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
 			if !LeftMousePressed {
@@ -94,7 +106,7 @@ func (g *Game) Update() error {
 			}
 		}
 		mx, my := ebiten.CursorPosition()
-		editPos = XY{X: camPos.X - uint32(mx), Y: camPos.Y - uint32(my)}
+		editPos = XY{X: smoothCamPos.X - uint32(mx), Y: smoothCamPos.Y - uint32(my)}
 	}
 
 	pressedKeys := inpututil.AppendPressedKeys(nil)

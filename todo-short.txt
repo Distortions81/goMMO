@@ -19,5 +19,4 @@ I think it would be best if we do this at X amount per frame to throttle the dow
 Chunk dirty flag, timer, lock, autosave.
 
 Mouse, Touch and controller inputs.
-forward HTTP to HTTPS.
 Don't pixel-double on very small windows (mobile)
