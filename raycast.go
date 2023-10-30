@@ -58,7 +58,7 @@ func makeRayObjs() {
 		if obj.id == localPlayer.id {
 			continue
 		}
-		rec := rect(float64(camPos.X-obj.pos.X-10), float64(camPos.Y-obj.pos.Y-18), 32, 45)
+		rec := rect(float64(smoothCamPos.X-obj.spos.X-5), float64(smoothCamPos.Y-obj.spos.Y-12), 15, 35)
 		rObjects = append(rObjects, rayObject{rec})
 	}
 }

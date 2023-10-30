@@ -94,7 +94,7 @@ func (g *Game) Update() error {
 			}
 		}
 		mx, my := ebiten.CursorPosition()
-		editPos = XY{X: camPos.X - uint32(mx), Y: camPos.Y - uint32(my)}
+		editPos = XY{X: smoothCamPos.X - uint32(mx), Y: smoothCamPos.Y - uint32(my)}
 	}
 
 	pressedKeys := inpututil.AppendPressedKeys(nil)
@@ -153,7 +153,7 @@ func (g *Game) Update() error {
 		goDir = newDir
 		moveDir(goDir)
 
-		if updateCount%8 == 0 {
+		if updateCount%4 == 0 {
 			sendMove()
 		}
 	} else {

@@ -15,6 +15,7 @@ import (
 )
 
 var camPos XY = xyCenter
+var smoothCamPos XY = xyCenter
 
 var nightLevel uint8 = 255
 var startTime time.Time
@@ -46,19 +47,46 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		remaining := FrameSpeedNS - since.Nanoseconds()
 		normal := (float64(remaining) / float64(FrameSpeedNS))
 
-		smoothPos := ourPos
-		if normal < 0 {
-			normal = 0
-		} else if normal > 1 {
-			normal = 1
+		var smoothPos XY
+
+		if !dataDirty {
+			if normal < 0 {
+				normal = 0
+			} else if normal > 1 {
+				normal = 1
+			}
+
+			smoothPos.X = uint32(float64(ourOldPos.X) - ((float64(ourPos.X) - float64(ourOldPos.X)) * normal))
+			smoothPos.Y = uint32(float64(ourOldPos.Y) - ((float64(ourPos.Y) - float64(ourOldPos.Y)) * normal))
+
+			smoothCamPos.X = (uint32(HscreenWidth)) + smoothPos.X
+			smoothCamPos.Y = (uint32(HscreenHeight)) + smoothPos.Y
+
+			camPos.X = (uint32(HscreenWidth)) + ourPos.X
+			camPos.Y = (uint32(HscreenHeight)) + ourPos.Y
 		}
-		smoothPos.X = uint32(float64(ourOldPos.X) - ((float64(ourPos.X) - float64(ourOldPos.X)) * normal))
-		smoothPos.Y = uint32(float64(ourOldPos.Y) - ((float64(ourPos.Y) - float64(ourOldPos.Y)) * normal))
 
-		//fmt.Printf("%2.4f\n", normal)
+		for p, player := range playerList {
+			/* Extrapolate position */
+			since := startTime.Sub(lastUpdate)
+			remaining := FrameSpeedNS - since.Nanoseconds()
+			normal := (float64(remaining) / float64(FrameSpeedNS))
 
-		camPos.X = (uint32(HscreenWidth)) + smoothPos.X
-		camPos.Y = (uint32(HscreenHeight)) + smoothPos.Y
+			var psmooth XY
+			if !dataDirty {
+				if normal < 0 {
+					normal = 0
+				} else if normal > 1 {
+					normal = 1
+				}
+
+				psmooth.X = uint32(float64(player.lastPos.X) - ((float64(player.pos.X) - float64(player.lastPos.X)) * normal))
+				psmooth.Y = uint32(float64(player.lastPos.Y) - ((float64(player.pos.Y) - float64(player.lastPos.Y)) * normal))
+				playerList[p].spos = XY{X: uint32(psmooth.X), Y: uint32(psmooth.Y)}
+			}
+		}
+
+		dataDirty = false
 
 		posLock.Unlock()
 
@@ -68,7 +96,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 				op := ebiten.DrawImageOptions{}
 
 				op.GeoM.Scale(2, 2)
-				op.GeoM.Translate(float64(x+int(camPos.X%32)), float64(y+int(camPos.Y%32)))
+				op.GeoM.Translate(float64(x+int(smoothCamPos.X%32)), float64(y+int(smoothCamPos.Y%32)))
 
 				screen.DrawImage(testGrass, &op)
 			}
@@ -106,8 +134,8 @@ func drawWorld(screen *ebiten.Image) {
 	wObjLock.Lock()
 	for _, obj := range wObjList {
 
-		xPos := float64(int(camPos.X) - int(obj.pos.X))
-		yPos := float64(int(camPos.Y) - int(obj.pos.Y))
+		xPos := float64(int(smoothCamPos.X) - int(obj.pos.X))
+		yPos := float64(int(smoothCamPos.Y) - int(obj.pos.Y))
 
 		op := ebiten.DrawImageOptions{}
 
@@ -142,22 +170,8 @@ func drawLight(screen *ebiten.Image) {
 		sc = 1.01
 	}
 
-	/* Extrapolate position */
-	since := startTime.Sub(lastUpdate)
-	remaining := FrameSpeedNS - since.Nanoseconds()
-	normal := (float64(remaining) / float64(FrameSpeedNS))
-
-	psmooth := ourPos
-	if normal < 0 {
-		normal = 0
-	} else if normal > 1 {
-		normal = 1
-	}
-	psmooth.X = uint32(float64(ourOldPos.X) - ((float64(ourPos.X) - float64(ourOldPos.X)) * normal))
-	psmooth.Y = uint32(float64(ourOldPos.Y) - ((float64(ourPos.Y) - float64(ourOldPos.Y)) * normal))
-
-	xPos := float64(int(camPos.X)-int(psmooth.X)) - (512 * sc)
-	yPos := float64(int(camPos.Y)-int(psmooth.Y)) - (512 * sc)
+	xPos := float64(int(smoothCamPos.X)-int(playerList[localPlayer.id].spos.X)) - (512 * sc)
+	yPos := float64(int(smoothCamPos.Y)-int(playerList[localPlayer.id].spos.Y)) - (512 * sc)
 
 	op.GeoM.Translate(float64(xPos), float64(yPos))
 	op.GeoM.Scale(sc, sc)
@@ -171,8 +185,8 @@ func drawPlayers(screen *ebiten.Image) {
 	/* Find visible players and sort them */
 	var pList []*playerData
 	for _, player := range playerList {
-		xPos := float64(int(camPos.X) - int(player.pos.X))
-		yPos := float64(int(camPos.Y) - int(player.pos.Y))
+		xPos := float64(int(smoothCamPos.X) - int(player.spos.X))
+		yPos := float64(int(smoothCamPos.Y) - int(player.spos.Y))
 
 		//Sprite on screen?
 		if xPos-charSpriteSize > float64(screenWidth) {
@@ -191,29 +205,15 @@ func drawPlayers(screen *ebiten.Image) {
 	/* Draw player */
 	for _, player := range pList {
 
-		/* Extrapolate position */
-		since := startTime.Sub(lastUpdate)
-		remaining := FrameSpeedNS - since.Nanoseconds()
-		normal := (float64(remaining) / float64(FrameSpeedNS))
-
-		psmooth := player.pos
-		if normal < 0 {
-			normal = 0
-		} else if normal > 1 {
-			normal = 1
-		}
-		psmooth.X = uint32(float64(player.lastPos.X) - ((float64(player.pos.X) - float64(player.lastPos.X)) * normal))
-		psmooth.Y = uint32(float64(player.lastPos.Y) - ((float64(player.pos.Y) - float64(player.lastPos.Y)) * normal))
-
-		xPos := float64(int(camPos.X) - int(psmooth.X))
-		yPos := float64(int(camPos.Y) - int(psmooth.Y))
+		xPos := float64(int(smoothCamPos.X) - int(player.spos.X))
+		yPos := float64(int(smoothCamPos.Y) - int(player.spos.Y))
 
 		op := ebiten.DrawImageOptions{}
 
 		op.GeoM.Scale(2, 2)
 
 		//camera - object, TODO: get sprite size
-		op.GeoM.Translate(xPos-48.0, yPos-48.0)
+		op.GeoM.Translate(float64(xPos)-48.0, float64(yPos)-48.0)
 
 		//Draw sub-image
 		screen.DrawImage(getCharFrame(player).(*ebiten.Image), &op)
@@ -230,24 +230,10 @@ func drawPlayers(screen *ebiten.Image) {
 			pname = fmt.Sprintf("Player-%v", player.id)
 		}
 
-		/* Extrapolate position */
-		since := startTime.Sub(lastUpdate)
-		remaining := FrameSpeedNS - since.Nanoseconds()
-		normal := (float64(remaining) / float64(FrameSpeedNS))
-
-		psmooth := player.pos
-		if normal < 0 {
-			normal = 0
-		} else if normal > 1 {
-			normal = 1
-		}
-		psmooth.X = uint32(float64(player.lastPos.X) - ((float64(player.pos.X) - float64(player.lastPos.X)) * normal))
-		psmooth.Y = uint32(float64(player.lastPos.Y) - ((float64(player.pos.Y) - float64(player.lastPos.Y)) * normal))
-
 		// Draw name
 		drawText(pname, toolTipFont, color.White, colorNameBG,
-			XYf32{X: float32(int(camPos.X)-int(psmooth.X)) + 4,
-				Y: float32(int(camPos.Y)-int(psmooth.Y)) + 48},
+			XYf32{X: float32(int(smoothCamPos.X)-int(player.spos.X)) + 4,
+				Y: float32(int(smoothCamPos.Y)-int(player.spos.Y)) + 48},
 			2, screen, false, false, true)
 
 	}
@@ -266,15 +252,15 @@ func drawPlayers(screen *ebiten.Image) {
 
 			vector.DrawFilledRect(
 				screen,
-				float32(int(camPos.X)-int(player.pos.X))-12+4-1,
-				float32(int(camPos.Y)-int(player.pos.Y))+24-1,
+				float32(int(smoothCamPos.X)-int(player.pos.X))-12+4-1,
+				float32(int(smoothCamPos.Y)-int(player.pos.Y))+24-1,
 				27, 4, colorNameBG,
 				false)
 
 			vector.DrawFilledRect(
 				screen,
-				float32(int(camPos.X)-int(player.pos.X))-12+4,
-				float32(int(camPos.Y)-int(player.pos.Y))+24,
+				float32(int(smoothCamPos.X)-int(player.pos.X))-12+4,
+				float32(int(smoothCamPos.Y)-int(player.pos.Y))+24,
 				25-((100.0-float32(player.health))/4.0), 2, healthColor,
 				false)
 		}
