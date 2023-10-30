@@ -179,6 +179,10 @@ func rayVertices(x1, y1, x2, y2, x3, y3 float64) []ebiten.Vertex {
 
 func drawRays(screen *ebiten.Image) {
 
+	if nightLevel == 0 {
+		return
+	}
+
 	// Reset the shadowImage
 	shadowImage.Fill(color.Black)
 	rays := rayCasting(float64(px), float64(py), rObjects)
@@ -210,13 +214,14 @@ func drawRays(screen *ebiten.Image) {
 	*/
 
 	// Simple linear blur (7x7)
-	for j := -3; j <= 3; j++ {
-		for i := -3; i <= 3; i++ {
+	amount := 3
+	for j := -amount; j <= amount; j++ {
+		for i := -amount; i <= amount; i++ {
 			op := &ebiten.DrawImageOptions{}
 			op.GeoM.Translate(float64(i*2), float64(j*2))
 			// Alpha scale should be 1.0/49.0, but accumulating 1/49 49 times doesn't reach to 1 due to
 			// errors.
-			op.ColorScale.ScaleAlpha(1 / 25.0)
+			op.ColorScale.ScaleAlpha((float32(nightLevel) / 255.0) / (float32(amount*amount) * 10.0))
 			screen.DrawImage(shadowImage, op)
 		}
 	}

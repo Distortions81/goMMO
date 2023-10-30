@@ -75,6 +75,18 @@ func (g *Game) Update() error {
 			EditMode = true
 		}
 	}
+	if repeatingKeyPressed(ebiten.KeyN) {
+		if !ChatMode && !CommandMode {
+
+			if nightLevel >= 250 {
+				nightLevel = 0
+			} else if nightLevel+42 >= 250 {
+				nightLevel = 255
+			} else {
+				nightLevel += 42
+			}
+		}
+	}
 	if EditMode {
 		if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
 			if !LeftMousePressed {
@@ -153,7 +165,7 @@ func (g *Game) Update() error {
 		goDir = newDir
 		moveDir(goDir)
 
-		if updateCount%4 == 0 {
+		if updateCount%8 == 0 {
 			sendMove()
 		}
 	} else {
