@@ -45,10 +45,22 @@ type rayObject struct {
 	walls []line
 }
 
-func init() {
+func makeRayObjs() {
 	triangleImage.Fill(color.White)
+
+	rObjects = []rayObject{}
+
+	//Outer walls
 	rObjects = append(rObjects, rayObject{rect(0, 0, float64(screenWidth), float64(screenHeight))})
-	rObjects = append(rObjects, rayObject{rect(45, 50, 70, 20)})
+
+	//Test obj
+	for _, obj := range playerList {
+		if obj.id == localPlayer.id {
+			continue
+		}
+		rec := rect(float64(camPos.X-obj.pos.X-10), float64(camPos.Y-obj.pos.Y-18), 32, 45)
+		rObjects = append(rObjects, rayObject{rec})
+	}
 }
 
 func rect(x, y, w, h float64) []line {
@@ -112,6 +124,8 @@ func intersection(l1, l2 line) (float64, float64, bool) {
 // rayCasting returns a slice of line originating from point cx, cy and intersecting with objects
 func rayCasting(cx, cy float64, objects []rayObject) []line {
 	const rayLength = 1000 // something large enough to reach all objects
+
+	makeRayObjs()
 
 	var rays []line
 	for _, obj := range objects {
@@ -190,18 +204,17 @@ func drawRays(screen *ebiten.Image) {
 
 	// Draw shadow
 	op := &ebiten.DrawImageOptions{}
-	op.ColorScale.ScaleAlpha(0.5)
+	op.ColorScale.ScaleAlpha(0.8)
 	screen.DrawImage(shadowImage, op)
 
 	// Draw walls
-	for _, obj := range rObjects {
-		for _, w := range obj.walls {
-			vector.StrokeLine(screen, float32(w.X1), float32(w.Y1), float32(w.X2), float32(w.Y2), 1, color.RGBA{255, 0, 0, 255}, true)
+	/*
+		for _, obj := range rObjects {
+			for _, w := range obj.walls {
+				vector.StrokeLine(screen, float32(w.X1), float32(w.Y1), float32(w.X2), float32(w.Y2), 1, color.RGBA{255, 0, 0, 255}, true)
+			}
 		}
-	}
+	*/
 
-	// Draw player as a rect
-	vector.DrawFilledRect(screen, float32(px)-2, float32(py)-2, 4, 4, color.Black, true)
-	vector.DrawFilledRect(screen, float32(px)-1, float32(py)-1, 2, 2, color.RGBA{255, 100, 100, 255}, true)
 	ebitenutil.DebugPrintAt(screen, fmt.Sprintf("Rays: 2*%d", len(rays)/2), 1, 222)
 }

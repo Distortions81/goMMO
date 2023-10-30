@@ -16,7 +16,7 @@ import (
 
 var camPos XY = xyCenter
 
-var nightLevel uint8 = 0
+var nightLevel uint8 = 255
 var startTime time.Time
 
 type xySort []*playerData
@@ -146,8 +146,20 @@ func drawLight(screen *ebiten.Image) {
 		sc = 1.01
 	}
 
-	xPos := float64(int(camPos.X)-int(ourPos.X)) - (512 * sc)
-	yPos := float64(int(camPos.Y)-int(ourPos.Y)) - (512 * sc)
+	/* Extrapolate position */
+	since := startTime.Sub(lastUpdate)
+	remaining := FrameSpeedNS - since.Nanoseconds()
+	normal := (float64(remaining) / float64(FrameSpeedNS))
+
+	psmooth := ourPos
+	if normal >= -2 && normal <= 2 {
+		psmooth.X = uint32(float64(ourOldPos.X) - ((float64(ourPos.X) - float64(ourOldPos.X)) * normal))
+		psmooth.Y = uint32(float64(ourOldPos.Y) - ((float64(ourPos.Y) - float64(ourOldPos.Y)) * normal))
+	}
+
+	xPos := float64(int(camPos.X)-int(psmooth.X)) - (512 * sc)
+	yPos := float64(int(camPos.Y)-int(psmooth.Y)) - (512 * sc)
+
 	op.GeoM.Translate(float64(xPos), float64(yPos))
 	op.GeoM.Scale(sc, sc)
 	op.ColorScale.ScaleAlpha(float32(nightLevel) / 255.0)
