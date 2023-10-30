@@ -90,8 +90,8 @@ func (g *Game) Update() error {
 				nightLevel += 42
 			}
 
-			buf := fmt.Sprintf("Night level: %v", int((float32(nightLevel)/255.0)*100.0))
-			chat(buf + "%%")
+			buf := fmt.Sprintf("Night level: %v%%", int((float32(nightLevel)/255.0)*100.0))
+			chat(buf)
 		}
 	}
 	if repeatingKeyPressed(ebiten.KeyL) {
