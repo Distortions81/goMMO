@@ -51,7 +51,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		normal := (float64(remaining) / float64(FrameSpeedNS))
 
 		smoothPos := ourPos
-		if normal >= -1 && normal <= 1 {
+		if normal >= 0 && normal <= 1 {
 			smoothPos.X = uint32(float64(ourOldPos.X) - ((float64(ourPos.X) - float64(ourOldPos.X)) * normal))
 			smoothPos.Y = uint32(float64(ourOldPos.Y) - ((float64(ourPos.Y) - float64(ourOldPos.Y)) * normal))
 		}
@@ -182,7 +182,7 @@ func drawPlayers(screen *ebiten.Image) {
 		normal := (float64(remaining) / float64(FrameSpeedNS))
 
 		psmooth := player.pos
-		if normal >= -1 && normal <= 1 {
+		if normal >= 0 && normal <= 1 {
 			psmooth.X = uint32(float64(player.lastPos.X) - ((float64(player.pos.X) - float64(player.lastPos.X)) * normal))
 			psmooth.Y = uint32(float64(player.lastPos.Y) - ((float64(player.pos.Y) - float64(player.lastPos.Y)) * normal))
 		}
@@ -218,7 +218,7 @@ func drawPlayers(screen *ebiten.Image) {
 		normal := (float64(remaining) / float64(FrameSpeedNS))
 
 		psmooth := player.pos
-		if normal >= -1 && normal <= 1 {
+		if normal >= 0 && normal <= 1 {
 			psmooth.X = uint32(float64(player.lastPos.X) - ((float64(player.pos.X) - float64(player.lastPos.X)) * normal))
 			psmooth.Y = uint32(float64(player.lastPos.Y) - ((float64(player.pos.Y) - float64(player.lastPos.Y)) * normal))
 		}
