@@ -17,6 +17,7 @@ import (
 var camPos XY = xyCenter
 
 var nightLevel uint8 = 0
+var startTime time.Time
 
 type xySort []*playerData
 
@@ -32,6 +33,8 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 	if gameMode == MODE_PLAYING {
 
+		startTime = time.Now()
+
 		playerListLock.Lock()
 		defer playerListLock.Unlock()
 
@@ -46,12 +49,12 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		posLock.Lock()
 
 		/* Extrapolate position */
-		since := time.Since(lastUpdate)
+		since := startTime.Sub(lastUpdate)
 		remaining := FrameSpeedNS - since.Nanoseconds()
 		normal := (float64(remaining) / float64(FrameSpeedNS))
 
 		smoothPos := ourPos
-		if normal >= 0 && normal <= 1 {
+		if normal >= -2 && normal <= 2 {
 			smoothPos.X = uint32(float64(ourOldPos.X) - ((float64(ourPos.X) - float64(ourOldPos.X)) * normal))
 			smoothPos.Y = uint32(float64(ourOldPos.Y) - ((float64(ourPos.Y) - float64(ourOldPos.Y)) * normal))
 		}
@@ -177,12 +180,12 @@ func drawPlayers(screen *ebiten.Image) {
 	for _, player := range pList {
 
 		/* Extrapolate position */
-		since := time.Since(lastUpdate)
+		since := startTime.Sub(lastUpdate)
 		remaining := FrameSpeedNS - since.Nanoseconds()
 		normal := (float64(remaining) / float64(FrameSpeedNS))
 
 		psmooth := player.pos
-		if normal >= 0 && normal <= 1 {
+		if normal >= -2 && normal <= 2 {
 			psmooth.X = uint32(float64(player.lastPos.X) - ((float64(player.pos.X) - float64(player.lastPos.X)) * normal))
 			psmooth.Y = uint32(float64(player.lastPos.Y) - ((float64(player.pos.Y) - float64(player.lastPos.Y)) * normal))
 		}
@@ -213,12 +216,12 @@ func drawPlayers(screen *ebiten.Image) {
 		}
 
 		/* Extrapolate position */
-		since := time.Since(lastUpdate)
+		since := startTime.Sub(lastUpdate)
 		remaining := FrameSpeedNS - since.Nanoseconds()
 		normal := (float64(remaining) / float64(FrameSpeedNS))
 
 		psmooth := player.pos
-		if normal >= 0 && normal <= 1 {
+		if normal >= -2 && normal <= 2 {
 			psmooth.X = uint32(float64(player.lastPos.X) - ((float64(player.pos.X) - float64(player.lastPos.X)) * normal))
 			psmooth.Y = uint32(float64(player.lastPos.Y) - ((float64(player.pos.Y) - float64(player.lastPos.Y)) * normal))
 		}
@@ -325,7 +328,7 @@ func drawChatLines(screen *ebiten.Image) {
 	for x := chatLinesTop; x > 0 && lineNum < chatHeightLines; x-- {
 		line := chatLines[x-1]
 		/* Ignore old chat lines */
-		since := time.Since(line.timestamp)
+		since := startTime.Sub(line.timestamp)
 		if !consoleActive && since > line.lifetime {
 			continue
 		}
