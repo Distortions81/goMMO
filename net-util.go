@@ -23,6 +23,7 @@ func sendCommand(header CMD, data []byte) bool {
 
 	localPlayer.plock.Lock()
 	defer localPlayer.plock.Unlock()
+
 	if localPlayer.conn == nil {
 		return false
 	}
@@ -51,8 +52,6 @@ func sendCommand(header CMD, data []byte) bool {
 		chatLinesTop = 0
 
 		chat("Connection lost!")
-
-		go connectServer()
 
 		return false
 	}
