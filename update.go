@@ -116,7 +116,7 @@ func (g *Game) Update() error {
 			LeftMousePressed = false
 		}
 		if ebiten.IsMouseButtonPressed(ebiten.MouseButtonRight) {
-			if !LeftMousePressed {
+			if !RightMousePressed {
 				editDeleteItem()
 			}
 			RightMousePressed = true
