@@ -19,6 +19,7 @@ var smoothCamPos XY = xyCenter
 
 var nightLevel uint8 = 0
 var startTime time.Time
+var noSmoothing bool = false
 
 type xySort []*playerData
 
@@ -36,6 +37,12 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 		startTime = time.Now()
 
+		if noSmoothing {
+			if !dataDirty {
+				return
+			}
+		}
+
 		playerListLock.Lock()
 		defer playerListLock.Unlock()
 
@@ -47,9 +54,8 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		remaining := FrameSpeedNS - since.Nanoseconds()
 		normal := (float64(remaining) / float64(FrameSpeedNS))
 
-		var smoothPos XY
-
-		if !dataDirty {
+		if !noSmoothing && !dataDirty {
+			var smoothPos XY
 			if normal < 0 {
 				normal = 0
 			} else if normal > 1 {
@@ -61,19 +67,28 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 			smoothCamPos.X = (uint32(HscreenWidth)) + smoothPos.X
 			smoothCamPos.Y = (uint32(HscreenHeight)) + smoothPos.Y
-
-			camPos.X = (uint32(HscreenWidth)) + ourPos.X
-			camPos.Y = (uint32(HscreenHeight)) + ourPos.Y
 		}
 
-		for p, player := range playerList {
-			/* Extrapolate position */
-			since := startTime.Sub(lastUpdate)
-			remaining := FrameSpeedNS - since.Nanoseconds()
-			normal := (float64(remaining) / float64(FrameSpeedNS))
+		camPos.X = (uint32(HscreenWidth)) + ourPos.X
+		camPos.Y = (uint32(HscreenHeight)) + ourPos.Y
 
-			var psmooth XY
-			if !dataDirty {
+		if noSmoothing {
+			smoothCamPos = camPos
+			for o, _ := range playerList {
+				playerList[o].spos = playerList[o].pos
+			}
+		}
+
+		if !noSmoothing && !dataDirty {
+			for p, player := range playerList {
+
+				/* Extrapolate position */
+				since := startTime.Sub(lastUpdate)
+				remaining := FrameSpeedNS - since.Nanoseconds()
+				normal := (float64(remaining) / float64(FrameSpeedNS))
+
+				var psmooth XY
+
 				if normal < 0 {
 					normal = 0
 				} else if normal > 1 {
@@ -83,6 +98,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 				psmooth.X = uint32(float64(player.lastPos.X) - ((float64(player.pos.X) - float64(player.lastPos.X)) * normal))
 				psmooth.Y = uint32(float64(player.lastPos.Y) - ((float64(player.pos.Y) - float64(player.lastPos.Y)) * normal))
 				playerList[p].spos = XY{X: uint32(psmooth.X), Y: uint32(psmooth.Y)}
+
 			}
 		}
 

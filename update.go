@@ -87,6 +87,19 @@ func (g *Game) Update() error {
 			}
 		}
 	}
+	if repeatingKeyPressed(ebiten.KeyL) {
+		if !ChatMode && !CommandMode {
+
+			if noSmoothing {
+				noSmoothing = false
+				chat("Motion smoothing turned OFF!")
+
+			} else {
+				noSmoothing = true
+				chat("Motion smoothing turned ON!")
+			}
+		}
+	}
 	if EditMode {
 		if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
 			if !LeftMousePressed {
