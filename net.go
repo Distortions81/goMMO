@@ -236,12 +236,15 @@ func readNet() {
 						/* Update local player pos */
 						if localPlayer.id == nid {
 							posLock.Lock()
+							ourOldPos = ourPos
 							ourPos.X = nx
 							ourPos.Y = ny
+							ourPosLast = time.Now()
 							posLock.Unlock()
 						}
 
 						playerList[nid].lastPos = playerList[nid].pos
+						playerList[nid].lastUpdate = time.Now()
 
 						playerList[nid].pos.X = nx
 						playerList[nid].pos.Y = ny

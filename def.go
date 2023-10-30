@@ -2,6 +2,8 @@ package main
 
 var netProtoVersion uint16 = 6
 
+const FrameSpeedNS = 66666666
+
 const (
 	gameVersion = "0.0.8"
 

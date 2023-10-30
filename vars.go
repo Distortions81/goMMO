@@ -26,7 +26,10 @@ var (
 	playerNames     map[uint32]pNameData
 	playerNamesLock sync.Mutex
 
-	ourPos  XY
+	ourPos     XY
+	ourOldPos  XY
+	ourPosLast time.Time
+
 	posLock sync.Mutex
 
 	playerList     map[uint32]*playerData

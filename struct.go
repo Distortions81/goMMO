@@ -44,7 +44,9 @@ type playerData struct {
 	pos    XY
 	areaid uint16
 
-	lastPos   XY
+	lastPos    XY
+	lastUpdate time.Time
+
 	direction DIR
 	walkFrame int
 	isWalking bool

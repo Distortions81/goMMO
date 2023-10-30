@@ -35,15 +35,32 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		playerListLock.Lock()
 		defer playerListLock.Unlock()
 
-		if !dataDirty {
-			return
-		}
-		dataDirty = false
+		/*
+			if !dataDirty {
+				return
+			}
+			dataDirty = false
+		*/
 
 		//Make camera position
 		posLock.Lock()
-		camPos.X = (uint32(HscreenWidth)) + ourPos.X
-		camPos.Y = (uint32(HscreenHeight)) + ourPos.Y
+
+		/* Extrapolate position */
+		since := time.Since(ourPosLast)
+		remaining := FrameSpeedNS - since.Nanoseconds()
+		normal := (float64(remaining) / float64(FrameSpeedNS))
+
+		smoothPos := ourPos
+		if normal >= -1 && normal <= 1 {
+			smoothPos.X = uint32(float64(ourOldPos.X) - ((float64(ourPos.X) - float64(ourOldPos.X)) * normal))
+			smoothPos.Y = uint32(float64(ourOldPos.Y) - ((float64(ourPos.Y) - float64(ourOldPos.Y)) * normal))
+		}
+
+		//fmt.Printf("%2.4f\n", normal)
+
+		camPos.X = (uint32(HscreenWidth)) + smoothPos.X
+		camPos.Y = (uint32(HscreenHeight)) + smoothPos.Y
+
 		posLock.Unlock()
 
 		/* Draw grass */
@@ -156,13 +173,22 @@ func drawPlayers(screen *ebiten.Image) {
 	}
 	sort.Sort(xySort(pList))
 
-	//Draw other players
-
 	/* Draw player */
 	for _, player := range pList {
 
-		xPos := float64(int(camPos.X) - int(player.pos.X))
-		yPos := float64(int(camPos.Y) - int(player.pos.Y))
+		/* Extrapolate position */
+		since := time.Since(player.lastUpdate)
+		remaining := FrameSpeedNS - since.Nanoseconds()
+		normal := (float64(remaining) / float64(FrameSpeedNS))
+
+		psmooth := player.pos
+		if normal >= -1 && normal <= 1 {
+			psmooth.X = uint32(float64(player.lastPos.X) - ((float64(player.pos.X) - float64(player.lastPos.X)) * normal))
+			psmooth.Y = uint32(float64(player.lastPos.Y) - ((float64(player.pos.Y) - float64(player.lastPos.Y)) * normal))
+		}
+
+		xPos := float64(int(camPos.X) - int(psmooth.X))
+		yPos := float64(int(camPos.Y) - int(psmooth.Y))
 
 		op := ebiten.DrawImageOptions{}
 
@@ -186,10 +212,21 @@ func drawPlayers(screen *ebiten.Image) {
 			pname = fmt.Sprintf("Player-%v", player.id)
 		}
 
+		/* Extrapolate position */
+		since := time.Since(player.lastUpdate)
+		remaining := FrameSpeedNS - since.Nanoseconds()
+		normal := (float64(remaining) / float64(FrameSpeedNS))
+
+		psmooth := player.pos
+		if normal >= -1 && normal <= 1 {
+			psmooth.X = uint32(float64(player.lastPos.X) - ((float64(player.pos.X) - float64(player.lastPos.X)) * normal))
+			psmooth.Y = uint32(float64(player.lastPos.Y) - ((float64(player.pos.Y) - float64(player.lastPos.Y)) * normal))
+		}
+
 		// Draw name
 		drawText(pname, toolTipFont, color.White, colorNameBG,
-			XYf32{X: float32(int(camPos.X)-int(player.pos.X)) + 4,
-				Y: float32(int(camPos.Y)-int(player.pos.Y)) + 48},
+			XYf32{X: float32(int(camPos.X)-int(psmooth.X)) + 4,
+				Y: float32(int(camPos.Y)-int(psmooth.Y)) + 48},
 			2, screen, false, false, true)
 
 	}
