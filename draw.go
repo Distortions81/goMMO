@@ -17,7 +17,7 @@ import (
 var camPos XY = xyCenter
 var smoothCamPos XY = xyCenter
 
-var nightLevel uint8 = 255
+var nightLevel uint8 = 0
 var startTime time.Time
 
 type xySort []*playerData

@@ -125,8 +125,6 @@ func intersection(l1, l2 line) (float64, float64, bool) {
 func rayCasting(cx, cy float64, objects []rayObject) []line {
 	const rayLength = 1000 // something large enough to reach all objects
 
-	makeRayObjs()
-
 	var rays []line
 	for _, obj := range objects {
 		// Cast two rays per point
@@ -182,6 +180,7 @@ func drawRays(screen *ebiten.Image) {
 	if nightLevel == 0 {
 		return
 	}
+	makeRayObjs()
 
 	// Reset the shadowImage
 	shadowImage.Fill(color.Black)
