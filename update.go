@@ -92,11 +92,10 @@ func (g *Game) Update() error {
 
 			if noSmoothing {
 				noSmoothing = false
-				chat("Motion smoothing turned OFF!")
-
+				chat("Motion smoothing turned ON!")
 			} else {
 				noSmoothing = true
-				chat("Motion smoothing turned ON!")
+				chat("Motion smoothing turned OFF!")
 			}
 		}
 	}
