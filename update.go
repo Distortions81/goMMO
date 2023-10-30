@@ -3,16 +3,19 @@ package main
 import (
 	"bytes"
 	"encoding/binary"
+	"fmt"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 )
 
 var (
-	LeftMousePressed bool
-	EditMode         bool
-	EditID           uint32
-	editPos          XY = xyCenter
+	LeftMousePressed  bool
+	RightMousePressed bool
+
+	EditMode bool
+	EditID   uint32
+	editPos  XY = xyCenter
 
 	ChatMode    bool
 	CommandMode bool
@@ -73,6 +76,7 @@ func (g *Game) Update() error {
 			EditMode = false
 		} else {
 			EditMode = true
+			chat("Click to place an item, right-click to delete an item, + and - cycle item IDs.")
 		}
 	}
 	if repeatingKeyPressed(ebiten.KeyN) {
@@ -85,6 +89,9 @@ func (g *Game) Update() error {
 			} else {
 				nightLevel += 42
 			}
+
+			buf := fmt.Sprintf("Night level: %v", int((float32(nightLevel)/255.0)*100.0))
+			chat(buf + "%%")
 		}
 	}
 	if repeatingKeyPressed(ebiten.KeyL) {
@@ -107,6 +114,14 @@ func (g *Game) Update() error {
 			LeftMousePressed = true
 		} else {
 			LeftMousePressed = false
+		}
+		if ebiten.IsMouseButtonPressed(ebiten.MouseButtonRight) {
+			if !LeftMousePressed {
+				editDeleteItem()
+			}
+			RightMousePressed = true
+		} else {
+			RightMousePressed = false
 		}
 		if repeatingKeyPressed(ebiten.KeyEqual) {
 			if EditID < numSprites {
@@ -255,4 +270,15 @@ func editPlaceItem() {
 	binary.Write(outbuf, binary.LittleEndian, editPos.X)
 	binary.Write(outbuf, binary.LittleEndian, editPos.Y)
 	sendCommand(CMD_EDITPLACEITEM, outbuf.Bytes())
+}
+
+func editDeleteItem() {
+
+	var buf []byte
+	outbuf := bytes.NewBuffer(buf)
+
+	binary.Write(outbuf, binary.LittleEndian, EditID)
+	binary.Write(outbuf, binary.LittleEndian, editPos.X)
+	binary.Write(outbuf, binary.LittleEndian, editPos.Y)
+	sendCommand(CMD_EDITDELETEITEM, outbuf.Bytes())
 }
