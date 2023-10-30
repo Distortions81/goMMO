@@ -203,9 +203,23 @@ func drawRays(screen *ebiten.Image) {
 	}
 
 	// Draw shadow
-	op := &ebiten.DrawImageOptions{}
-	op.ColorScale.ScaleAlpha(0.8)
-	screen.DrawImage(shadowImage, op)
+	/*
+		op := &ebiten.DrawImageOptions{}
+		op.ColorScale.ScaleAlpha(0.8)
+		screen.DrawImage(shadowImage, op)
+	*/
+
+	// Simple linear blur (7x7)
+	for j := -3; j <= 3; j++ {
+		for i := -3; i <= 3; i++ {
+			op := &ebiten.DrawImageOptions{}
+			op.GeoM.Translate(float64(i*2), float64(j*2))
+			// Alpha scale should be 1.0/49.0, but accumulating 1/49 49 times doesn't reach to 1 due to
+			// errors.
+			op.ColorScale.ScaleAlpha(0.7 / 25.0)
+			screen.DrawImage(shadowImage, op)
+		}
+	}
 
 	// Draw walls
 	/*
