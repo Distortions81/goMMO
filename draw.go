@@ -83,8 +83,8 @@ func (g *Game) Draw(screen *ebiten.Image) {
 			drawDebugEdit(screen)
 		}
 		drawWorld(screen)
-		drawPlayers(screen)
 		drawRays(screen)
+		drawPlayers(screen)
 		drawLight(screen)
 
 		drawDebugInfo(screen)
