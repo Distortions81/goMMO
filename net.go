@@ -103,6 +103,7 @@ func getName(id uint32) string {
 }
 
 var netCount int
+var lastUpdate time.Time
 
 func readNet() {
 
@@ -201,6 +202,7 @@ func readNet() {
 			}
 
 			if numPlayers > 0 {
+				lastUpdate = time.Now()
 
 				var x uint16
 				for x = 0; x < numPlayers; x++ {
@@ -239,12 +241,10 @@ func readNet() {
 							ourOldPos = ourPos
 							ourPos.X = nx
 							ourPos.Y = ny
-							ourPosLast = time.Now()
 							posLock.Unlock()
 						}
 
 						playerList[nid].lastPos = playerList[nid].pos
-						playerList[nid].lastUpdate = time.Now()
 
 						playerList[nid].pos.X = nx
 						playerList[nid].pos.Y = ny

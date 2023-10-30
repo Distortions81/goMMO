@@ -46,7 +46,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		posLock.Lock()
 
 		/* Extrapolate position */
-		since := time.Since(ourPosLast)
+		since := time.Since(lastUpdate)
 		remaining := FrameSpeedNS - since.Nanoseconds()
 		normal := (float64(remaining) / float64(FrameSpeedNS))
 
@@ -177,7 +177,7 @@ func drawPlayers(screen *ebiten.Image) {
 	for _, player := range pList {
 
 		/* Extrapolate position */
-		since := time.Since(player.lastUpdate)
+		since := time.Since(lastUpdate)
 		remaining := FrameSpeedNS - since.Nanoseconds()
 		normal := (float64(remaining) / float64(FrameSpeedNS))
 
@@ -213,7 +213,7 @@ func drawPlayers(screen *ebiten.Image) {
 		}
 
 		/* Extrapolate position */
-		since := time.Since(player.lastUpdate)
+		since := time.Since(lastUpdate)
 		remaining := FrameSpeedNS - since.Nanoseconds()
 		normal := (float64(remaining) / float64(FrameSpeedNS))
 
