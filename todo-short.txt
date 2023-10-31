@@ -20,8 +20,3 @@ Chunk dirty flag, timer, lock, autosave.
 
 Mouse, Touch and controller inputs.
 Don't pixel-double on very small windows (mobile)
-
-
-###
-Server and client need mutex redesign/review
-###
