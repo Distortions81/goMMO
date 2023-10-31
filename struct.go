@@ -55,8 +55,6 @@ type playerData struct {
 	unmark bool
 
 	id uint32
-
-	plock sync.Mutex
 }
 
 /* Chat line data */

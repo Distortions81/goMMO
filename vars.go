@@ -22,21 +22,17 @@ var (
 	gameModeLock sync.Mutex
 
 	/* Local player */
-	localPlayer     playerData
-	playerNames     map[uint32]pNameData
-	playerNamesLock sync.Mutex
+	localPlayer playerData
+	playerNames map[uint32]pNameData
 
 	ourPos     XY
 	ourOldPos  XY
 	ourPosLast time.Time
 
-	posLock sync.Mutex
-
-	playerList     map[uint32]*playerData
-	playerListLock sync.Mutex
+	playerList map[uint32]*playerData
+	drawLock   sync.Mutex
 
 	wObjList []*worldObject
-	wObjLock sync.Mutex
 
 	/* Name BG Color */
 	colorNameBG = color.RGBA{R: 32, G: 32, B: 32, A: 160}

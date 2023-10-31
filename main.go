@@ -94,18 +94,6 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 
 		HscreenWidth = outsideWidth / 2
 		HscreenHeight = outsideHeight / 2
-
-		/*
-			var buf []byte
-			outbuf := bytes.NewBuffer(buf)
-
-			var outHeight uint16 = uint16(screenHeight)
-			var outWidth uint16 = uint16(screenWidth)
-			binary.Write(outbuf, binary.LittleEndian, &outHeight)
-			binary.Write(outbuf, binary.LittleEndian, &outWidth)
-
-			sendCommand(CMD_SCREENSIZE, outbuf.Bytes())
-		*/
 	}
 	return int(outsideWidth), int(outsideHeight)
 }

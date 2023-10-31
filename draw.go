@@ -43,11 +43,8 @@ func (g *Game) Draw(screen *ebiten.Image) {
 			}
 		}
 
-		playerListLock.Lock()
-		defer playerListLock.Unlock()
-
-		//Make camera position
-		posLock.Lock()
+		drawLock.Lock()
+		defer drawLock.Unlock()
 
 		/* Extrapolate position */
 		since := startTime.Sub(lastUpdate)
@@ -104,8 +101,6 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 		dataDirty = false
 
-		posLock.Unlock()
-
 		/* Draw grass */
 		for x := -32; x <= screenWidth; x += 32 {
 			for y := -32; y <= screenHeight; y += 32 {
@@ -147,7 +142,6 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 func drawWorld(screen *ebiten.Image) {
 	/* Draw obj */
-	wObjLock.Lock()
 	for _, obj := range wObjList {
 
 		xPos := float64(int(smoothCamPos.X) - int(obj.pos.X))
@@ -163,7 +157,6 @@ func drawWorld(screen *ebiten.Image) {
 		//Draw sub-image
 		screen.DrawImage(spritelist[obj.itemId].image, &op)
 	}
-	wObjLock.Unlock()
 }
 
 func drawLight(screen *ebiten.Image) {

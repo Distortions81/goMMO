@@ -40,10 +40,10 @@ func connectServer() {
 }
 
 func doConnect() bool {
-	localPlayer.plock.Lock()
-	defer localPlayer.plock.Unlock()
 
-	playerNames = make(map[uint32]pNameData)
+	if playerNames == nil {
+		playerNames = make(map[uint32]pNameData)
+	}
 
 	changeGameMode(MODE_CONNECT, 0)
 	doLog(true, "Connecting...")
@@ -87,8 +87,6 @@ func doConnect() bool {
 }
 
 func getName(id uint32) string {
-	playerNamesLock.Lock()
-	defer playerNamesLock.Unlock()
 
 	for _, pname := range playerNames {
 		if pname.id == id {
@@ -136,6 +134,7 @@ func readNet() {
 		data := input[1:]
 		inbuf := bytes.NewReader(data)
 
+		drawLock.Lock()
 		/*
 			cmdName := cmdNames[d]
 
@@ -171,8 +170,6 @@ func readNet() {
 				continue
 			}
 
-			playerNamesLock.Lock()
-
 			for x := 0; x < int(numNames); x++ {
 				var id uint32
 				binary.Read(inbuf, binary.LittleEndian, &id)
@@ -188,14 +185,11 @@ func readNet() {
 
 				playerNames[id] = pNameData{name: name, id: id}
 			}
-			playerNamesLock.Unlock()
 
 		case CMD_UPDATE:
 
 			var numPlayers uint16
 			binary.Read(inbuf, binary.LittleEndian, &numPlayers)
-
-			playerListLock.Lock()
 
 			for _, player := range playerList {
 				player.unmark = true
@@ -237,11 +231,9 @@ func readNet() {
 					} else {
 						/* Update local player pos */
 						if localPlayer.id == nid {
-							posLock.Lock()
 							ourOldPos = ourPos
 							ourPos.X = nx
 							ourPos.Y = ny
-							posLock.Unlock()
 						}
 
 						playerList[nid].lastPos = playerList[nid].pos
@@ -280,7 +272,6 @@ func readNet() {
 			if numObj > 0 {
 				//fmt.Printf("numObj: %v\n", numObj)
 
-				wObjLock.Lock()
 				wObjList = []*worldObject{}
 				for x := 0; x < int(numObj); x++ {
 					var itemId, posx, posy uint32
@@ -304,18 +295,17 @@ func readNet() {
 					object := &worldObject{itemId: itemId, pos: pos}
 					wObjList = append(wObjList, object)
 				}
-				wObjLock.Unlock()
 			}
 
 			netCount++
 			dataDirty = true
-			playerListLock.Unlock()
 
 		default:
 			doLog(true, "Received invalid: 0x%02X\n", d)
 			localPlayer.conn.Close(websocket.StatusNormalClosure, "closed")
 			changeGameMode(MODE_ERROR, 0)
-			return
 		}
+
+		drawLock.Unlock()
 	}
 }
