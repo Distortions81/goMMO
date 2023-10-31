@@ -26,6 +26,10 @@ const maxChat = 256
 
 /* Input interface handler */
 func (g *Game) Update() error {
+
+	drawLock.Lock()
+	defer drawLock.Unlock()
+
 	updateCount++
 
 	if ChatMode || CommandMode {

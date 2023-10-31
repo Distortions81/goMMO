@@ -1,6 +1,7 @@
 package main
 
 import (
+	"sync"
 	"time"
 
 	"nhooyr.io/websocket"
@@ -19,10 +20,12 @@ func changeGameMode(newMode MODE, delay time.Duration) {
 	gameModeLock.Unlock()
 }
 
+var writeLock sync.Mutex
+
 func sendCommand(header CMD, data []byte) bool {
 
-	localPlayer.plock.Lock()
-	defer localPlayer.plock.Unlock()
+	writeLock.Lock()
+	defer writeLock.Unlock()
 
 	if localPlayer.conn == nil {
 		return false
