@@ -19,7 +19,7 @@ var smoothCamPos XY = xyCenter
 
 var nightLevel uint8 = 0
 var startTime time.Time
-var noSmoothing bool = false
+var noSmoothing bool = true
 
 type xySort []*playerData
 

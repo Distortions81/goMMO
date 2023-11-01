@@ -7,6 +7,8 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
+	"github.com/twpayne/go-geom"
+	"github.com/twpayne/go-geom/xy"
 )
 
 var (
@@ -31,6 +33,7 @@ func (g *Game) Update() error {
 	defer drawLock.Unlock()
 
 	updateCount++
+	newDir := DIR_NONE
 
 	if ChatMode || CommandMode {
 		start := []rune{}
@@ -110,6 +113,7 @@ func (g *Game) Update() error {
 			}
 		}
 	}
+
 	if EditMode {
 		if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
 			if !LeftMousePressed {
@@ -138,16 +142,27 @@ func (g *Game) Update() error {
 		}
 		mx, my := ebiten.CursorPosition()
 		editPos = XY{X: smoothCamPos.X - uint32(mx), Y: smoothCamPos.Y - uint32(my)}
+	} else {
+		if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
+			mx, my := ebiten.CursorPosition()
+			newDir = walkXY(mx, my)
+		} else {
+			touchIDs := ebiten.AppendTouchIDs(nil)
+			//Ignore multi-touch
+			if len(touchIDs) == 1 {
+				for _, touch := range touchIDs {
+					mx, my := ebiten.TouchPosition(touch)
+					newDir = walkXY(mx, my)
+					break
+				}
+			}
+		}
 	}
 
 	pressedKeys := inpututil.AppendPressedKeys(nil)
-	if pressedKeys == nil {
-		return nil
-	}
 
-	newDir := DIR_NONE
 	for _, key := range pressedKeys {
-		if !ChatMode {
+		if !ChatMode && newDir == DIR_NONE {
 			if key == ebiten.KeyW ||
 				key == ebiten.KeyArrowUp {
 				if newDir == DIR_NONE {
@@ -192,9 +207,7 @@ func (g *Game) Update() error {
 	}
 
 	if newDir != DIR_NONE {
-
-		goDir = newDir
-		moveDir(goDir)
+		moveDir(newDir)
 
 		if updateCount%8 == 0 {
 			sendMove()
@@ -204,6 +217,15 @@ func (g *Game) Update() error {
 	}
 
 	return nil
+}
+
+func walkXY(mx, my int) DIR {
+
+	p1 := geom.Coord{float64(HscreenWidth), float64(HscreenHeight), 0}
+	p2 := geom.Coord{float64(mx), float64(my), 0}
+	angle := xy.Angle(p1, p2)
+
+	return radToDir(angle)
 }
 
 const diagSpeed = 0.707

@@ -10,7 +10,6 @@ var (
 	WASMMode bool = false
 
 	updateCount int
-	goDir       DIR
 	dataDirty   bool  = true
 	curCharPos  XYf64 = XYf64{X: xyHalf, Y: xyHalf}
 	lastCharPos XYf64 = XYf64{X: xyHalf, Y: xyHalf}

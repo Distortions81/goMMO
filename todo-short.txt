@@ -16,7 +16,5 @@ Look into a system to convert live objects to standard...
 Maybe a command at connect to download new items, and to all players connected when changes are made.
 I think it would be best if we do this at X amount per frame to throttle the download (x segments, based on kb/sec?)... or on a different server.
 
-Chunk dirty flag, timer, lock, autosave.
-
-Mouse, Touch and controller inputs.
+Controller inputs (mouse/touch walk added)
 Don't pixel-double on very small windows (mobile)
