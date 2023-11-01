@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
+	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
@@ -22,9 +23,16 @@ var (
 	ChatMode    bool
 	CommandMode bool
 	ChatText    string
+
+	lastSent time.Time
+
+	sendInterval = time.Millisecond * 250
 )
 
-const maxChat = 256
+const (
+	maxChat     = 256
+	maxSendRate = time.Millisecond * 10
+)
 
 /* Input interface handler */
 func (g *Game) Update() error {
@@ -205,10 +213,7 @@ func (g *Game) Update() error {
 		}
 	}
 
-	if newDir != DIR_NONE && newDir != goDir {
-		goDir = newDir
-		sendMove()
-	}
+	sendMove(newDir)
 
 	return nil
 }
@@ -247,13 +252,31 @@ func repeatingKeyPressed(key ebiten.Key) bool {
 	return false
 }
 
-func sendMove() {
+func sendMove(newDir DIR) {
+
+	//Exit if nothing changed
+	if newDir == goDir {
+		if goDir == DIR_NONE {
+			return
+		} else if time.Since(lastSent) < sendInterval {
+			return
+		}
+	}
+
+	if time.Since(lastSent) < maxSendRate {
+		return
+	}
+
+	//Update our direction
+	goDir = newDir
 
 	var buf []byte
 	outbuf := bytes.NewBuffer(buf)
 
-	binary.Write(outbuf, binary.LittleEndian, goDir)
+	binary.Write(outbuf, binary.LittleEndian, &goDir)
 	sendCommand(CMD_MOVE, outbuf.Bytes())
+
+	lastSent = time.Now()
 }
 
 func editPlaceItem() {
