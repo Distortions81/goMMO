@@ -9,15 +9,16 @@ import (
 
 func changeGameMode(newMode MODE, delay time.Duration) {
 
+	gameModeLock.Lock()
+	defer gameModeLock.Unlock()
+
 	/* Skip if the same */
 	if newMode == gameMode {
 		return
 	}
 
 	time.Sleep(delay)
-	gameModeLock.Lock()
 	gameMode = newMode
-	gameModeLock.Unlock()
 }
 
 var writeLock sync.Mutex

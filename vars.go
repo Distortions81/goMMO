@@ -9,12 +9,8 @@ import (
 var (
 	WASMMode bool = false
 
-	updateCount int
-	dataDirty   bool  = true
-	curCharPos  XYf64 = XYf64{X: xyHalf, Y: xyHalf}
-	lastCharPos XYf64 = XYf64{X: xyHalf, Y: xyHalf}
-
-	gDevMode bool
+	dataDirty bool = true
+	gDevMode  bool
 
 	/* Game Mode */
 	gameMode     = MODE_START
@@ -24,9 +20,10 @@ var (
 	localPlayer playerData
 	playerNames map[uint32]pNameData
 
-	ourPos     XY
-	ourOldPos  XY
-	ourPosLast time.Time
+	goDir DIR
+
+	ourPos    XY
+	ourOldPos XY
 
 	playerList map[uint32]*playerData
 	drawLock   sync.Mutex

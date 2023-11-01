@@ -32,7 +32,6 @@ func (g *Game) Update() error {
 	drawLock.Lock()
 	defer drawLock.Unlock()
 
-	updateCount++
 	newDir := DIR_NONE
 
 	if ChatMode || CommandMode {
@@ -206,14 +205,9 @@ func (g *Game) Update() error {
 		}
 	}
 
-	if newDir != DIR_NONE {
-		moveDir(newDir)
-
-		if updateCount%8 == 0 {
-			sendMove()
-		}
-	} else {
-		updateCount = 0
+	if newDir != DIR_NONE && newDir != goDir {
+		goDir = newDir
+		sendMove()
 	}
 
 	return nil
@@ -237,8 +231,6 @@ func walkXY(mx, my int) DIR {
 	return radToDir(angle)
 }
 
-const diagSpeed = 0.707
-
 // repeatingKeyPressed return true when key is pressed considering the repeat state.
 func repeatingKeyPressed(key ebiten.Key) bool {
 	const (
@@ -255,45 +247,13 @@ func repeatingKeyPressed(key ebiten.Key) bool {
 	return false
 }
 
-func moveDir(dir DIR) {
-
-	switch dir {
-	case DIR_N:
-		curCharPos.Y++
-	case DIR_NE:
-		curCharPos.Y += diagSpeed
-		curCharPos.X -= diagSpeed
-	case DIR_E:
-		curCharPos.X--
-	case DIR_SE:
-		curCharPos.X -= diagSpeed
-		curCharPos.Y -= diagSpeed
-	case DIR_S:
-		curCharPos.Y--
-	case DIR_SW:
-		curCharPos.Y -= diagSpeed
-		curCharPos.X += diagSpeed
-	case DIR_W:
-		curCharPos.X++
-	case DIR_NW:
-		curCharPos.Y += diagSpeed
-		curCharPos.X += diagSpeed
-	default:
-		return
-	}
-
-}
-
 func sendMove() {
 
 	var buf []byte
 	outbuf := bytes.NewBuffer(buf)
 
-	binary.Write(outbuf, binary.LittleEndian, int8(curCharPos.X-lastCharPos.X))
-	binary.Write(outbuf, binary.LittleEndian, int8(curCharPos.Y-lastCharPos.Y))
+	binary.Write(outbuf, binary.LittleEndian, goDir)
 	sendCommand(CMD_MOVE, outbuf.Bytes())
-
-	lastCharPos = curCharPos
 }
 
 func editPlaceItem() {
