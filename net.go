@@ -162,6 +162,8 @@ func readNet() {
 
 		case CMD_COMMAND:
 			chat("> " + string(data))
+		case CMD_WORLDDATA:
+			fmt.Printf("WorldData %v\n", string(data))
 		case CMD_PLAYERNAMES:
 			var numNames uint32
 			binary.Read(inbuf, binary.LittleEndian, &numNames)
