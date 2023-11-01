@@ -221,8 +221,17 @@ func (g *Game) Update() error {
 
 func walkXY(mx, my int) DIR {
 
+	distance := distance(XY{X: uint32(HscreenWidth), Y: uint32(HscreenHeight)}, XY{X: uint32(mx), Y: uint32(my)})
+
+	if distance < charSpriteSize ||
+		mx > screenWidth || my > screenHeight ||
+		mx < 0 || my < 0 {
+		return DIR_NONE
+	}
+
 	p1 := geom.Coord{float64(HscreenWidth), float64(HscreenHeight), 0}
 	p2 := geom.Coord{float64(mx), float64(my), 0}
+
 	angle := xy.Angle(p1, p2)
 
 	return radToDir(angle)
