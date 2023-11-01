@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
+	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
@@ -22,9 +23,16 @@ var (
 	ChatMode    bool
 	CommandMode bool
 	ChatText    string
+
+	lastSent time.Time
+
+	sendInterval = time.Millisecond * 250
 )
 
-const maxChat = 256
+const (
+	maxChat     = 256
+	maxSendRate = time.Millisecond * 10
+)
 
 /* Input interface handler */
 func (g *Game) Update() error {
@@ -32,7 +40,6 @@ func (g *Game) Update() error {
 	drawLock.Lock()
 	defer drawLock.Unlock()
 
-	updateCount++
 	newDir := DIR_NONE
 
 	if ChatMode || CommandMode {
@@ -206,15 +213,7 @@ func (g *Game) Update() error {
 		}
 	}
 
-	if newDir != DIR_NONE {
-		moveDir(newDir)
-
-		if updateCount%8 == 0 {
-			sendMove()
-		}
-	} else {
-		updateCount = 0
-	}
+	sendMove(newDir)
 
 	return nil
 }
@@ -237,8 +236,6 @@ func walkXY(mx, my int) DIR {
 	return radToDir(angle)
 }
 
-const diagSpeed = 0.707
-
 // repeatingKeyPressed return true when key is pressed considering the repeat state.
 func repeatingKeyPressed(key ebiten.Key) bool {
 	const (
@@ -255,45 +252,31 @@ func repeatingKeyPressed(key ebiten.Key) bool {
 	return false
 }
 
-func moveDir(dir DIR) {
+func sendMove(newDir DIR) {
 
-	switch dir {
-	case DIR_N:
-		curCharPos.Y++
-	case DIR_NE:
-		curCharPos.Y += diagSpeed
-		curCharPos.X -= diagSpeed
-	case DIR_E:
-		curCharPos.X--
-	case DIR_SE:
-		curCharPos.X -= diagSpeed
-		curCharPos.Y -= diagSpeed
-	case DIR_S:
-		curCharPos.Y--
-	case DIR_SW:
-		curCharPos.Y -= diagSpeed
-		curCharPos.X += diagSpeed
-	case DIR_W:
-		curCharPos.X++
-	case DIR_NW:
-		curCharPos.Y += diagSpeed
-		curCharPos.X += diagSpeed
-	default:
+	//Exit if nothing changed
+	if newDir == goDir {
+		if goDir == DIR_NONE {
+			return
+		} else if time.Since(lastSent) < sendInterval {
+			return
+		}
+	}
+
+	if time.Since(lastSent) < maxSendRate {
 		return
 	}
 
-}
-
-func sendMove() {
+	//Update our direction
+	goDir = newDir
 
 	var buf []byte
 	outbuf := bytes.NewBuffer(buf)
 
-	binary.Write(outbuf, binary.LittleEndian, int8(curCharPos.X-lastCharPos.X))
-	binary.Write(outbuf, binary.LittleEndian, int8(curCharPos.Y-lastCharPos.Y))
+	binary.Write(outbuf, binary.LittleEndian, &goDir)
 	sendCommand(CMD_MOVE, outbuf.Bytes())
 
-	lastCharPos = curCharPos
+	lastSent = time.Now()
 }
 
 func editPlaceItem() {

@@ -9,15 +9,16 @@ import (
 
 func changeGameMode(newMode MODE, delay time.Duration) {
 
+	gameModeLock.Lock()
+	defer gameModeLock.Unlock()
+
 	/* Skip if the same */
 	if newMode == gameMode {
 		return
 	}
 
 	time.Sleep(delay)
-	gameModeLock.Lock()
 	gameMode = newMode
-	gameModeLock.Unlock()
 }
 
 var writeLock sync.Mutex
@@ -32,7 +33,7 @@ func sendCommand(header CMD, data []byte) bool {
 	}
 
 	cmdName := cmdNames[header]
-	if header != CMD_MOVE {
+	if header != 0 {
 		if cmdName == "" {
 			doLog(true, "Sent: 0x%02X", header)
 		} else {

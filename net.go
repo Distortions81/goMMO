@@ -135,16 +135,17 @@ func readNet() {
 		inbuf := bytes.NewReader(data)
 
 		drawLock.Lock()
-		/*
+
+		if d != CMD_UPDATE {
 			cmdName := cmdNames[d]
 
-				// Log event
-				if cmdName == "" {
-					doLog(true, "Received: 0x%02X (%vb)", d, inputLen)
-				} else {
-					doLog(true, "Received: %v (%vb)", cmdName, inputLen)
-				}
-		*/
+			// Log event
+			if cmdName == "" {
+				doLog(true, "Received: 0x%02X (%vb)", d, inputLen)
+			} else {
+				doLog(true, "Received: %v (%vb)", cmdName, inputLen)
+			}
+		}
 
 		switch d {
 		case CMD_INIT:
