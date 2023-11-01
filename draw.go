@@ -117,7 +117,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		if EditMode {
 			drawDebugEdit(screen)
 		}
-		drawRays(screen)
+
 		drawWorld(screen)
 		drawPlayers(screen)
 
@@ -144,6 +144,9 @@ func (g *Game) Draw(screen *ebiten.Image) {
 func drawWorld(screen *ebiten.Image) {
 	/* Draw obj */
 	for _, obj := range wObjList {
+		if !obj.itemData.OnGround {
+			continue
+		}
 
 		xPos := float64(int(smoothCamPos.X) - int(obj.pos.X))
 		yPos := float64(int(smoothCamPos.Y) - int(obj.pos.Y))
@@ -158,6 +161,28 @@ func drawWorld(screen *ebiten.Image) {
 		//Draw sub-image
 		screen.DrawImage(spritelist[obj.itemId].image, &op)
 	}
+
+	drawRays(screen)
+
+	for _, obj := range wObjList {
+		if obj.itemData.OnGround {
+			continue
+		}
+
+		xPos := float64(int(smoothCamPos.X) - int(obj.pos.X))
+		yPos := float64(int(smoothCamPos.Y) - int(obj.pos.Y))
+
+		op := ebiten.DrawImageOptions{}
+
+		op.GeoM.Scale(2, 2)
+
+		//camera - object, TODO: get sprite size
+		op.GeoM.Translate(xPos-48.0, yPos-48.0)
+
+		//Draw sub-image
+		screen.DrawImage(spritelist[obj.itemId].image, &op)
+	}
+
 }
 
 func drawLight(screen *ebiten.Image) {
