@@ -27,12 +27,43 @@ var (
 	lastSent time.Time
 
 	sendInterval = time.Millisecond * 250
+
+	/* UI state */
+	gMouseHeld       bool
+	gMiddleMouseHeld bool
+	gRightMouseHeld  bool
+	gShiftPressed    bool
+	gClickCaptured   bool
+	gCameraDrag      bool
+	gWindowDrag      *windowData
+
+	/* Last object we performed an action on */
+	gLastActionPosition XY
 )
 
 const (
 	maxChat     = 256
 	maxSendRate = time.Millisecond * 10
 )
+
+/* Record mouse clicks, send clicks to toolbar */
+func getMouseClicks() {
+	defer reportPanic("getMouseClicks")
+
+	/* Mouse clicks */
+	if inpututil.IsMouseButtonJustReleased(ebiten.MouseButtonLeft) {
+		gMouseHeld = false
+
+		/* Stop dragging window */
+		gWindowDrag = nil
+
+		gLastActionPosition = XY{}
+	} else if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
+		gMouseHeld = true
+		gLastActionPosition.X = 0
+		gLastActionPosition.Y = 0
+	}
+}
 
 /* Input interface handler */
 func (g *Game) Update() error {
@@ -41,6 +72,8 @@ func (g *Game) Update() error {
 	defer drawLock.Unlock()
 
 	newDir := DIR_NONE
+
+	getMouseClicks()
 
 	if ChatMode || CommandMode {
 		start := []rune{}

@@ -7,9 +7,11 @@ import (
 	"image/color"
 	"io"
 	"math"
+	"runtime"
 	"strings"
 	"time"
 
+	"github.com/shirou/gopsutil/cpu"
 	"github.com/twpayne/go-geom"
 	"github.com/twpayne/go-geom/xy"
 )
@@ -170,4 +172,64 @@ func XYf64toXY(pos XYf64) XY {
 
 func XYf32toXY(pos XYf32) XY {
 	return XY{X: uint32(pos.X), Y: uint32(pos.Y)}
+}
+
+/* Bool to text */
+func BoolToOnOff(input bool) string {
+	defer reportPanic("BoolToOnOff")
+	if input {
+		return "On"
+	} else {
+		return "Off"
+	}
+}
+
+/* Check if a position is within a image.Rectangle */
+func PosWithinRect(pos XY, rect image.Rectangle, pad uint32) bool {
+	defer reportPanic("PosWithinRect")
+	if int(pos.X-pad) <= rect.Max.X && int(pos.X+pad) >= rect.Min.X {
+		if int(pos.Y-pad) <= rect.Max.Y && int(pos.Y+pad) >= rect.Min.Y {
+			return true
+		}
+	}
+	return false
+}
+
+/* Detect logical and virtual CPUs, set number of workers */
+func detectCPUs(hyper bool) {
+	defer reportPanic("detectCPUs")
+
+	if WASMMode {
+		numWorkers = 1
+		return
+	}
+
+	/* Detect logical CPUs, failing that... use numcpu */
+	var lCPUs int = runtime.NumCPU()
+	if lCPUs <= 1 {
+		lCPUs = 1
+	}
+	numWorkers = lCPUs
+	doLog(true, "Virtual CPUs: %v", lCPUs)
+
+	if hyper {
+		numWorkers = lCPUs
+		doLog(true, "Number of workers: %v", lCPUs)
+		return
+	}
+
+	/* Logical CPUs */
+	count, err := cpu.Counts(false)
+
+	if err == nil {
+		if count > 1 {
+			lCPUs = (count - 1)
+		} else {
+			lCPUs = 1
+		}
+		doLog(true, "Logical CPUs: %v", count)
+	}
+
+	doLog(true, "Number of workers: %v", lCPUs)
+	numWorkers = lCPUs
 }

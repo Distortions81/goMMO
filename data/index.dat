@@ -26,3 +26,9 @@ tree-2:tree2.png:false:60:60
 effects:
 light:light.png
 login:login.png
+
+ui:
+check on:check-on.png
+check off:check-off.png
+close box:close.png
+

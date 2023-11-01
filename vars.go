@@ -42,4 +42,18 @@ var (
 	/* Reconnect */
 	ReconnectCount     = 0
 	RecconnectDelayCap = 30
+
+	debugMode        = false
+	helpText  string = ""
+
+	/* Number of tocks per worker */
+	numWorkers int
+
+	magnify = true
+
+	vSync    bool = true
+	usUnits  bool = false
+	useHyper bool = false
+	infoLine bool = false
+	autoSave bool = true
 )

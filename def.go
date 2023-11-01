@@ -10,6 +10,7 @@ const (
 	/* Files and directories */
 	dataDir = "data/"
 	gfxDir  = dataDir + "gfx/"
+	txtDir  = dataDir + "txt/"
 
 	charSpriteSize    = 52
 	cLoadEmbedSprites = true
@@ -83,5 +84,6 @@ func init() {
 }
 
 const xyHalf = 2147483648
+const xyMax = xyHalf * 2.0
 
 var xyCenter XY = XY{X: xyHalf, Y: xyHalf}

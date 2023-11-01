@@ -3,7 +3,9 @@ package main
 import (
 	"embed"
 	"image"
+	"io"
 	"log"
+	"strings"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
@@ -18,9 +20,35 @@ var (
 	testlight *ebiten.Image
 	testLogin *ebiten.Image
 
+	checkOn  *ebiten.Image
+	checkOff *ebiten.Image
+	closeBox *ebiten.Image
+
 	spritelist []*sectionItemData
 	numSprites uint32
 )
+
+func getText(name string) (string, error) {
+	file, err := efs.Open(txtDir + name + ".txt")
+	if err != nil {
+		doLog(true, "GetText: %v", err)
+		return "GetText: File: " + name + " not found in embed.", err
+	}
+
+	txt, err := io.ReadAll(file)
+	if err != nil {
+		doLog(true, "GetText: %v", err)
+		return "Error: Failed read: " + name, err
+	}
+
+	if len(txt) > 0 {
+		doLog(true, "GetText: %v", name)
+		return strings.ReplaceAll(string(txt), "\r", ""), nil
+	} else {
+		return "Error: length 0!", err
+	}
+
+}
 
 func loadTest() {
 
@@ -48,6 +76,10 @@ func loadTest() {
 	testChar = getItemImage("characters", "player")
 	testlight = getItemImage("effects", "light")
 	testLogin = getItemImage("effects", "login")
+
+	checkOn = getItemImage("ui", "check on")
+	checkOff = getItemImage("ui", "check off")
+	closeBox = getItemImage("ui", "close box")
 }
 
 func getItemImage(typeName string, itemName string) *ebiten.Image {
