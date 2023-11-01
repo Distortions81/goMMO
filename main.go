@@ -53,7 +53,7 @@ func main() {
 
 	/* Set up ebiten and window */
 	ebiten.SetVsyncEnabled(true)
-	ebiten.SetTPS(120)
+	ebiten.SetTPS(ebiten.SyncWithFPS)
 	ebiten.SetScreenClearedEveryFrame(false)
 	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeEnabled)
 	ebiten.SetWindowSize(screenWidth, screenHeight)
