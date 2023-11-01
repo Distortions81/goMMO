@@ -31,6 +31,8 @@ var (
 	showRays bool
 	px, py   int = screenWidth / 2, screenHeight / 2
 	rObjects []rayObject
+
+	fastShadow bool
 )
 
 type line struct {
@@ -53,12 +55,24 @@ func makeRayObjs() {
 	//Outer walls
 	rObjects = append(rObjects, rayObject{rect(0, 0, float64(screenWidth), float64(screenHeight))})
 
-	//Test obj
+	//Cast against players
 	for _, obj := range playerList {
 		if obj.id == localPlayer.id {
 			continue
 		}
 		rec := rect(float64(smoothCamPos.X-obj.spos.X-5), float64(smoothCamPos.Y-obj.spos.Y-12), 15, 35)
+		rObjects = append(rObjects, rayObject{rec})
+	}
+
+	//Cast against objects
+	for _, obj := range wObjList {
+		if obj.itemData.OnGround {
+			continue
+		}
+		rec := rect(
+			float64(smoothCamPos.X-obj.pos.X-uint32(obj.itemData.SizeW/2)),
+			float64(smoothCamPos.Y-obj.pos.Y-uint32(obj.itemData.SizeH/2)),
+			float64(obj.itemData.SizeW), float64(obj.itemData.SizeH))
 		rObjects = append(rObjects, rayObject{rec})
 	}
 }
@@ -206,22 +220,23 @@ func drawRays(screen *ebiten.Image) {
 	}
 
 	// Draw shadow
-	/*
+	if fastShadow {
 		op := &ebiten.DrawImageOptions{}
-		op.ColorScale.ScaleAlpha(0.8)
+		op.ColorScale.ScaleAlpha(0.5)
 		screen.DrawImage(shadowImage, op)
-	*/
 
-	// Simple linear blur (7x7)
-	amount := 3
-	for j := -amount; j <= amount; j++ {
-		for i := -amount; i <= amount; i++ {
-			op := &ebiten.DrawImageOptions{}
-			op.GeoM.Translate(float64(i*2), float64(j*2))
-			// Alpha scale should be 1.0/49.0, but accumulating 1/49 49 times doesn't reach to 1 due to
-			// errors.
-			op.ColorScale.ScaleAlpha((float32(nightLevel) / 255.0) / (float32(amount*amount) * 10.0))
-			screen.DrawImage(shadowImage, op)
+	} else {
+		// Simple linear blur (7x7)
+		amount := 3
+		for j := -amount; j <= amount; j++ {
+			for i := -amount; i <= amount; i++ {
+				op := &ebiten.DrawImageOptions{}
+				op.GeoM.Translate(float64(i*2), float64(j*2))
+				// Alpha scale should be 1.0/49.0, but accumulating 1/49 49 times doesn't reach to 1 due to
+				// errors.
+				op.ColorScale.ScaleAlpha((float32(nightLevel) / 255.0) / (float32(amount*amount) * 10.0))
+				screen.DrawImage(shadowImage, op)
+			}
 		}
 	}
 

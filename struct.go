@@ -82,5 +82,6 @@ type chunkData struct {
 type worldObject struct {
 	itemId uint32
 	pos    XY
-	uid    uint32
+
+	itemData *sectionItemData
 }

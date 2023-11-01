@@ -15,13 +15,13 @@ grass:grass.png
 grass-1:grass1.png
 
 world-objects:
-blue mushroom:blue-mush.png
-red mushroom:red-mush.png
-tiny rock:tiny-rock.png
-tiny shrub:tiny-shrub.png
-tiny tree stump:tiny-tree-stump.png
-tree-1:tree1.png
-tree-2:tree2.png
+blue mushroom:blue-mush.png:true:0:0
+red mushroom:red-mush.png:true:0:0
+tiny rock:tiny-rock.png:true:0:0
+tiny shrub:tiny-shrub.png:true:0:0
+tiny tree stump:tiny-tree-stump.png:true:0:0
+tree-1:tree1.png:false:60:60
+tree-2:tree2.png:false:60:60
 
 effects:
 light:light.png

@@ -295,8 +295,10 @@ func readNet() {
 					}
 
 					pos := XY{X: posx, Y: posy}
-					object := &worldObject{itemId: itemId, pos: pos}
+
+					object := &worldObject{itemId: itemId, pos: pos, itemData: spritelist[itemId]}
 					wObjList = append(wObjList, object)
+
 				}
 			}
 

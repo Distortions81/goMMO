@@ -1,6 +1,7 @@
 package main
 
 import (
+	"strconv"
 	"strings"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -20,6 +21,9 @@ type sectionItemData struct {
 	fileName string
 	itemType uint32
 	id       uint32
+	OnGround bool
+	SizeW    uint16
+	SizeH    uint16
 
 	image *ebiten.Image
 }
@@ -103,11 +107,22 @@ func readIndex() bool {
 		if currentSection != nil {
 			words := strings.Split(line, ":")
 			numWords := len(words)
-			if numWords != 2 {
+			if numWords < 2 {
 				doLog(true, "Item doesn't have correct number of entries on line %v.", lnum)
 				return false
 			}
-			newItem := &sectionItemData{name: words[0], fileName: words[1], id: uint32(itemID), itemType: currentSection.id}
+			newItem := &sectionItemData{
+				name: words[0], fileName: words[1],
+				id: uint32(itemID), itemType: currentSection.id}
+			if numWords == 5 {
+				if words[2] == "true" {
+					newItem.OnGround = true
+				}
+				sizeW, _ := strconv.ParseUint(words[3], 10, 16)
+				newItem.SizeW = uint16(sizeW)
+				sizeH, _ := strconv.ParseUint(words[4], 10, 16)
+				newItem.SizeH = uint16(sizeH)
+			}
 			itemID++
 			currentSection.items[newItem.id] = newItem
 

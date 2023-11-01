@@ -113,10 +113,22 @@ func (g *Game) Update() error {
 
 			if noSmoothing {
 				noSmoothing = false
-				chat("Motion smoothing turned ON!")
+				chat("Motion smoothing now ON!")
 			} else {
 				noSmoothing = true
-				chat("Motion smoothing turned OFF!")
+				chat("Motion smoothing now OFF! (battery saver)")
+			}
+		}
+	}
+	if repeatingKeyPressed(ebiten.KeyZ) {
+		if !ChatMode && !CommandMode {
+
+			if fastShadow {
+				fastShadow = false
+				chat("Fast shadows now ON! (Faster/Less battery)")
+			} else {
+				fastShadow = true
+				chat("Fast shadows now OFF!")
 			}
 		}
 	}

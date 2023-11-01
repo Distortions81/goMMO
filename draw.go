@@ -117,9 +117,10 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		if EditMode {
 			drawDebugEdit(screen)
 		}
-		drawWorld(screen)
 		drawRays(screen)
+		drawWorld(screen)
 		drawPlayers(screen)
+
 		drawLight(screen)
 
 		drawDebugInfo(screen)
