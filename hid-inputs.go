@@ -181,7 +181,7 @@ func (g *Game) Update() error {
 	pressedKeys := inpututil.AppendPressedKeys(nil)
 
 	for _, key := range pressedKeys {
-		if !ChatMode && newDir == DIR_NONE {
+		if !ChatMode {
 			if key == ebiten.KeyW ||
 				key == ebiten.KeyArrowUp {
 				if newDir == DIR_NONE {
