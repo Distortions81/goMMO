@@ -68,12 +68,24 @@ func getMouseClicks() {
 /* Input interface handler */
 func (g *Game) Update() error {
 
+	/* Ignore if game not focused */
+	if !ebiten.IsFocused() {
+		return nil
+	}
+
 	drawLock.Lock()
 	defer drawLock.Unlock()
 
-	newDir := DIR_NONE
-
+	gClickCaptured = false
 	getMouseClicks()
+
+	/* Check if we clicked within a window */
+	mx, my := ebiten.CursorPosition()
+	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
+		gClickCaptured = collisionWindowsCheck(XYs{X: int32(mx), Y: int32(my)})
+	}
+
+	newDir := DIR_NONE
 
 	if ChatMode || CommandMode {
 		start := []rune{}
@@ -167,21 +179,23 @@ func (g *Game) Update() error {
 	}
 
 	if EditMode {
-		if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
-			if !LeftMousePressed {
-				editPlaceItem()
+		if !gClickCaptured {
+			if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
+				if !LeftMousePressed {
+					editPlaceItem()
+				}
+				LeftMousePressed = true
+			} else {
+				LeftMousePressed = false
 			}
-			LeftMousePressed = true
-		} else {
-			LeftMousePressed = false
-		}
-		if ebiten.IsMouseButtonPressed(ebiten.MouseButtonRight) {
-			if !RightMousePressed {
-				editDeleteItem()
+			if ebiten.IsMouseButtonPressed(ebiten.MouseButtonRight) {
+				if !RightMousePressed {
+					editDeleteItem()
+				}
+				RightMousePressed = true
+			} else {
+				RightMousePressed = false
 			}
-			RightMousePressed = true
-		} else {
-			RightMousePressed = false
 		}
 		if repeatingKeyPressed(ebiten.KeyEqual) {
 			if EditID < numSprites {
@@ -192,11 +206,10 @@ func (g *Game) Update() error {
 				EditID--
 			}
 		}
-		mx, my := ebiten.CursorPosition()
+
 		editPos = XY{X: smoothCamPos.X - uint32(mx), Y: smoothCamPos.Y - uint32(my)}
-	} else {
+	} else if !gClickCaptured {
 		if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
-			mx, my := ebiten.CursorPosition()
 			newDir = walkXY(mx, my)
 		} else {
 			touchIDs := ebiten.AppendTouchIDs(nil)

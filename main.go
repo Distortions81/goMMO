@@ -71,6 +71,7 @@ func newGame() *Game {
 	go connectServer()
 
 	initWindows()
+	settingsToggle()
 
 	HscreenWidth = screenWidth / 2
 	HscreenHeight = screenHeight / 2

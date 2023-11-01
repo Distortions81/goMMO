@@ -72,6 +72,27 @@ type WindowButtonData struct {
 	titleBarHeight int
 }
 
+/* Toggle settings window */
+func settingsToggle() {
+	defer reportPanic("settingsToggle")
+	if windows[0].active {
+		closeWindow(windows[0])
+	} else {
+		openWindow(windows[0])
+	}
+}
+
+/* Toggle help window */
+func toggleHelp() {
+	defer reportPanic("toggleHelp")
+
+	if windows[1].active {
+		closeWindow(windows[1])
+	} else {
+		openWindow(windows[1])
+	}
+}
+
 /* Allow windows to do any precalculation they need to do */
 func initWindows() {
 	defer reportPanic("initWindows")
