@@ -130,6 +130,12 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		drawChatBar(screen)
 
 		drawOpenWindows(screen)
+
+		/* Draw toolbar */
+		toolbarCacheLock.RLock()
+		screen.DrawImage(toolbarCache, nil)
+		toolbarCacheLock.RUnlock()
+
 	} else {
 		op := &ebiten.DrawImageOptions{}
 		var imgSize float64 = 1024.0

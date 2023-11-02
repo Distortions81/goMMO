@@ -31,4 +31,5 @@ ui:
 check on:check-on.png
 check off:check-off.png
 close box:close.png
-
+settings:settings.png
+help:help.png

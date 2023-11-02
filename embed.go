@@ -20,9 +20,11 @@ var (
 	testlight *ebiten.Image
 	testLogin *ebiten.Image
 
-	checkOn  *ebiten.Image
-	checkOff *ebiten.Image
-	closeBox *ebiten.Image
+	checkOn      *ebiten.Image
+	checkOff     *ebiten.Image
+	closeBox     *ebiten.Image
+	settingsIcon *ebiten.Image
+	helpIcon     *ebiten.Image
 
 	spritelist []*sectionItemData
 	numSprites uint32
@@ -80,6 +82,11 @@ func loadTest() {
 	checkOn = getItemImage("ui", "check on")
 	checkOff = getItemImage("ui", "check off")
 	closeBox = getItemImage("ui", "close box")
+	settingsIcon = getItemImage("ui", "settings")
+	helpIcon = getItemImage("ui", "help")
+
+	initToolbar()
+	drawToolbar(false, false, maxItemType)
 }
 
 func getItemImage(typeName string, itemName string) *ebiten.Image {
