@@ -35,14 +35,14 @@ func main() {
 	devMode := flag.Bool("dev", false, "dev mode enable")
 	flag.Parse()
 
-	/* Temporary for testing */
+	// Temporary for testing
 	if *devMode {
 		gDevMode = true
 		authSite = "https://127.0.0.1/gs"
 		transport.TLSClientConfig.InsecureSkipVerify = true
 	}
 
-	/* TODO: use compile flag instead */
+	// TODO: use compile flag instead
 	if runtime.GOARCH == "wasm" {
 		WASMMode = true
 	}
@@ -51,7 +51,7 @@ func main() {
 		return
 	}
 
-	/* Set up ebiten and window */
+	// Set up ebiten and window
 	ebiten.SetVsyncEnabled(true)
 	ebiten.SetTPS(ebiten.SyncWithFPS)
 	ebiten.SetScreenClearedEveryFrame(false)
@@ -87,7 +87,7 @@ func newGame() *Game {
 
 const maxScreenSize = 1080
 
-/* Ebiten resize handling */
+// Ebiten resize handling
 func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 
 	if outsideWidth > maxScreenSize {

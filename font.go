@@ -14,7 +14,7 @@ var (
 	fontDPI float64 = fpx
 	uiScale         = 1.0
 
-	/* Fonts */
+	// Fonts
 	toolTipFont  font.Face
 	monoFont     font.Face
 	generalFont  font.Face
@@ -44,7 +44,7 @@ func updateFonts() {
 		log.Fatal(err)
 	}
 
-	/* Mono font */
+	// Mono font
 	fontData = getFont("Hack-Regular.ttf")
 	collection, err = opentype.ParseCollection(fontData)
 	if err != nil {
@@ -61,7 +61,7 @@ func updateFonts() {
 	 * Changes how large the font is for a given point value
 	 */
 
-	/* General font */
+	// General font
 	generalFont, err = opentype.NewFace(tt, &opentype.FaceOptions{
 		Size:    10,
 		DPI:     fontDPI,
@@ -72,7 +72,7 @@ func updateFonts() {
 	}
 	generalFontH = getFontHeight(generalFont)
 
-	/* Tooltip font */
+	// Tooltip font
 	toolTipFont, err = opentype.NewFace(tt, &opentype.FaceOptions{
 		Size:    8,
 		DPI:     fontDPI,
@@ -82,7 +82,7 @@ func updateFonts() {
 		log.Fatal(err)
 	}
 
-	/* Mono font */
+	// Mono font
 	monoFont, err = opentype.NewFace(mono, &opentype.FaceOptions{
 		Size:    8,
 		DPI:     fontDPI,

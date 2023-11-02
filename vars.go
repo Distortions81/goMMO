@@ -7,26 +7,35 @@ import (
 )
 
 var (
-	WASMMode bool = false //web assembly mode
+	//Web assembly mode
+	WASMMode bool = false
 
-	dataDirty bool = true //If new network data has been rendered or not
-	gDevMode  bool        //-dev argument
+	//If new network data has been rendered or not
+	dataDirty bool = true
+	//-dev argument
+	gDevMode bool
 
-	gameMode     = MODE_Start //Login, playing, reconnect, etc
+	//Login, playing, reconnect, etc
+	gameMode     = MODE_Start
 	gameModeLock sync.Mutex
 
-	localPlayer playerData           //Our local player's data (id, etc)
-	playerNames map[uint32]pNameData //Player ID to name map
+	//Our local player's data (id, etc)
+	localPlayer playerData
+	//Player ID to name map
+	playerNames map[uint32]pNameData
+	//Direction we are walking
+	goingDirection DIR
 
-	goingDirection DIR //Direction we are walking
-
-	localPlayerPos    XY //Our position from server
+	//Our position from server
+	localPlayerPos    XY
 	oldLocalPlayerPos XY
 
-	playerList map[uint32]*playerData //Players from server
+	//Players from server
+	playerList map[uint32]*playerData
 	drawLock   sync.Mutex
 
-	wObjList []*worldObject //World object list
+	//World object list
+	wObjList []*worldObject
 
 	//Player name BG color
 	colorNameBG = color.RGBA{R: 32, G: 32, B: 32, A: 160}
@@ -41,9 +50,13 @@ var (
 	ReconnectCount     = 0
 	RecconnectDelayCap = 30
 
-	windowDebugMode        = false
-	helpText        string = ""
+	//Useful while designing or debugging UI
+	windowDebugMode = false
 
+	//Help string
+	helpText string = ""
+
+	//Settings
 	vSync     bool = true
 	debugLine bool = false
 )

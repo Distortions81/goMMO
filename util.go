@@ -20,7 +20,7 @@ func changeGameMode(newMode MODE, delay time.Duration) {
 	gameModeLock.Lock()
 	defer gameModeLock.Unlock()
 
-	/* Skip if the same */
+	// Skip if the same
 	if newMode == gameMode {
 		return
 	}
@@ -101,7 +101,7 @@ func getCharFrame(player *playerData) image.Image {
 
 }
 
-/* Generic unzip []byte */
+// Generic unzip []byte
 func UncompressZip(data []byte) []byte {
 	defer reportPanic("UncompressZip")
 
@@ -117,7 +117,7 @@ func UncompressZip(data []byte) []byte {
 	return p
 }
 
-/* Generic zip []byte */
+// Generic zip []byte
 func CompressZip(data []byte) []byte {
 	defer reportPanic("CompressZip")
 
@@ -128,13 +128,13 @@ func CompressZip(data []byte) []byte {
 	return b.Bytes()
 }
 
-/* Trim lines from chat */
+// Trim lines from chat
 func deleteOldChatLines() {
 	defer reportPanic("deleteOldChatLines")
 	var newLines []chatLineData
 	var newTop int
 
-	/* Delete 1 excess line each time */
+	// Delete 1 excess line each time
 	for l, line := range chatLines {
 		if l < 1000 {
 			newLines = append(newLines, line)
@@ -153,12 +153,12 @@ func distance(a, b XY) float64 {
 	return math.Sqrt(float64(dx*dx + dy*dy))
 }
 
-/* Default add lines to chat */
+// Default add lines to chat
 func chat(text string) {
 	chatDetailed(text, color.White, time.Second*15)
 }
 
-/* Add to chat with options */
+// Add to chat with options
 func chatDetailed(text string, color color.Color, life time.Duration) {
 	defer reportPanic("chatDetailed")
 
@@ -192,7 +192,7 @@ func XYf32toXY(pos XYf32) XY {
 	return XY{X: uint32(pos.X), Y: uint32(pos.Y)}
 }
 
-/* Bool to text */
+// Bool to text
 func BoolToOnOff(input bool) string {
 	defer reportPanic("BoolToOnOff")
 
@@ -203,7 +203,7 @@ func BoolToOnOff(input bool) string {
 	}
 }
 
-/* Check if a position is within a image.Rectangle */
+// Check if a position is within a image.Rectangle
 func PosWithinRect(pos XY, rect image.Rectangle, pad uint32) bool {
 	defer reportPanic("PosWithinRect")
 

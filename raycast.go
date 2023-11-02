@@ -242,13 +242,12 @@ func drawNightShadows(screen *ebiten.Image) {
 	}
 
 	// Draw walls
-	/*
-		for _, obj := range rObjects {
-			for _, w := range obj.walls {
-				vector.StrokeLine(screen, float32(w.X1), float32(w.Y1), float32(w.X2), float32(w.Y2), 1, color.RGBA{255, 0, 0, 255}, true)
-			}
+	//
+	for _, obj := range rObjects {
+		for _, w := range obj.walls {
+			vector.StrokeLine(screen, float32(w.X1), float32(w.Y1), float32(w.X2), float32(w.Y2), 1, color.RGBA{255, 0, 0, 255}, true)
 		}
-	*/
+	}
 
 	ebitenutil.DebugPrintAt(screen, fmt.Sprintf("Rays: 2*%d", len(rays)/2), 1, 222)
 }

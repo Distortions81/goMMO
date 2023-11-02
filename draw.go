@@ -31,7 +31,7 @@ func (v xySort) Len() int           { return len(v) }
 func (v xySort) Swap(i, j int)      { v[i], v[j] = v[j], v[i] }
 func (v xySort) Less(i, j int) bool { return v[i].pos.Y+v[i].pos.X > v[j].pos.Y+v[j].pos.X }
 
-/* Ebiten: Draw everything */
+// Ebiten: Draw everything
 func (g *Game) Draw(screen *ebiten.Image) {
 	gameModeLock.Lock()
 	defer gameModeLock.Unlock()
@@ -79,7 +79,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 }
 
 func drawBootScreen(screen *ebiten.Image) {
-	/* Boot screen */
+	// Boot screen
 	op := &ebiten.DrawImageOptions{}
 	var imgSize float64 = 1024.0
 
@@ -93,7 +93,7 @@ func drawBootScreen(screen *ebiten.Image) {
 }
 
 func drawGrass(screen *ebiten.Image) {
-	/* Draw grass */
+	// Draw grass
 	for x := -32; x <= screenX; x += 32 {
 		for y := -32; y <= screenY; y += 32 {
 			op := ebiten.DrawImageOptions{}
@@ -140,7 +140,7 @@ func motionSmoothing() {
 			}
 		}
 	} else {
-		/* Standard mode, just copy data over */
+		// Standard mode, just copy data over
 		camPos.X = (uint32(halfScreenX)) + localPlayerPos.X
 		camPos.Y = (uint32(halfScreenY)) + localPlayerPos.Y
 		sCamPos = camPos
@@ -208,7 +208,7 @@ func drawNightVignette(screen *ebiten.Image) {
 	//Use linear filter for this
 	op := ebiten.DrawImageOptions{Filter: ebiten.FilterLinear}
 
-	/* Fit this onto the screen */
+	// Fit this onto the screen
 	var screenSize int
 	if screenY > screenX {
 		screenSize = screenY
@@ -235,7 +235,7 @@ func drawNightVignette(screen *ebiten.Image) {
 func drawPlayers(screen *ebiten.Image) {
 	defer reportPanic("drawPlayers")
 
-	/* Find visible players and sort them */
+	// Find visible players and sort them
 	var pList []*playerData
 	for _, player := range playerList {
 		xPos := float64(int(sCamPos.X) - int(player.spos.X))
@@ -255,7 +255,7 @@ func drawPlayers(screen *ebiten.Image) {
 	}
 	sort.Sort(xySort(pList))
 
-	/* Draw player */
+	// Draw player
 	for _, player := range pList {
 
 		xPos := float64(int(sCamPos.X) - int(player.spos.X))
@@ -272,7 +272,7 @@ func drawPlayers(screen *ebiten.Image) {
 		screen.DrawImage(getCharFrame(player).(*ebiten.Image), &op)
 	}
 
-	/* Draw player name */
+	// Draw player name
 	for _, player := range pList {
 
 		var pname string
@@ -291,7 +291,7 @@ func drawPlayers(screen *ebiten.Image) {
 
 	}
 
-	/* Draw health */
+	// Draw health
 	for _, player := range pList {
 		if player.health < 100 {
 
@@ -366,9 +366,9 @@ var (
 )
 
 const (
-	/* Number of chat lines to display at once */
+	// Number of chat lines to display at once
 	chatHeightLines = 20
-	/* Default fade out time */
+	// Default fade out time
 	chatFadeTime = time.Second * 3
 
 	padding = 8
@@ -383,19 +383,19 @@ func drawChatLines(screen *ebiten.Image) {
 
 	for x := chatLinesTop; x > 0 && lineNum < chatHeightLines; x-- {
 		line := chatLines[x-1]
-		/* Ignore old chat lines */
+		// Ignore old chat lines
 		since := startTime.Sub(line.timestamp)
 		if !consoleActive && since > line.lifetime {
 			continue
 		}
 		lineNum++
 
-		/* BG */
+		// BG
 		tempBGColor := colorNameBG
-		/* Text color */
+		// Text color
 		r, g, b, _ := line.color.RGBA()
 
-		/* Alpha + fade out */
+		// Alpha + fade out
 		var blend float64 = 0
 		if line.lifetime-since < chatFadeTime {
 			blend = (float64(chatFadeTime-(line.lifetime-since)) / float64(chatFadeTime) * 100.0)
@@ -424,7 +424,7 @@ func drawDebugInfo(screen *ebiten.Image) {
 		return
 	}
 
-	/* Draw debug info */
+	// Draw debug info
 	buf := fmt.Sprintf("FPS: %3v  Arch: %v  Build: v%v",
 		int(ebiten.ActualFPS()),
 		runtime.GOARCH, gameVersion,
@@ -456,7 +456,7 @@ func drawDebugEdit(screen *ebiten.Image) {
 		screen.DrawImage(spritelist[worldEditID].image, &op)
 	}
 
-	/* Draw debug info */
+	// Draw debug info
 	buf := fmt.Sprintf("EDIT MODE ON: ID: %v", worldEditID)
 
 	drawText(buf, monoFont, color.White, colorNameBG,

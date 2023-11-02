@@ -55,7 +55,7 @@ type playerData struct {
 	id uint32
 }
 
-/* Chat line data */
+// Chat line data
 type chatLineData struct {
 	text string
 

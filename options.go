@@ -53,7 +53,7 @@ func init() {
 	}
 }
 
-/* Load user options settings from disk */
+// Load user options settings from disk
 func loadOptions() bool {
 	defer reportPanic("loadOptions")
 	if WASMMode {
@@ -91,7 +91,7 @@ func loadOptions() bool {
 	return true
 }
 
-/* Save user options settings to disk */
+// Save user options settings to disk
 func saveOptions() {
 	defer reportPanic("saveOptions")
 	if WASMMode {
@@ -141,7 +141,7 @@ func saveOptions() {
 	doLog(true, "Settings saved.")
 }
 
-/* Toggle the debug bottom-screen text */
+// Toggle the debug bottom-screen text
 func toggleInfoLine(item int) {
 	defer reportPanic("toggleInfoLine")
 	if debugLine {
@@ -153,7 +153,7 @@ func toggleInfoLine(item int) {
 	}
 }
 
-/* Toggle the use of hyper-threading */
+// Toggle the use of hyper-threading
 func toggleNightShadow(item int) {
 	defer reportPanic("toggleNightShadow")
 	if disableNightShadow {
@@ -165,7 +165,7 @@ func toggleNightShadow(item int) {
 	}
 }
 
-/* Toggle full-screen */
+// Toggle full-screen
 func toggleFullscreen(item int) {
 	defer reportPanic("toggleFullscreen")
 
@@ -184,7 +184,7 @@ func toggleFullscreen(item int) {
 	chatDetailed(buf, ColorOrange, time.Second*5)
 }
 
-/* Toggle UI magnification */
+// Toggle UI magnification
 func toggleFastShadow(item int) {
 	defer reportPanic("toggleFastShadow")
 	if fastShadow {
@@ -203,7 +203,7 @@ func toggleFastShadow(item int) {
 	chatDetailed(buf, ColorOrange, time.Second*5)
 }
 
-/* Toggle debug mode */
+// Toggle debug mode
 func toggleSmoothing(item int) {
 	defer reportPanic("toggleSmoothing")
 	if !noSmoothing {

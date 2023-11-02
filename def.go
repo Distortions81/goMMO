@@ -7,7 +7,7 @@ const FrameSpeedNS = 66666666
 const (
 	gameVersion = "0.0.10"
 
-	/* Files and directories */
+	// Files and directories
 	dataDir = "data/"
 	gfxDir  = dataDir + "gfx/"
 	txtDir  = dataDir + "txt/"
@@ -17,11 +17,11 @@ const (
 	chunkDiv         = 128
 )
 
-/* Directions */
+// Directions
 type DIR uint8
 
 const (
-	/* Directions */
+	// Directions
 	DIR_N DIR = iota
 	DIR_NE
 	DIR_E
@@ -33,7 +33,7 @@ const (
 	DIR_NONE
 )
 
-/* Game modes */
+// Game modes
 type MODE uint8
 
 const (
@@ -48,7 +48,7 @@ const (
 	MODE_Error
 )
 
-/* Network commands */
+// Network commands
 type CMD uint8
 
 const (
@@ -65,7 +65,7 @@ const (
 	CMD_EditDeleteItem
 )
 
-/* Used for debug messages, this could be better */
+// Used for debug messages, this could be better
 var cmdNames map[CMD]string
 
 func init() {

@@ -112,7 +112,7 @@ func readNet() {
 
 		_, input, err := localPlayer.conn.Read(localPlayer.context)
 
-		/* Read error, reconnect */
+		// Read error, reconnect
 		if err != nil {
 			doLog(true, "readNet error: %v", err)
 
@@ -126,13 +126,13 @@ func readNet() {
 			return
 		}
 
-		/* Check data length */
+		// Check data length
 		inputLen := len(input)
 		if inputLen <= 0 {
 			continue
 		}
 
-		/* Separate command and data*/
+		// Separate command and data
 		d := CMD(input[0])
 		data := input[1:]
 		inbuf := bytes.NewReader(data)
@@ -237,7 +237,7 @@ func readNet() {
 						playerList[nid] = &playerData{id: nid, pos: XY{X: nx, Y: ny}, direction: DIR_S}
 					} else {
 
-						/* Update local player pos */
+						// Update local player pos
 						if localPlayer.id == nid {
 							oldLocalPlayerPos = localPlayerPos
 							localPlayerPos.X = nx

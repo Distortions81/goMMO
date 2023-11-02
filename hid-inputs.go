@@ -13,7 +13,7 @@ import (
 )
 
 var (
-	/* UI states */
+	// UI states
 	mouseHeld         bool
 	gRightMouseHeld   bool
 	clickCaptured     bool
@@ -181,15 +181,15 @@ func settingsHotkeys() {
 	}
 }
 
-/* Record mouse clicks, send clicks to toolbar */
+// Record mouse clicks, send clicks to toolbar
 func getMouseClicks() {
 	defer reportPanic("getMouseClicks")
 
-	/* Mouse clicks */
+	// Mouse clicks
 	if inpututil.IsMouseButtonJustReleased(ebiten.MouseButtonLeft) {
 		mouseHeld = false
 
-		/* Stop dragging window */
+		// Stop dragging window
 		draggingWindow = nil
 
 	} else if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
@@ -249,7 +249,7 @@ func handleUI() {
 		clickCaptured = collisionWindowsCheck(XYs{X: int32(mouseX), Y: int32(mouseY)})
 	}
 
-	/* Handle window drag */
+	// Handle window drag
 	dragWindow()
 }
 

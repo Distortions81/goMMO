@@ -12,20 +12,20 @@ import (
 
 const scaleFactor = 1.5
 
-/* Calculate spacing and order based on DPI and scale */
+// Calculate spacing and order based on DPI and scale
 func setupOptionsWindow(window *windowData) {
 	defer reportPanic("setupOptionsWindow")
 	optionWindowButtons = []image.Rectangle{}
 
-	/* Loop all settings */
+	// Loop all settings
 	optNum := 1
 	for pos := range settingItems {
 
-		/* Place line */
+		// Place line
 		settingItems[pos].TextPosX = int(padding * uiScale)
 		settingItems[pos].TextPosY = int((float64(generalFontH)*scaleFactor)*float64(optNum+linePad)) + int(padding*uiScale)
 
-		/* Generate button */
+		// Generate button
 		button := image.Rectangle{}
 		if (WASMMode && !settingItems[pos].WASMExclude) || !WASMMode {
 			button.Min.X = 0
@@ -43,7 +43,7 @@ func setupOptionsWindow(window *windowData) {
 
 }
 
-/* Draw the help window content */
+// Draw the help window content
 func drawHelpWindow(window *windowData) {
 	defer reportPanic("drawHelpWindow")
 
@@ -52,7 +52,7 @@ func drawHelpWindow(window *windowData) {
 		0, window.cache, false, false, true)
 }
 
-/* Draw options window content */
+// Draw options window content
 const checkScale = 0.5
 
 func drawOptionsWindow(window *windowData) {
@@ -61,11 +61,11 @@ func drawOptionsWindow(window *windowData) {
 
 	d := 0
 
-	/* Draw items */
+	// Draw items
 	for i, item := range settingItems {
 		b := optionWindowButtons[i]
 
-		/* Text */
+		// Text
 		if !item.NoCheck {
 			txt = fmt.Sprintf("%v: %v", item.Text, BoolToOnOff(item.Enabled))
 		} else {
@@ -81,15 +81,15 @@ func drawOptionsWindow(window *windowData) {
 				color.NRGBA{R: 255, G: 255, B: 255, A: 16}, false)
 		}
 
-		/* Skip some entries for WASM mode */
+		// Skip some entries for WASM mode
 		if (WASMMode && !item.WASMExclude) || !WASMMode {
 
 			text.Draw(window.cache, txt, generalFont, item.TextPosX, item.TextPosY-(generalFontH/2), color.White)
 
-			/* if the item can be toggled, draw checkmark */
+			// if the item can be toggled, draw checkmark
 			if !item.NoCheck {
 
-				/* Get checkmark image */
+				//Get checkmark image
 				op := &ebiten.DrawImageOptions{Filter: ebiten.FilterLinear}
 				var check *ebiten.Image
 				if item.Enabled {
@@ -98,7 +98,7 @@ func drawOptionsWindow(window *windowData) {
 					check = checkOff
 				}
 
-				/* Draw checkmark */
+				// Draw checkmark
 				op.GeoM.Scale(uiScale*checkScale, uiScale*checkScale)
 				op.GeoM.Translate(
 					float64(window.scaledSize.X)-(float64(check.Bounds().Dx())*uiScale)-(padding*uiScale),

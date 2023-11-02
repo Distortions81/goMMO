@@ -37,30 +37,30 @@ var windows []*windowData = []*windowData{
 var openWindows []*windowData
 
 type windowData struct {
-	active  bool   /* Window is open */
-	focused bool   /* Mouse is on window */
-	title   string /* Window title */
+	active  bool   // Window is open
+	focused bool   // Mouse is on window
+	title   string // Window title
 
-	movable    bool /* Can be dragged */
-	opaque     bool /* Non-semitransparent background */
-	centered   bool /* Auto-centered */
+	movable    bool // Can be dragged
+	opaque     bool // Non-semitransparent background
+	centered   bool // Auto-centered
 	borderless bool
-	closeable  bool /* Has a close-x in title bar */
-	keepCache  bool /* Draw cache persists when window is closed */
-	dragPos    XYs  /* Position where window drag began */
+	closeable  bool // Has a close-x in title bar
+	keepCache  bool // Draw cache persists when window is closed
+	dragPos    XYs  // Position where window drag began
 
-	windowButtons WindowButtonData /* Window buttons */
+	windowButtons WindowButtonData // Window buttons
 
-	size       XYs /* Size in pixels */
-	scaledSize XYs /* Size with UI scale */
-	position   XYs /* Position */
+	size       XYs // Size in pixels
+	scaledSize XYs // Size with UI scale
+	position   XYs // Position
 
-	bgColor      *color.Color /* Custom BG color */
-	titleBGColor *color.Color /* Custom title bar background color */
-	titleColor   *color.Color /* Custom title text color */
+	bgColor      *color.Color // Custom BG color
+	titleBGColor *color.Color // Custom title bar background color
+	titleColor   *color.Color // Custom title text color
 
-	dirty       bool          /* Needs to be redrawn */
-	cache       *ebiten.Image /* Cache image */
+	dirty       bool          // Needs to be redrawn
+	cache       *ebiten.Image // Cache image
 	windowDraw  func(Window *windowData)
 	windowInput func(input XYs, Window *windowData) bool
 	windowSetup func(Window *windowData)
@@ -72,7 +72,7 @@ type WindowButtonData struct {
 	titleBarHeight int
 }
 
-/* Toggle settings window */
+// Toggle settings window
 func settingsToggle() {
 	defer reportPanic("settingsToggle")
 	if windows[0].active {
@@ -82,7 +82,7 @@ func settingsToggle() {
 	}
 }
 
-/* Toggle help window */
+// Toggle help window
 func toggleHelp() {
 	defer reportPanic("toggleHelp")
 
@@ -93,7 +93,7 @@ func toggleHelp() {
 	}
 }
 
-/* Allow windows to do any precalculation they need to do */
+// Allow windows to do any precalculation they need to do
 func initWindows() {
 	defer reportPanic("initWindows")
 	for _, win := range windows {
@@ -104,7 +104,7 @@ func initWindows() {
 	}
 }
 
-/* Draw whatever windows are currently open */
+// Draw whatever windows are currently open
 func drawOpenWindows(screen *ebiten.Image) {
 	defer reportPanic("drawOpenWindows")
 	for _, win := range openWindows {
@@ -112,8 +112,8 @@ func drawOpenWindows(screen *ebiten.Image) {
 	}
 }
 
-/* Open a window */
-/* Until layering is added, close other windows if we open one */
+// Open a window
+// Until layering is added, close other windows if we open one
 func openWindow(window *windowData) {
 	defer reportPanic("openWindow")
 	windowsLock.Lock()
@@ -141,13 +141,13 @@ func openWindow(window *windowData) {
 
 			openWindows = append(openWindows, windows[winPos])
 		} else {
-			/* Patch until layering is added */
+			//work-around until layering is added
 			go closeWindow(windows[winPos])
 		}
 	}
 }
 
-/* Close a window */
+// Close a window
 func closeWindow(window *windowData) {
 	defer reportPanic("closeWindow")
 	windowsLock.Lock()
@@ -157,12 +157,12 @@ func closeWindow(window *windowData) {
 		return
 	}
 
-	/* Handle window closed while dragging */
+	//Handle window closed while dragging
 	if draggingWindow == window {
 		draggingWindow = nil
 	}
 
-	/* Check all open windows */
+	//Check all open windows
 	for winPos := range openWindows {
 		if openWindows[winPos] == window {
 			window.active = false
@@ -170,13 +170,13 @@ func closeWindow(window *windowData) {
 			if windowDebugMode {
 				doLog(true, "Window '%v' removed from open list.", window.title)
 			}
-			/* Remove item */
+			// Remove item
 			openWindows = append(openWindows[:winPos], openWindows[winPos+1:]...)
 			break
 		}
 	}
 
-	/* Dispose window image cache if needed */
+	//Dispose window image cache if needed
 	if !window.keepCache && window.cache != nil {
 		if windowDebugMode {
 			doLog(true, "Window '%v' closed, disposing cache.", window.title)
@@ -185,15 +185,15 @@ func closeWindow(window *windowData) {
 		window.cache = nil
 	}
 
-	/* Eat click event */
+	// Eat click event
 	clickCaptured = true
 	mouseHeld = false
 }
 
-/* Draw window title, frame, background and cached window contents */
 const closePad = 18
 const closeScale = 0.7
 
+// Draw window title, frame, background and cached window contents
 func dragWindow() {
 	windowsLock.Lock()
 	defer windowsLock.Unlock()
@@ -205,8 +205,8 @@ func dragWindow() {
 	draggingWindow.position = XYs{X: int32(mouseX) - draggingWindow.dragPos.X, Y: int32(mouseY) - draggingWindow.dragPos.Y}
 	clickCaptured = true
 
-	/* Clamp position */
-	clanWindow(draggingWindow)
+	// Clamp position
+	clampWindow(draggingWindow)
 }
 
 func clampUIWindows() {
@@ -214,16 +214,16 @@ func clampUIWindows() {
 	defer windowsLock.Unlock()
 
 	for _, window := range openWindows {
-		clanWindow(window)
+		clampWindow(window)
 	}
 }
 
-func clanWindow(w *windowData) {
+func clampWindow(w *windowData) {
 	if w == nil {
 		return
 	}
 
-	/* Clamp position */
+	//Clamp position
 	if w.position.X < 0 {
 		w.position.X = 0
 	} else if w.position.X > int32(screenX)-w.size.X {
@@ -241,14 +241,14 @@ func drawWindow(screen *ebiten.Image, window *windowData) {
 	windowsLock.Lock()
 	defer windowsLock.Unlock()
 
-	/* Calculate some values for UI scale */
+	//Calculate some values for UI scale
 	pad := int(closePad * uiScale)
 	halfPad := int((closePad / 2.0) * uiScale)
 
 	winPos := getWindowPos(window)
 	window.scaledSize = XYs{X: int32(float64(window.size.X) * uiScale), Y: int32(float64(window.size.Y) * uiScale)}
 
-	/* If window not dirty, and it has a cache, draw the cache */
+	//If window not dirty, and it has a cache, draw the cache
 	if !window.dirty {
 		if window.cache != nil {
 			op := &ebiten.DrawImageOptions{}
@@ -258,7 +258,7 @@ func drawWindow(screen *ebiten.Image, window *windowData) {
 		}
 	}
 
-	/* If there is no window cache, init it */
+	//If there is no window cache, init it
 	if window.cache == nil {
 		window.cache = ebiten.NewImage(int(window.scaledSize.X), int(window.scaledSize.Y))
 		if windowDebugMode {
@@ -268,7 +268,7 @@ func drawWindow(screen *ebiten.Image, window *windowData) {
 		window.cache.Clear()
 	}
 
-	/* Custom colors */
+	//Custom colors
 	var winBG color.Color
 	if window.bgColor != nil {
 		winBG = *window.bgColor
@@ -292,7 +292,7 @@ func drawWindow(screen *ebiten.Image, window *windowData) {
 		titleColor = color.White
 	}
 
-	/* Draw window BG */
+	//Draw window BG
 	vector.DrawFilledRect(
 		window.cache,
 		0, 0,
@@ -303,7 +303,7 @@ func drawWindow(screen *ebiten.Image, window *windowData) {
 
 		fHeight := text.BoundString(generalFont, "!Aa0")
 
-		/* Border */
+		// Border
 		if !window.borderless {
 			vector.DrawFilledRect(
 				window.cache, 0, +float32(window.scaledSize.Y)-1,
@@ -321,7 +321,7 @@ func drawWindow(screen *ebiten.Image, window *windowData) {
 				titleBGColor, false)
 		}
 
-		/* Title bar */
+		// Title bar
 		vector.DrawFilledRect(
 			window.cache, 0, 0,
 			float32(window.scaledSize.X), float32(float64(fHeight.Dy()))+float32(pad), titleBGColor, false,
@@ -337,7 +337,7 @@ func drawWindow(screen *ebiten.Image, window *windowData) {
 			op.GeoM.Scale(uiScale*closeScale, uiScale*closeScale)
 			op.GeoM.Translate(closePosX, 0)
 
-			/* save button positions */
+			// save button positions
 			window.windowButtons.closePos = XYs{X: int32(closePosX), Y: int32(0)}
 			window.windowButtons.closeSize = XYs{X: int32(float64(img.Bounds().Dx()) * uiScale),
 				Y: int32(float64(img.Bounds().Dy()) * uiScale)}
@@ -345,7 +345,7 @@ func drawWindow(screen *ebiten.Image, window *windowData) {
 		}
 	}
 
-	/* Call custom draw function, if it exists */
+	// Call custom draw function, if it exists
 	if window.windowDraw != nil {
 		window.windowDraw(window)
 	}
@@ -357,7 +357,7 @@ func drawWindow(screen *ebiten.Image, window *windowData) {
 	screen.DrawImage(window.cache, op)
 }
 
-/* Check if a click is within an open window */
+// Check if a click is within an open window
 func collisionWindowsCheck(input XYs) bool {
 	defer reportPanic("collisionWindowsCheck")
 	if clickCaptured {
@@ -372,7 +372,7 @@ func collisionWindowsCheck(input XYs) bool {
 	return false
 }
 
-/* Check if a click is within a specific window */
+// Check if a click is within a specific window
 func collisionWindow(input XYs, window *windowData) bool {
 	defer reportPanic("collisionWindow")
 	winPos := getWindowPos(window)
@@ -383,7 +383,7 @@ func collisionWindow(input XYs, window *windowData) bool {
 			window.focused = true
 		}
 
-		/* Handle X close */
+		// Handle X close
 		if handleClose(input, window) {
 			return true
 		}
@@ -392,7 +392,7 @@ func collisionWindow(input XYs, window *windowData) bool {
 			return true
 		}
 
-		/* Handle input */
+		// Handle input
 		if window.windowInput != nil {
 			window.windowInput(input, window)
 		}
@@ -406,7 +406,7 @@ func collisionWindow(input XYs, window *windowData) bool {
 	}
 }
 
-/* Check if a click was within a window's close box */
+// Check if a click was within a window's close box
 func handleClose(input XYs, window *windowData) bool {
 	defer reportPanic("handleCLose")
 	if draggingWindow != nil {
@@ -431,7 +431,7 @@ func handleClose(input XYs, window *windowData) bool {
 	return false
 }
 
-/* Handle dragging windows */
+// Handle dragging windows
 func handleDrag(input XYs, window *windowData) bool {
 	defer reportPanic("handleDrag")
 	if !mouseHeld {
@@ -462,7 +462,7 @@ func handleDrag(input XYs, window *windowData) bool {
 	return false
 }
 
-/* Get window position, assists with auto-centered windows */
+// Get window position, assists with auto-centered windows
 func getWindowPos(window *windowData) XYs {
 	defer reportPanic("getWindowPos")
 	var winPos XYs

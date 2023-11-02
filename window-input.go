@@ -1,6 +1,6 @@
 package main
 
-/* Figure out what option item user clicked */
+// Figure out what option item user clicked
 func handleOptions(input XYs, window *windowData) bool {
 	defer reportPanic("handleOptions")
 	windowsLock.Lock()
