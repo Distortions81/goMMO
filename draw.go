@@ -457,8 +457,13 @@ func drawDebugEdit(screen *ebiten.Image) {
 	}
 
 	// Draw debug info
-	buf := fmt.Sprintf("EDIT MODE ON: ID: %v", worldEditID)
-
+	var buf = "EDIT MODE: Invalid item"
+	if worldEditID < topSpriteID {
+		iType := spritelist[worldEditID].itemType
+		itemName := spritelist[worldEditID].name
+		typeName := itemTypesList[iType].name
+		buf = fmt.Sprintf("EDIT MODE: ID: %v, Type: %v, Name: %v", worldEditID, typeName, itemName)
+	}
 	drawText(buf, monoFont, color.White, colorNameBG,
 		XYf32{X: float32(screenX) - 4, Y: 2},
 		1, screen, false, false, false)

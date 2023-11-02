@@ -424,6 +424,17 @@ func editPlaceItem() {
 	var buf []byte
 	outbuf := bytes.NewBuffer(buf)
 
+	if worldEditID >= topSpriteID {
+		return
+	}
+
+	iType := spritelist[worldEditID].itemType
+	typeName := itemTypesList[iType].name
+
+	if typeName != "world-objects" {
+		return
+	}
+
 	binary.Write(outbuf, binary.LittleEndian, worldEditID)
 	binary.Write(outbuf, binary.LittleEndian, editPos.X)
 	binary.Write(outbuf, binary.LittleEndian, editPos.Y)
