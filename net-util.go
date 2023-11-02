@@ -7,20 +7,6 @@ import (
 	"nhooyr.io/websocket"
 )
 
-func changeGameMode(newMode MODE, delay time.Duration) {
-
-	gameModeLock.Lock()
-	defer gameModeLock.Unlock()
-
-	/* Skip if the same */
-	if newMode == gameMode {
-		return
-	}
-
-	time.Sleep(delay)
-	gameMode = newMode
-}
-
 var writeLock sync.Mutex
 
 func sendCommand(header CMD, data []byte) bool {
@@ -51,7 +37,7 @@ func sendCommand(header CMD, data []byte) bool {
 
 		doLog(true, "sendCommand error: %v", err)
 
-		changeGameMode(MODE_RECONNECT, time.Second)
+		changeGameMode(MODE_Reconnect, time.Second)
 		chatLines = []chatLineData{}
 		chatLinesTop = 0
 

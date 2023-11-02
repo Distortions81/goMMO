@@ -12,13 +12,13 @@ var (
 	dataDirty bool = true //If new network data has been rendered or not
 	gDevMode  bool        //-dev argument
 
-	gameMode     = MODE_START //Login, playing, reconnect, etc
+	gameMode     = MODE_Start //Login, playing, reconnect, etc
 	gameModeLock sync.Mutex
 
 	localPlayer playerData           //Our local player's data (id, etc)
 	playerNames map[uint32]pNameData //Player ID to name map
 
-	goDir DIR //Direction we are walking
+	goingDirection DIR //Direction we are walking
 
 	localPlayerPos    XY //Our position from server
 	oldLocalPlayerPos XY

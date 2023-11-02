@@ -131,8 +131,8 @@ func openWindow(window *windowData) {
 
 				window.scaledSize = XYs{X: int32(float64(window.size.X) * uiScale), Y: int32(float64(window.size.Y) * uiScale)}
 				windows[winPos].position = XYs{
-					X: int32(screenWidth/2) - (window.scaledSize.X / 2),
-					Y: int32(screenHeight/2) - (window.scaledSize.Y / 2)}
+					X: int32(screenX/2) - (window.scaledSize.X / 2),
+					Y: int32(screenY/2) - (window.scaledSize.Y / 2)}
 			}
 
 			if windowDebugMode {
@@ -158,8 +158,8 @@ func closeWindow(window *windowData) {
 	}
 
 	/* Handle window closed while dragging */
-	if gWindowDrag == window {
-		gWindowDrag = nil
+	if dragWindow == window {
+		dragWindow = nil
 	}
 
 	/* Check all open windows */
@@ -186,13 +186,27 @@ func closeWindow(window *windowData) {
 	}
 
 	/* Eat click event */
-	gClickCaptured = true
-	gMouseHeld = false
+	clickCaptured = true
+	mouseHeld = false
 }
 
 /* Draw window title, frame, background and cached window contents */
 const closePad = 18
 const closeScale = 0.7
+
+func clampUIWindow() {
+	/* Clamp position */
+	if dragWindow.position.X < 0 {
+		dragWindow.position.X = 0
+	} else if dragWindow.position.X > int32(screenX)-dragWindow.size.X {
+		dragWindow.position.X = int32(screenX) - dragWindow.size.X
+	}
+	if dragWindow.position.Y < 0 {
+		dragWindow.position.Y = 0
+	} else if dragWindow.position.Y > int32(screenY)-dragWindow.size.Y {
+		dragWindow.position.Y = int32(screenY) - dragWindow.size.Y
+	}
+}
 
 func drawWindow(screen *ebiten.Image, window *windowData) {
 	defer reportPanic("drawWindow")
@@ -318,7 +332,7 @@ func drawWindow(screen *ebiten.Image, window *windowData) {
 /* Check if a click is within an open window */
 func collisionWindowsCheck(input XYs) bool {
 	defer reportPanic("collisionWindowsCheck")
-	if gClickCaptured {
+	if clickCaptured {
 		return true
 	}
 	for _, win := range openWindows {
@@ -367,7 +381,7 @@ func collisionWindow(input XYs, window *windowData) bool {
 /* Check if a click was within a window's close box */
 func handleClose(input XYs, window *windowData) bool {
 	defer reportPanic("handleCLose")
-	if gWindowDrag != nil {
+	if dragWindow != nil {
 		return false
 	}
 	if !window.closeable {
@@ -392,7 +406,7 @@ func handleClose(input XYs, window *windowData) bool {
 /* Handle dragging windows */
 func handleDrag(input XYs, window *windowData) bool {
 	defer reportPanic("handleDrag")
-	if !gMouseHeld {
+	if !mouseHeld {
 		return false
 	}
 	if !window.movable {
@@ -401,7 +415,7 @@ func handleDrag(input XYs, window *windowData) bool {
 	if !window.active {
 		return false
 	}
-	if gWindowDrag != nil {
+	if dragWindow != nil {
 		return true
 	}
 
@@ -412,8 +426,8 @@ func handleDrag(input XYs, window *windowData) bool {
 		input.X < winPos.X+window.scaledSize.X &&
 		input.Y > winPos.Y &&
 		input.Y < winPos.Y+int32(window.windowButtons.titleBarHeight) {
-		gWindowDrag = window
-		gWindowDrag.dragPos = winOff
+		dragWindow = window
+		dragWindow.dragPos = winOff
 		doLog(true, "dragging window '%v'", window.title)
 		return true
 	}
@@ -425,7 +439,7 @@ func getWindowPos(window *windowData) XYs {
 	defer reportPanic("getWindowPos")
 	var winPos XYs
 	if window.centered && !window.movable {
-		winPos.X, winPos.Y = int32(screenWidth/2)-(window.scaledSize.X/2), int32(screenHeight/2)-(window.scaledSize.Y/2)
+		winPos.X, winPos.Y = int32(screenX/2)-(window.scaledSize.X/2), int32(screenY/2)-(window.scaledSize.Y/2)
 	} else {
 		winPos = window.position
 	}

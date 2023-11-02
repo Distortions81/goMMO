@@ -12,9 +12,9 @@ const (
 	gfxDir  = dataDir + "gfx/"
 	txtDir  = dataDir + "txt/"
 
-	charSpriteSize    = 52
-	cLoadEmbedSprites = true
-	chunkDiv          = 128
+	playerSpriteSize = 52
+	loadEmbedSprites = true
+	chunkDiv         = 128
 )
 
 /* Directions */
@@ -37,32 +37,32 @@ const (
 type MODE uint8
 
 const (
-	MODE_START MODE = iota
-	MODE_BOOT
-	MODE_CONNECT
-	MODE_RECONNECT
-	MODE_CONNECTED
-	MODE_LOGIN
-	MODE_PLAYING
-	MODE_LOGOFF
-	MODE_ERROR
+	MODE_Start MODE = iota
+	MODE_Boot
+	MODE_Connect
+	MODE_Reconnect
+	MODE_Connected
+	MODE_Login
+	MODE_Playing
+	MODE_Logoff
+	MODE_Error
 )
 
 /* Network commands */
 type CMD uint8
 
 const (
-	CMD_INIT CMD = iota
-	CMD_LOGIN
-	CMD_PLAY
-	CMD_MOVE
-	CMD_UPDATE
-	CMD_CHAT
-	CMD_COMMAND
-	CMD_WORLDDATA
-	CMD_PLAYERNAMES
-	CMD_EDITPLACEITEM
-	CMD_EDITDELETEITEM
+	CMD_Init CMD = iota
+	CMD_Login
+	CMD_Play
+	CMD_Move
+	CMD_WorldUpdate
+	CMD_Chat
+	CMD_Command
+	CMD_WorldData
+	CMD_PlayerNames
+	CMD_EditPlaceItem
+	CMD_EditDeleteItem
 )
 
 /* Used for debug messages, this could be better */
@@ -70,20 +70,20 @@ var cmdNames map[CMD]string
 
 func init() {
 	cmdNames = make(map[CMD]string)
-	cmdNames[CMD_INIT] = "CMD_INIT"
-	cmdNames[CMD_LOGIN] = "CMD_LOGIN"
-	cmdNames[CMD_PLAY] = "CMD_PLAY"
-	cmdNames[CMD_MOVE] = "CMD_MOVE"
-	cmdNames[CMD_UPDATE] = "CMD_UPDATE"
-	cmdNames[CMD_CHAT] = "CMD_CHAT"
-	cmdNames[CMD_COMMAND] = "CMD_COMMAND"
-	cmdNames[CMD_WORLDDATA] = "CMD_WORLDDATA"
-	cmdNames[CMD_PLAYERNAMES] = "CMD_PLAYERNAMES"
-	cmdNames[CMD_EDITPLACEITEM] = "CMD_EDITPLACEITEM"
-	cmdNames[CMD_EDITDELETEITEM] = "CMD_EDITDELETEITEM"
+	cmdNames[CMD_Init] = "CMD_Init"
+	cmdNames[CMD_Login] = "CMD_Login"
+	cmdNames[CMD_Play] = "CMD_Play"
+	cmdNames[CMD_Move] = "CMD_Move"
+	cmdNames[CMD_WorldUpdate] = "CMD_WorldUpdate"
+	cmdNames[CMD_Chat] = "CMD_Chat"
+	cmdNames[CMD_Command] = "CMD_Command"
+	cmdNames[CMD_WorldData] = "CMD_WorldData"
+	cmdNames[CMD_PlayerNames] = "CMD_PlayerNames"
+	cmdNames[CMD_EditPlaceItem] = "CMD_EditPlaceItem"
+	cmdNames[CMD_EditDeleteItem] = "CMD_EditDeleteItem"
 }
 
-const xyHalf = 2147483648
-const xyMax = xyHalf * 2.0
+const xyCenter = 2147483648
+const xyMax = xyCenter * 2
 
-var xyCenter XY = XY{X: xyHalf, Y: xyHalf}
+var worldCenter XY = XY{X: xyCenter, Y: xyCenter}

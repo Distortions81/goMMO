@@ -18,11 +18,11 @@ var (
 	}
 	client *http.Client = &http.Client{Transport: transport}
 )
-var screenWidth int = 1080
-var screenHeight int = 1080
+var screenX int = 1080
+var screenY int = 1080
 
-var HscreenWidth int
-var HscreenHeight int
+var halfScreenX int
+var halfScreenY int
 
 func main() {
 	defer time.Sleep(time.Second * 2) //Wait for log to close
@@ -56,7 +56,7 @@ func main() {
 	ebiten.SetTPS(ebiten.SyncWithFPS)
 	ebiten.SetScreenClearedEveryFrame(false)
 	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeEnabled)
-	ebiten.SetWindowSize(screenWidth, screenHeight)
+	ebiten.SetWindowSize(screenX, screenY)
 	ebiten.SetWindowTitle("goMMO")
 
 	helpText, _ = getText("help")
@@ -79,8 +79,8 @@ func newGame() *Game {
 	toggleHelp()
 	loadOptions()
 
-	HscreenWidth = screenWidth / 2
-	HscreenHeight = screenHeight / 2
+	halfScreenX = screenX / 2
+	halfScreenY = screenY / 2
 
 	return &Game{}
 }
@@ -97,12 +97,15 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 		outsideHeight = maxScreenSize
 	}
 
-	if outsideWidth != screenWidth || outsideHeight != screenHeight {
-		screenWidth = outsideWidth
-		screenHeight = outsideHeight
+	if outsideWidth != screenX || outsideHeight != screenY {
+		screenX = outsideWidth
+		screenY = outsideHeight
 
-		HscreenWidth = outsideWidth / 2
-		HscreenHeight = outsideHeight / 2
+		halfScreenX = outsideWidth / 2
+		halfScreenY = outsideHeight / 2
+
+		//Keep UI windows from going outside the window
+		clampUIWindow()
 	}
 	return int(outsideWidth), int(outsideHeight)
 }

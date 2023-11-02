@@ -18,7 +18,7 @@ func handleOptions(input XYs, window *windowData) bool {
 				item.action(i)
 				saveOptions()
 				window.dirty = true
-				gMouseHeld = false
+				mouseHeld = false
 
 				return true
 			}
@@ -33,7 +33,7 @@ func handleHelpWindow(input XYs, window *windowData) bool {
 	windowsLock.Lock()
 	defer windowsLock.Unlock()
 
-	if !gMouseHeld {
+	if !mouseHeld {
 		return false
 	}
 

@@ -183,8 +183,8 @@ func handleToolbar() bool {
 
 	tbLength := float32((toolbarMax * int(iconSize+spacing)))
 
-	fmx := float32(MouseX)
-	fmy := float32(MouseY)
+	fmx := float32(mouseX)
+	fmy := float32(mouseY)
 
 	/* If the click isn't off the right of the toolbar */
 	if fmx <= tbLength {
@@ -210,8 +210,8 @@ func handleToolbar() bool {
 			}
 
 			/* Eat this mouse event */
-			gMouseHeld = false
-			gClickCaptured = true
+			mouseHeld = false
+			clickCaptured = true
 			return true
 		}
 	}
@@ -227,10 +227,10 @@ func toolBarTooltip(screen *ebiten.Image) bool {
 	spacing := float32(iconSize / toolBarSpaceRatio)
 
 	/* Calculate item */
-	val := int(MouseX / int(iconSize+spacing))
+	val := int(mouseX / int(iconSize+spacing))
 
 	/* Check if mouse is on top of the toolbar */
-	if MouseY <= int(iconSize) &&
+	if mouseY <= int(iconSize) &&
 		val < toolbarMax && val >= 0 {
 
 		/* Calculate toolbar item */
@@ -256,7 +256,7 @@ func toolBarTooltip(screen *ebiten.Image) bool {
 
 		/* Draw text */
 		drawText(toolTip, toolTipFont, color.White, ColorToolTipBG,
-			XYf32{X: float32(MouseX) + 10, Y: float32(MouseY) + 10}, 0, screen,
+			XYf32{X: float32(mouseX) + 10, Y: float32(mouseY) + 10}, 0, screen,
 			true, false, false)
 
 		/* Don't redraw if item has not changed */

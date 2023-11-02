@@ -14,24 +14,41 @@ import (
 	"github.com/twpayne/go-geom/xy"
 )
 
-func dirToCharOffset(dir DIR) int {
+func changeGameMode(newMode MODE, delay time.Duration) {
+	defer reportPanic("changeGameMode")
+
+	gameModeLock.Lock()
+	defer gameModeLock.Unlock()
+
+	/* Skip if the same */
+	if newMode == gameMode {
+		return
+	}
+
+	time.Sleep(delay)
+	gameMode = newMode
+}
+
+func playerDirSpriteOffset(dir DIR) int {
+	defer reportPanic("playerDirSpriteOffset")
+
 	switch dir {
 	case DIR_S:
-		return charSpriteSize * 0
+		return playerSpriteSize * 0
 	case DIR_SE:
-		return charSpriteSize * 1
+		return playerSpriteSize * 1
 	case DIR_E:
-		return charSpriteSize * 2
+		return playerSpriteSize * 2
 	case DIR_NE:
-		return charSpriteSize * 3
+		return playerSpriteSize * 3
 	case DIR_N:
-		return charSpriteSize * 4
+		return playerSpriteSize * 4
 	case DIR_NW:
-		return charSpriteSize * 5
+		return playerSpriteSize * 5
 	case DIR_W:
-		return charSpriteSize * 6
+		return playerSpriteSize * 6
 	case DIR_SW:
-		return charSpriteSize * 7
+		return playerSpriteSize * 7
 	}
 	return 0
 }
@@ -39,7 +56,9 @@ func dirToCharOffset(dir DIR) int {
 const twoPi = math.Pi * 2.0
 const offset = math.Pi / 2.0
 
-func radToDir(in float64) DIR {
+func radiansToDirection(in float64) DIR {
+	defer reportPanic("radiansToDirection")
+
 	rads := math.Mod(in+offset, twoPi)
 	normal := (rads / twoPi) * 100.0
 
@@ -52,6 +71,7 @@ func radToDir(in float64) DIR {
 }
 
 func getCharFrame(player *playerData) image.Image {
+	defer reportPanic("getCharFrame")
 
 	if player.pos.X != player.lastPos.X || player.pos.Y != player.lastPos.Y {
 
@@ -59,10 +79,10 @@ func getCharFrame(player *playerData) image.Image {
 		p2 := geom.Coord{float64(player.lastPos.X), float64(player.lastPos.Y), 0}
 		angle := xy.Angle(p1, p2)
 
-		player.direction = radToDir(angle)
+		player.direction = radiansToDirection(angle)
 	}
 
-	dirOff := dirToCharOffset(player.direction)
+	dirOff := playerDirSpriteOffset(player.direction)
 
 	var newFrame int
 	if player.isWalking {
@@ -72,17 +92,19 @@ func getCharFrame(player *playerData) image.Image {
 	}
 
 	rect := image.Rectangle{}
-	rect.Min.X = (newFrame * charSpriteSize)
-	rect.Max.X = (newFrame * charSpriteSize) + charSpriteSize
+	rect.Min.X = (newFrame * playerSpriteSize)
+	rect.Max.X = (newFrame * playerSpriteSize) + playerSpriteSize
 	rect.Min.Y = dirOff
-	rect.Max.Y = charSpriteSize + dirOff
+	rect.Max.Y = playerSpriteSize + dirOff
 
-	return testChar.SubImage(rect)
+	return playerSprite.SubImage(rect)
 
 }
 
 /* Generic unzip []byte */
 func UncompressZip(data []byte) []byte {
+	defer reportPanic("UncompressZip")
+
 	b := bytes.NewReader(data)
 
 	z, _ := zlib.NewReader(b)
@@ -97,6 +119,8 @@ func UncompressZip(data []byte) []byte {
 
 /* Generic zip []byte */
 func CompressZip(data []byte) []byte {
+	defer reportPanic("CompressZip")
+
 	var b bytes.Buffer
 	w, _ := zlib.NewWriterLevel(&b, zlib.BestCompression)
 	w.Write(data)
@@ -105,8 +129,8 @@ func CompressZip(data []byte) []byte {
 }
 
 /* Trim lines from chat */
-func deleteOldLines() {
-	defer reportPanic("deleteOldLines")
+func deleteOldChatLines() {
+	defer reportPanic("deleteOldChatLines")
 	var newLines []chatLineData
 	var newTop int
 
@@ -122,7 +146,7 @@ func deleteOldLines() {
 }
 
 func distance(a, b XY) float64 {
-
+	defer reportPanic("distance")
 	dx := a.X - b.X
 	dy := a.Y - b.Y
 
@@ -136,11 +160,12 @@ func chat(text string) {
 
 /* Add to chat with options */
 func chatDetailed(text string, color color.Color, life time.Duration) {
+	defer reportPanic("chatDetailed")
 
 	doLog(false, "Chat: "+text)
 
 	chatLinesLock.Lock()
-	deleteOldLines()
+	deleteOldChatLines()
 
 	sepLines := strings.Split(text, "\n")
 	for _, sep := range sepLines {
@@ -149,7 +174,6 @@ func chatDetailed(text string, color color.Color, life time.Duration) {
 	}
 
 	chatLinesLock.Unlock()
-
 }
 
 func XYtoXYf64(pos XY) XYf64 {
@@ -171,6 +195,7 @@ func XYf32toXY(pos XYf32) XY {
 /* Bool to text */
 func BoolToOnOff(input bool) string {
 	defer reportPanic("BoolToOnOff")
+
 	if input {
 		return "On"
 	} else {
@@ -181,6 +206,7 @@ func BoolToOnOff(input bool) string {
 /* Check if a position is within a image.Rectangle */
 func PosWithinRect(pos XY, rect image.Rectangle, pad uint32) bool {
 	defer reportPanic("PosWithinRect")
+
 	if int(pos.X-pad) <= rect.Max.X && int(pos.X+pad) >= rect.Min.X {
 		if int(pos.Y-pad) <= rect.Max.Y && int(pos.Y+pad) >= rect.Min.Y {
 			return true

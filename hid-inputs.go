@@ -14,21 +14,21 @@ import (
 
 var (
 	/* UI states */
-	gMouseHeld        bool
+	mouseHeld         bool
 	gRightMouseHeld   bool
-	gClickCaptured    bool
-	gWindowDrag       *windowData
-	LeftMousePressed  bool
-	RightMousePressed bool
-	MouseX            int
-	MouseY            int
+	clickCaptured     bool
+	dragWindow        *windowData
+	leftMousePressed  bool
+	rightMousePressed bool
+	mouseX            int
+	mouseY            int
 	lastMouseX        int
 	lastMouseY        int
 
 	//World edit states
-	EditMode bool
-	EditID   uint32
-	editPos  XY = xyCenter
+	worldEditMode bool
+	worldEditID   uint32
+	editPos       XY = worldCenter
 
 	//Chat command states
 	ChatMode    bool
@@ -41,7 +41,7 @@ var (
 	directionThrottle  = time.Millisecond * 10
 
 	//Direction player will be going this tick
-	newPlayerDirection DIR
+	newPlayerDir DIR
 )
 
 const (
@@ -57,7 +57,7 @@ func (g *Game) Update() error {
 		return nil
 	}
 
-	newPlayerDirection = DIR_NONE
+	newPlayerDir = DIR_NONE
 
 	//Don't update during draw
 	drawLock.Lock()
@@ -85,7 +85,7 @@ func (g *Game) Update() error {
 	WASDKeys()
 
 	//Send current player direction
-	sendMove(newPlayerDirection)
+	sendMove(newPlayerDir)
 
 	return nil
 }
@@ -97,42 +97,42 @@ func WASDKeys() {
 		if !ChatMode {
 			if key == ebiten.KeyW ||
 				key == ebiten.KeyArrowUp {
-				if newPlayerDirection == DIR_NONE {
-					newPlayerDirection = DIR_N
-				} else if newPlayerDirection == DIR_E {
-					newPlayerDirection = DIR_NE
-				} else if newPlayerDirection == DIR_W {
-					newPlayerDirection = DIR_NW
+				if newPlayerDir == DIR_NONE {
+					newPlayerDir = DIR_N
+				} else if newPlayerDir == DIR_E {
+					newPlayerDir = DIR_NE
+				} else if newPlayerDir == DIR_W {
+					newPlayerDir = DIR_NW
 				}
 			}
 			if key == ebiten.KeyA ||
 				key == ebiten.KeyArrowLeft {
-				if newPlayerDirection == DIR_NONE {
-					newPlayerDirection = DIR_W
-				} else if newPlayerDirection == DIR_N {
-					newPlayerDirection = DIR_NW
-				} else if newPlayerDirection == DIR_S {
-					newPlayerDirection = DIR_SW
+				if newPlayerDir == DIR_NONE {
+					newPlayerDir = DIR_W
+				} else if newPlayerDir == DIR_N {
+					newPlayerDir = DIR_NW
+				} else if newPlayerDir == DIR_S {
+					newPlayerDir = DIR_SW
 				}
 			}
 			if key == ebiten.KeyS ||
 				key == ebiten.KeyArrowDown {
-				if newPlayerDirection == DIR_NONE {
-					newPlayerDirection = DIR_S
-				} else if newPlayerDirection == DIR_E {
-					newPlayerDirection = DIR_SE
-				} else if newPlayerDirection == DIR_W {
-					newPlayerDirection = DIR_SW
+				if newPlayerDir == DIR_NONE {
+					newPlayerDir = DIR_S
+				} else if newPlayerDir == DIR_E {
+					newPlayerDir = DIR_SE
+				} else if newPlayerDir == DIR_W {
+					newPlayerDir = DIR_SW
 				}
 			}
 			if key == ebiten.KeyD ||
 				key == ebiten.KeyArrowRight {
-				if newPlayerDirection == DIR_NONE {
-					newPlayerDirection = DIR_E
-				} else if newPlayerDirection == DIR_N {
-					newPlayerDirection = DIR_NE
-				} else if newPlayerDirection == DIR_S {
-					newPlayerDirection = DIR_SE
+				if newPlayerDir == DIR_NONE {
+					newPlayerDir = DIR_E
+				} else if newPlayerDir == DIR_N {
+					newPlayerDir = DIR_NE
+				} else if newPlayerDir == DIR_S {
+					newPlayerDir = DIR_SE
 				}
 			}
 		}
@@ -187,74 +187,73 @@ func getMouseClicks() {
 
 	/* Mouse clicks */
 	if inpututil.IsMouseButtonJustReleased(ebiten.MouseButtonLeft) {
-		gMouseHeld = false
+		mouseHeld = false
 
 		/* Stop dragging window */
-		gWindowDrag = nil
+		dragWindow = nil
 
 	} else if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
-		gMouseHeld = true
+		mouseHeld = true
 	}
 
 }
 
 func getCursor() {
 	// Save mouse coords
-	lastMouseX = MouseX
-	lastMouseY = MouseY
-	gClickCaptured = false
+	lastMouseX = mouseX
+	lastMouseY = mouseY
+	clickCaptured = false
 
 	//Handle mouse/touch events
 	touchIDs := ebiten.AppendTouchIDs(nil)
 	if len(touchIDs) > 0 {
-		touchEnabled = true
+		touchDetected = true
 
-		MouseX, MouseY = ebiten.TouchPosition(touchIDs[0])
-		if !lastTouch {
-			gMouseHeld = true
-			lastTouch = true
+		mouseX, mouseY = ebiten.TouchPosition(touchIDs[0])
+		if !hadTouchEvent {
+			mouseHeld = true
+			hadTouchEvent = true
 		}
 	} else {
-		if touchEnabled {
-			lastTouch = false
-			gMouseHeld = false
-			gWindowDrag = nil
+		if touchDetected {
+			hadTouchEvent = false
+			mouseHeld = false
+			dragWindow = nil
 		}
+		//Now check for mouse events
 		getMouseClicks()
 	}
 }
 
-var touchEnabled bool
-var lastTouch bool
+var touchDetected bool
+var hadTouchEvent bool
 
 func clampCursor() {
 	// Clamp mouse/touch to window
-	MouseX, MouseY = ebiten.CursorPosition()
-	if MouseX < 0 || MouseX > int(screenWidth) ||
-		MouseY < 0 || MouseY > int(screenHeight) {
-		MouseX = lastMouseX
-		MouseY = lastMouseY
-
-		// Stop dragging window if we go off-screen
-		gWindowDrag = nil
+	mouseX, mouseY = ebiten.CursorPosition()
+	if mouseX < 0 || mouseX > int(screenX) ||
+		mouseY < 0 || mouseY > int(screenY) {
+		mouseX = lastMouseX
+		mouseY = lastMouseY
 
 		//Eat clicks
-		gClickCaptured = true
-		gMouseHeld = false
+		clickCaptured = true
+		mouseHeld = false
 	}
 }
 
 func handleUI() {
 	// Check if we clicked within a window
-	if gMouseHeld {
-		gClickCaptured = handleToolbar()
-		gClickCaptured = collisionWindowsCheck(XYs{X: int32(MouseX), Y: int32(MouseY)})
+	if mouseHeld {
+		clickCaptured = handleToolbar()
+		clickCaptured = collisionWindowsCheck(XYs{X: int32(mouseX), Y: int32(mouseY)})
 	}
 
 	/* Handle window drag */
-	if gWindowDrag != nil {
-		gWindowDrag.position = XYs{X: int32(MouseX) - gWindowDrag.dragPos.X, Y: int32(MouseY) - gWindowDrag.dragPos.Y}
-		gClickCaptured = true
+	if dragWindow != nil {
+		dragWindow.position = XYs{X: int32(mouseX) - dragWindow.dragPos.X, Y: int32(mouseY) - dragWindow.dragPos.Y}
+		clampUIWindow()
+		clickCaptured = true
 	}
 }
 
@@ -279,9 +278,9 @@ func chatCommands() {
 
 			if ChatText != "" {
 				if CommandMode {
-					sendCommand(CMD_COMMAND, []byte(ChatText))
+					sendCommand(CMD_Command, []byte(ChatText))
 				} else if ChatMode {
-					sendCommand(CMD_CHAT, []byte(ChatText))
+					sendCommand(CMD_Chat, []byte(ChatText))
 				}
 
 			}
@@ -306,48 +305,48 @@ func chatCommands() {
 
 func worldEditor() {
 	if repeatingKeyPressed(ebiten.KeyBackslash) {
-		if EditMode {
-			EditMode = false
+		if worldEditMode {
+			worldEditMode = false
 		} else {
-			EditMode = true
+			worldEditMode = true
 			chat("Click to place an item, right-click to delete an item, + and - cycle item IDs.")
 		}
 	}
 
-	if EditMode {
-		if !gClickCaptured {
-			if gMouseHeld {
-				if !LeftMousePressed {
+	if worldEditMode {
+		if !clickCaptured {
+			if mouseHeld {
+				if !leftMousePressed {
 					editPlaceItem()
 				}
-				LeftMousePressed = true
+				leftMousePressed = true
 			} else {
-				LeftMousePressed = false
+				leftMousePressed = false
 			}
 			if gRightMouseHeld {
-				if !RightMousePressed {
+				if !rightMousePressed {
 					editDeleteItem()
 				}
-				RightMousePressed = true
+				rightMousePressed = true
 			} else {
-				RightMousePressed = false
+				rightMousePressed = false
 			}
 		}
 		if repeatingKeyPressed(ebiten.KeyEqual) {
-			if EditID < numSprites {
-				EditID++
+			if worldEditID < topSpriteID {
+				worldEditID++
 			}
 		} else if repeatingKeyPressed(ebiten.KeyMinus) {
-			if EditID > 0 {
-				EditID--
+			if worldEditID > 0 {
+				worldEditID--
 			}
 		}
 
-		editPos = XY{X: smoothCamPos.X - uint32(MouseX), Y: smoothCamPos.Y - uint32(MouseY)}
+		editPos = XY{X: sCamPos.X - uint32(mouseX), Y: sCamPos.Y - uint32(mouseY)}
 	} else {
-		if !gClickCaptured {
-			if gMouseHeld {
-				newPlayerDirection = walkXY(MouseX, MouseY)
+		if !clickCaptured {
+			if mouseHeld {
+				newPlayerDir = walkXY(mouseX, mouseY)
 			}
 		}
 	}
@@ -355,20 +354,20 @@ func worldEditor() {
 
 func walkXY(mx, my int) DIR {
 
-	distance := distance(XY{X: uint32(HscreenWidth), Y: uint32(HscreenHeight)}, XY{X: uint32(mx), Y: uint32(my)})
+	distance := distance(XY{X: uint32(halfScreenX), Y: uint32(halfScreenY)}, XY{X: uint32(mx), Y: uint32(my)})
 
-	if distance < charSpriteSize ||
-		mx > screenWidth || my > screenHeight ||
+	if distance < playerSpriteSize ||
+		mx > screenX || my > screenY ||
 		mx < 0 || my < 0 {
 		return DIR_NONE
 	}
 
-	p1 := geom.Coord{float64(HscreenWidth), float64(HscreenHeight), 0}
-	p2 := geom.Coord{float64(mx), float64(my), 0}
+	screenCenter := geom.Coord{float64(halfScreenX), float64(halfScreenY), 0}
+	mousePosition := geom.Coord{float64(mx), float64(my), 0}
 
-	angle := xy.Angle(p1, p2)
+	angle := xy.Angle(screenCenter, mousePosition)
 
-	return radToDir(angle)
+	return radiansToDirection(angle)
 }
 
 // repeatingKeyPressed return true when key is pressed considering the repeat state.
@@ -387,11 +386,11 @@ func repeatingKeyPressed(key ebiten.Key) bool {
 	return false
 }
 
-func sendMove(newDir DIR) {
+func sendMove(nextDirection DIR) {
 
 	//Exit if nothing changed
-	if newDir == goDir {
-		if goDir == DIR_NONE {
+	if nextDirection == goingDirection {
+		if goingDirection == DIR_NONE {
 			return
 		} else if time.Since(lastNetSend) < directionKeepAlive {
 			return
@@ -403,13 +402,13 @@ func sendMove(newDir DIR) {
 	}
 
 	//Update our direction
-	goDir = newDir
+	goingDirection = nextDirection
 
 	var buf []byte
 	outbuf := bytes.NewBuffer(buf)
 
-	binary.Write(outbuf, binary.LittleEndian, &goDir)
-	sendCommand(CMD_MOVE, outbuf.Bytes())
+	binary.Write(outbuf, binary.LittleEndian, &goingDirection)
+	sendCommand(CMD_Move, outbuf.Bytes())
 
 	lastNetSend = time.Now()
 }
@@ -419,10 +418,10 @@ func editPlaceItem() {
 	var buf []byte
 	outbuf := bytes.NewBuffer(buf)
 
-	binary.Write(outbuf, binary.LittleEndian, EditID)
+	binary.Write(outbuf, binary.LittleEndian, worldEditID)
 	binary.Write(outbuf, binary.LittleEndian, editPos.X)
 	binary.Write(outbuf, binary.LittleEndian, editPos.Y)
-	sendCommand(CMD_EDITPLACEITEM, outbuf.Bytes())
+	sendCommand(CMD_EditPlaceItem, outbuf.Bytes())
 }
 
 func editDeleteItem() {
@@ -430,8 +429,8 @@ func editDeleteItem() {
 	var buf []byte
 	outbuf := bytes.NewBuffer(buf)
 
-	binary.Write(outbuf, binary.LittleEndian, EditID)
+	binary.Write(outbuf, binary.LittleEndian, worldEditID)
 	binary.Write(outbuf, binary.LittleEndian, editPos.X)
 	binary.Write(outbuf, binary.LittleEndian, editPos.Y)
-	sendCommand(CMD_EDITDELETEITEM, outbuf.Bytes())
+	sendCommand(CMD_EditDeleteItem, outbuf.Bytes())
 }

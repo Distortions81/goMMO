@@ -25,11 +25,11 @@ import (
 )
 
 var (
-	shadowImage   = ebiten.NewImage(screenWidth, screenHeight)
-	triangleImage = ebiten.NewImage(screenWidth, screenHeight)
+	shadowImage   = ebiten.NewImage(screenX, screenY)
+	triangleImage = ebiten.NewImage(screenX, screenY)
 
 	showRays bool
-	px, py   int = screenWidth / 2, screenHeight / 2
+	px, py   int = screenX / 2, screenY / 2
 	rObjects []rayObject
 
 	fastShadow bool
@@ -54,14 +54,14 @@ func makeRayObjs() {
 	rObjects = []rayObject{}
 
 	//Outer walls
-	rObjects = append(rObjects, rayObject{rect(0, 0, float64(screenWidth), float64(screenHeight))})
+	rObjects = append(rObjects, rayObject{rect(0, 0, float64(screenX), float64(screenY))})
 
 	//Cast against players
 	for _, obj := range playerList {
 		if obj.id == localPlayer.id {
 			continue
 		}
-		rec := rect(float64(smoothCamPos.X-obj.spos.X-5), float64(smoothCamPos.Y-obj.spos.Y-12), 15, 35)
+		rec := rect(float64(sCamPos.X-obj.spos.X-5), float64(sCamPos.Y-obj.spos.Y-12), 15, 35)
 		rObjects = append(rObjects, rayObject{rec})
 	}
 
@@ -71,8 +71,8 @@ func makeRayObjs() {
 			continue
 		}
 		rec := rect(
-			float64(smoothCamPos.X-obj.pos.X-uint32(obj.itemData.SizeW/2)),
-			float64(smoothCamPos.Y-obj.pos.Y-uint32(obj.itemData.SizeH/2)),
+			float64(sCamPos.X-obj.pos.X-uint32(obj.itemData.SizeW/2)),
+			float64(sCamPos.Y-obj.pos.Y-uint32(obj.itemData.SizeH/2)),
 			float64(obj.itemData.SizeW), float64(obj.itemData.SizeH))
 		rObjects = append(rObjects, rayObject{rec})
 	}

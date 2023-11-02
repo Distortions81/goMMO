@@ -15,17 +15,17 @@ var (
 	//go:embed data
 	efs embed.FS
 
-	testChar  *ebiten.Image
-	testGrass *ebiten.Image
-	testlight *ebiten.Image
-	testLogin *ebiten.Image
+	playerSprite *ebiten.Image
+	testGrass    *ebiten.Image
+	testlight    *ebiten.Image
+	testLogin    *ebiten.Image
 
 	checkOn  *ebiten.Image
 	checkOff *ebiten.Image
 	closeBox *ebiten.Image
 
-	spritelist []*sectionItemData
-	numSprites uint32
+	spritelist  []*sectionItemData
+	topSpriteID uint32
 )
 
 // Read text files
@@ -70,12 +70,12 @@ func loadSprites() {
 			}
 			itemTypesList[x].items[y].image = imageData
 			spritelist = append(spritelist, itemTypesList[x].items[y])
-			numSprites++
+			topSpriteID++
 		}
 	}
 
 	testGrass = findItemImage("terrain", "grass-1")
-	testChar = findItemImage("characters", "player")
+	playerSprite = findItemImage("characters", "player")
 	testlight = findItemImage("effects", "light")
 	testLogin = findItemImage("effects", "login")
 
@@ -131,7 +131,7 @@ func getFont(name string) []byte {
 // Load sprites
 func loadSprite(name string, unmanaged bool) (*ebiten.Image, error) {
 
-	if cLoadEmbedSprites {
+	if loadEmbedSprites {
 		gpng, err := efs.Open(gfxDir + name)
 		if err != nil {
 			doLog(true, "GetSpriteImage: Embedded: %v", err)

@@ -15,8 +15,8 @@ import (
 )
 
 var (
-	camPos       XY = xyCenter
-	smoothCamPos XY = xyCenter
+	camPos  XY = worldCenter
+	sCamPos XY = worldCenter
 
 	disableNightShadow bool
 	nightLevel         uint8 = 0
@@ -33,125 +33,133 @@ func (v xySort) Less(i, j int) bool { return v[i].pos.Y+v[i].pos.X > v[j].pos.Y+
 
 /* Ebiten: Draw everything */
 func (g *Game) Draw(screen *ebiten.Image) {
-
 	gameModeLock.Lock()
 	defer gameModeLock.Unlock()
 
-	if gameMode == MODE_PLAYING {
+	if gameMode != MODE_Playing {
+		drawBootScreen(screen)
+		return
+	}
 
-		// If not smoothing, don't draw if there isn't new data
-		if noSmoothing {
-			if !dataDirty {
-				return
-			}
+	// If not smoothing, don't draw if there isn't new data
+	if noSmoothing && !dataDirty {
+		return
+	}
+
+	drawLock.Lock()
+	defer drawLock.Unlock()
+
+	//We are drawing now, we can clear this flag
+	dataDirty = false
+
+	motionSmoothing()
+
+	drawGrass(screen)
+
+	drawDebugEdit(screen)
+
+	drawWorldObjs(screen)
+
+	drawPlayers(screen)
+
+	drawNightVignette(screen)
+
+	drawDebugInfo(screen)
+
+	drawChatLines(screen)
+
+	drawChatBar(screen)
+
+	drawOpenWindows(screen)
+
+	showToolbarCache(screen)
+
+	toolBarTooltip(screen)
+
+}
+
+func drawBootScreen(screen *ebiten.Image) {
+	/* Boot screen */
+	op := &ebiten.DrawImageOptions{}
+	var imgSize float64 = 1024.0
+
+	scalew := 1.0 / (imgSize / float64(screenX))
+	scaleh := 1.0 / (imgSize / float64(screenY))
+
+	op.GeoM.Scale(scalew, scaleh)
+
+	screen.DrawImage(testLogin, op)
+	drawChatLines(screen)
+}
+
+func drawGrass(screen *ebiten.Image) {
+	/* Draw grass */
+	for x := -32; x <= screenX; x += 32 {
+		for y := -32; y <= screenY; y += 32 {
+			op := ebiten.DrawImageOptions{}
+			op.GeoM.Scale(2, 2)
+			op.GeoM.Translate(float64(x+int(sCamPos.X%32)), float64(y+int(sCamPos.Y%32)))
+			screen.DrawImage(testGrass, &op)
+		}
+	}
+}
+
+func motionSmoothing() {
+	if !noSmoothing {
+		// Extrapolate position
+		startTime = time.Now()
+		since := startTime.Sub(lastNetUpdate)
+		remaining := FrameSpeedNS - since.Nanoseconds()
+		normal = (float64(remaining) / float64(FrameSpeedNS))
+
+		//Extrapolation limits
+		if normal < 0 {
+			normal = 0
+		} else if normal > 1 {
+			normal = 1
 		}
 
-		drawLock.Lock()
-		defer drawLock.Unlock()
+		// If there ins't new data yet, extrapolate
+		if !dataDirty {
+			var smoothPos XY
 
-		//We are drawing now, we can clear this flag
-		dataDirty = false
+			//Extrapolated local player position
+			smoothPos.X = uint32(float64(oldLocalPlayerPos.X) - ((float64(localPlayerPos.X) - float64(oldLocalPlayerPos.X)) * normal))
+			smoothPos.Y = uint32(float64(oldLocalPlayerPos.Y) - ((float64(localPlayerPos.Y) - float64(oldLocalPlayerPos.Y)) * normal))
 
-		/* Motion smoothing */
-		if !noSmoothing {
-			// Extrapolate position
-			startTime = time.Now()
-			since := startTime.Sub(lastNetUpdate)
-			remaining := FrameSpeedNS - since.Nanoseconds()
-			normal = (float64(remaining) / float64(FrameSpeedNS))
+			//Extrapolated camera position
+			sCamPos.X = (uint32(halfScreenX)) + smoothPos.X
+			sCamPos.Y = (uint32(halfScreenY)) + smoothPos.Y
 
-			//Extrapolation limits
-			if normal < 0 {
-				normal = 0
-			} else if normal > 1 {
-				normal = 1
-			}
-
-			// If there ins't new data yet, extrapolate
-			if !dataDirty {
-				var smoothPos XY
-
-				//Extrapolated local player position
-				smoothPos.X = uint32(float64(oldLocalPlayerPos.X) - ((float64(localPlayerPos.X) - float64(oldLocalPlayerPos.X)) * normal))
-				smoothPos.Y = uint32(float64(oldLocalPlayerPos.Y) - ((float64(localPlayerPos.Y) - float64(oldLocalPlayerPos.Y)) * normal))
-
-				//Extrapolated camera position
-				smoothCamPos.X = (uint32(HscreenWidth)) + smoothPos.X
-				smoothCamPos.Y = (uint32(HscreenHeight)) + smoothPos.Y
-
-				//Extrapolated remote players
-				for p, player := range playerList {
-					var psmooth XY
-					psmooth.X = uint32(float64(player.lastPos.X) - ((float64(player.pos.X) - float64(player.lastPos.X)) * normal))
-					psmooth.Y = uint32(float64(player.lastPos.Y) - ((float64(player.pos.Y) - float64(player.lastPos.Y)) * normal))
-					playerList[p].spos = XY{X: uint32(psmooth.X), Y: uint32(psmooth.Y)}
-				}
-			}
-		} else {
-			/* Standard mode, just copy data over */
-			camPos.X = (uint32(HscreenWidth)) + localPlayerPos.X
-			camPos.Y = (uint32(HscreenHeight)) + localPlayerPos.Y
-			smoothCamPos = camPos
-			for o := range playerList {
-				playerList[o].spos = playerList[o].pos
+			//Extrapolated remote players
+			for p, player := range playerList {
+				var psmooth XY
+				psmooth.X = uint32(float64(player.lastPos.X) - ((float64(player.pos.X) - float64(player.lastPos.X)) * normal))
+				psmooth.Y = uint32(float64(player.lastPos.Y) - ((float64(player.pos.Y) - float64(player.lastPos.Y)) * normal))
+				playerList[p].spos = XY{X: uint32(psmooth.X), Y: uint32(psmooth.Y)}
 			}
 		}
-
-		/* Draw grass */
-		for x := -32; x <= screenWidth; x += 32 {
-			for y := -32; y <= screenHeight; y += 32 {
-				op := ebiten.DrawImageOptions{}
-				op.GeoM.Scale(2, 2)
-				op.GeoM.Translate(float64(x+int(smoothCamPos.X%32)), float64(y+int(smoothCamPos.Y%32)))
-				screen.DrawImage(testGrass, &op)
-			}
-		}
-
-		if EditMode {
-			drawDebugEdit(screen)
-		}
-
-		drawWorldObjs(screen)
-
-		drawPlayers(screen)
-
-		drawNightVignette(screen)
-
-		drawDebugInfo(screen)
-
-		drawChatLines(screen)
-
-		drawChatBar(screen)
-
-		drawOpenWindows(screen)
-
-		showToolbarCache(screen)
-
-		toolBarTooltip(screen)
-
 	} else {
-
-		/* Boot screen */
-		op := &ebiten.DrawImageOptions{}
-		var imgSize float64 = 1024.0
-
-		scalew := 1.0 / (imgSize / float64(screenWidth))
-		scaleh := 1.0 / (imgSize / float64(screenHeight))
-
-		op.GeoM.Scale(scalew, scaleh)
-
-		screen.DrawImage(testLogin, op)
-		drawChatLines(screen)
+		/* Standard mode, just copy data over */
+		camPos.X = (uint32(halfScreenX)) + localPlayerPos.X
+		camPos.Y = (uint32(halfScreenY)) + localPlayerPos.Y
+		sCamPos = camPos
+		for o := range playerList {
+			playerList[o].spos = playerList[o].pos
+		}
 	}
 }
 
 func showToolbarCache(screen *ebiten.Image) {
+	defer reportPanic("showToolbarCache")
+
 	toolbarCacheLock.RLock()
 	screen.DrawImage(toolbarCache, nil)
 	toolbarCacheLock.RUnlock()
 }
 
 func drawWorldObjs(screen *ebiten.Image) {
+	defer reportPanic("drawWorldObjs")
 
 	//Draw on-ground objects first
 	for _, obj := range wObjList {
@@ -159,8 +167,8 @@ func drawWorldObjs(screen *ebiten.Image) {
 			continue
 		}
 
-		xPos := float64(int(smoothCamPos.X) - int(obj.pos.X))
-		yPos := float64(int(smoothCamPos.Y) - int(obj.pos.Y))
+		xPos := float64(int(sCamPos.X) - int(obj.pos.X))
+		yPos := float64(int(sCamPos.Y) - int(obj.pos.Y))
 
 		op := ebiten.DrawImageOptions{}
 		op.GeoM.Scale(2, 2)
@@ -178,8 +186,8 @@ func drawWorldObjs(screen *ebiten.Image) {
 			continue
 		}
 
-		xPos := float64(int(smoothCamPos.X) - int(obj.pos.X))
-		yPos := float64(int(smoothCamPos.Y) - int(obj.pos.Y))
+		xPos := float64(int(sCamPos.X) - int(obj.pos.X))
+		yPos := float64(int(sCamPos.Y) - int(obj.pos.Y))
 
 		op := ebiten.DrawImageOptions{}
 		op.GeoM.Scale(2, 2)
@@ -191,6 +199,7 @@ func drawWorldObjs(screen *ebiten.Image) {
 }
 
 func drawNightVignette(screen *ebiten.Image) {
+	defer reportPanic("drawNightVignette")
 
 	if nightLevel == 0 {
 		return
@@ -201,10 +210,10 @@ func drawNightVignette(screen *ebiten.Image) {
 
 	/* Fit this onto the screen */
 	var screenSize int
-	if screenHeight > screenWidth {
-		screenSize = screenHeight
+	if screenY > screenX {
+		screenSize = screenY
 	} else {
-		screenSize = screenWidth
+		screenSize = screenX
 	}
 	var sc float64
 	if screenSize > 1024 {
@@ -213,8 +222,8 @@ func drawNightVignette(screen *ebiten.Image) {
 		sc = 1.01
 	}
 
-	xPos := float64(int(smoothCamPos.X)-int(playerList[localPlayer.id].spos.X)) - (512 * sc)
-	yPos := float64(int(smoothCamPos.Y)-int(playerList[localPlayer.id].spos.Y)) - (512 * sc)
+	xPos := float64(int(sCamPos.X)-int(playerList[localPlayer.id].spos.X)) - (512 * sc)
+	yPos := float64(int(sCamPos.Y)-int(playerList[localPlayer.id].spos.Y)) - (512 * sc)
 
 	op.GeoM.Translate(float64(xPos), float64(yPos))
 	op.GeoM.Scale(sc, sc)
@@ -224,21 +233,22 @@ func drawNightVignette(screen *ebiten.Image) {
 }
 
 func drawPlayers(screen *ebiten.Image) {
+	defer reportPanic("drawPlayers")
 
 	/* Find visible players and sort them */
 	var pList []*playerData
 	for _, player := range playerList {
-		xPos := float64(int(smoothCamPos.X) - int(player.spos.X))
-		yPos := float64(int(smoothCamPos.Y) - int(player.spos.Y))
+		xPos := float64(int(sCamPos.X) - int(player.spos.X))
+		yPos := float64(int(sCamPos.Y) - int(player.spos.Y))
 
 		//Sprite on screen?
-		if xPos-charSpriteSize > float64(screenWidth) {
+		if xPos-playerSpriteSize > float64(screenX) {
 			continue
-		} else if xPos < -charSpriteSize {
+		} else if xPos < -playerSpriteSize {
 			continue
-		} else if yPos-charSpriteSize > float64(screenHeight) {
+		} else if yPos-playerSpriteSize > float64(screenY) {
 			continue
-		} else if yPos < -charSpriteSize {
+		} else if yPos < -playerSpriteSize {
 			continue
 		}
 		pList = append(pList, player)
@@ -248,8 +258,8 @@ func drawPlayers(screen *ebiten.Image) {
 	/* Draw player */
 	for _, player := range pList {
 
-		xPos := float64(int(smoothCamPos.X) - int(player.spos.X))
-		yPos := float64(int(smoothCamPos.Y) - int(player.spos.Y))
+		xPos := float64(int(sCamPos.X) - int(player.spos.X))
+		yPos := float64(int(sCamPos.Y) - int(player.spos.Y))
 
 		op := ebiten.DrawImageOptions{}
 
@@ -275,8 +285,8 @@ func drawPlayers(screen *ebiten.Image) {
 
 		// Draw name
 		drawText(pname, toolTipFont, color.White, colorNameBG,
-			XYf32{X: float32(int(smoothCamPos.X)-int(player.spos.X)) + 4,
-				Y: float32(int(smoothCamPos.Y)-int(player.spos.Y)) + 48},
+			XYf32{X: float32(int(sCamPos.X)-int(player.spos.X)) + 4,
+				Y: float32(int(sCamPos.Y)-int(player.spos.Y)) + 48},
 			2, screen, false, false, true)
 
 	}
@@ -295,15 +305,15 @@ func drawPlayers(screen *ebiten.Image) {
 
 			vector.DrawFilledRect(
 				screen,
-				float32(int(smoothCamPos.X)-int(player.pos.X))-12+4-1,
-				float32(int(smoothCamPos.Y)-int(player.pos.Y))+24-1,
+				float32(int(sCamPos.X)-int(player.pos.X))-12+4-1,
+				float32(int(sCamPos.Y)-int(player.pos.Y))+24-1,
 				27, 4, colorNameBG,
 				false)
 
 			vector.DrawFilledRect(
 				screen,
-				float32(int(smoothCamPos.X)-int(player.pos.X))-12+4,
-				float32(int(smoothCamPos.Y)-int(player.pos.Y))+24,
+				float32(int(sCamPos.X)-int(player.pos.X))-12+4,
+				float32(int(sCamPos.Y)-int(player.pos.Y))+24,
 				25-((100.0-float32(player.health))/4.0), 2, healthColor,
 				false)
 		}
@@ -402,7 +412,7 @@ func drawChatLines(screen *ebiten.Image) {
 
 		drawText(line.text, generalFont,
 			color.RGBA{R: uint8(r >> 8), G: uint8(g >> 8), B: uint8(b >> 8), A: byte(newAlpha)},
-			tempBGColor, XYf32{X: padding, Y: float32(screenHeight) - (float32(lineNum) * (float32(generalFontH) * 1.66)) - chatVertSpace},
+			tempBGColor, XYf32{X: padding, Y: float32(screenY) - (float32(lineNum) * (float32(generalFontH) * 1.66)) - chatVertSpace},
 			4, screen, true, false, false)
 	}
 }
@@ -429,6 +439,10 @@ func drawDebugInfo(screen *ebiten.Image) {
 func drawDebugEdit(screen *ebiten.Image) {
 	defer reportPanic("drawDebugEdit")
 
+	if !worldEditMode {
+		return
+	}
+
 	xPos := float64(int(camPos.X) - int(editPos.X))
 	yPos := float64(int(camPos.Y) - int(editPos.Y))
 
@@ -437,13 +451,13 @@ func drawDebugEdit(screen *ebiten.Image) {
 	op.GeoM.Scale(2, 2)
 
 	//Draw edit sprite
-	if EditID < numSprites {
+	if worldEditID < topSpriteID {
 		op.GeoM.Translate(xPos, yPos)
-		screen.DrawImage(spritelist[EditID].image, &op)
+		screen.DrawImage(spritelist[worldEditID].image, &op)
 	}
 
 	/* Draw debug info */
-	buf := fmt.Sprintf("EDIT MODE ON: ID: %v", EditID)
+	buf := fmt.Sprintf("EDIT MODE ON: ID: %v", worldEditID)
 
 	drawText(buf, monoFont, color.White, colorNameBG,
 		XYf32{X: 1, Y: 1},
@@ -472,12 +486,12 @@ func drawChatBar(screen *ebiten.Image) {
 	if ChatMode {
 		var pad float32 = 4 * float32(uiScale)
 		drawText(text, monoFont, color.White, colorNameBG,
-			XYf32{X: (pad * 1.5), Y: float32(screenHeight) + (pad * 2)},
+			XYf32{X: (pad * 1.5), Y: float32(screenY) + (pad * 2)},
 			pad, screen, true, true, false)
 	} else if CommandMode {
 		var pad float32 = 4 * float32(uiScale)
 		drawText(text, monoFont, color.White, colorNameBG,
-			XYf32{X: (pad * 1.5), Y: float32(screenHeight) + (pad * 2)},
+			XYf32{X: (pad * 1.5), Y: float32(screenY) + (pad * 2)},
 			pad, screen, true, true, false)
 	}
 

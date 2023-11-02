@@ -19,7 +19,7 @@ const (
 
 func connectServer() {
 
-	changeGameMode(MODE_BOOT, 0)
+	changeGameMode(MODE_Boot, 0)
 
 	for !doConnect() {
 		ReconnectCount++
@@ -34,7 +34,7 @@ func connectServer() {
 		delay := float64(3 + offset + int(float64(timeFuzz)/100000000.0))
 		reconnectTime = time.Now().Add(time.Duration(delay) * time.Second)
 
-		changeGameMode(MODE_RECONNECT, time.Millisecond*500)
+		changeGameMode(MODE_Reconnect, time.Millisecond*500)
 		buf := fmt.Sprintf("Connect %v failed, retrying in %v ...", ReconnectCount, time.Until(reconnectTime).Round(time.Second).String())
 		doLog(true, buf)
 		chat(buf)
@@ -42,7 +42,7 @@ func connectServer() {
 		time.Sleep(time.Duration(delay) * time.Second)
 	}
 	time.Sleep(bootSleep)
-	changeGameMode(MODE_PLAYING, 0)
+	changeGameMode(MODE_Playing, 0)
 }
 
 func doConnect() bool {
@@ -51,7 +51,7 @@ func doConnect() bool {
 		playerNames = make(map[uint32]pNameData)
 	}
 
-	changeGameMode(MODE_CONNECT, 0)
+	changeGameMode(MODE_Connect, 0)
 	doLog(true, "Connecting...")
 	chat("Connecting to server...")
 
@@ -77,12 +77,12 @@ func doConnect() bool {
 	binary.Write(outbuf, binary.LittleEndian, &netProtoVersion)
 
 	//Send INIT to server
-	go sendCommand(CMD_INIT, outbuf.Bytes())
+	go sendCommand(CMD_Init, outbuf.Bytes())
 
 	doLog(true, "Connected!")
 	chat("Connected!")
 
-	changeGameMode(MODE_CONNECTED, 0)
+	changeGameMode(MODE_Connected, 0)
 
 	//Start read loop on new thread and exit
 	go readNet()
@@ -117,7 +117,7 @@ func readNet() {
 			doLog(true, "readNet error: %v", err)
 
 			//TODO: Notify player here
-			changeGameMode(MODE_RECONNECT, time.Second)
+			changeGameMode(MODE_Reconnect, time.Second)
 
 			chatLines = []chatLineData{}
 			chatLinesTop = 0
@@ -139,7 +139,7 @@ func readNet() {
 
 		drawLock.Lock()
 
-		if d != CMD_UPDATE {
+		if d != CMD_WorldUpdate {
 			cmdName := cmdNames[d]
 
 			// Log event
@@ -151,24 +151,24 @@ func readNet() {
 		}
 
 		switch d {
-		case CMD_INIT:
+		case CMD_Init:
 			chat("Server rejected connection: invalid version.")
-			changeGameMode(MODE_ERROR, 0)
+			changeGameMode(MODE_Error, 0)
 
-		case CMD_LOGIN:
+		case CMD_Login:
 			binary.Read(inbuf, binary.LittleEndian, &localPlayer.id)
 			binary.Read(inbuf, binary.LittleEndian, &localPlayer.areaid)
 			doLog(true, "New local id: %v, area: %v", localPlayer.id, localPlayer.areaid)
-			changeGameMode(MODE_PLAYING, 0)
+			changeGameMode(MODE_Playing, 0)
 
-		case CMD_CHAT:
+		case CMD_Chat:
 			chat(string(data))
 
-		case CMD_COMMAND:
+		case CMD_Command:
 			chat("> " + string(data))
-		case CMD_WORLDDATA:
+		case CMD_WorldData:
 			fmt.Printf("WorldData %v\n", string(data))
-		case CMD_PLAYERNAMES:
+		case CMD_PlayerNames:
 			var numNames uint32
 			binary.Read(inbuf, binary.LittleEndian, &numNames)
 
@@ -192,7 +192,7 @@ func readNet() {
 				playerNames[id] = pNameData{name: name, id: id}
 			}
 
-		case CMD_UPDATE:
+		case CMD_WorldUpdate:
 
 			var numPlayers uint16
 			binary.Read(inbuf, binary.LittleEndian, &numPlayers)
@@ -315,7 +315,7 @@ func readNet() {
 		default:
 			doLog(true, "Received invalid: 0x%02X\n", d)
 			localPlayer.conn.Close(websocket.StatusNormalClosure, "closed")
-			changeGameMode(MODE_ERROR, 0)
+			changeGameMode(MODE_Error, 0)
 		}
 
 		drawLock.Unlock()
