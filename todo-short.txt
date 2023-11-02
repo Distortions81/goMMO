@@ -22,3 +22,7 @@ Don't pixel-double on very small windows (mobile)
 
 possibly skip caching chunk if not needed.
 only check chunks within radius of player!
+
+##############################
+## Write object data sending
+## Then add basic attack
