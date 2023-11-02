@@ -214,10 +214,10 @@ func (g *Game) Update() error {
 
 			if fastShadow {
 				fastShadow = false
-				chat("Fast shadows now ON! (Faster/Less battery)")
+				chat("Fast shadows now Off!")
 			} else {
 				fastShadow = true
-				chat("Fast shadows now OFF!")
+				chat("Fast shadows now ON! (Faster/Less battery)")
 			}
 		}
 	}
