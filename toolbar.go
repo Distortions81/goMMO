@@ -75,13 +75,13 @@ var uiObjs = []*objTypeData{
 		base: "help",
 		name: "Help", toolbarAction: toggleHelp,
 		description: "See game controls and help.", qKey: ebiten.KeyF1,
-		image: settingsIcon,
+		image: settingsIcon, excludeWASM: false,
 	},
 	{
 		base: "settings",
 		name: "Options", toolbarAction: settingsToggle,
 		description: "Show game options", qKey: ebiten.KeyF2,
-		image: helpIcon,
+		image: helpIcon, excludeWASM: false,
 	},
 }
 
@@ -90,16 +90,14 @@ func initToolbar() {
 	defer reportPanic("InitToolbar")
 	toolbarMax = 0
 	for subPos, subType := range subTypes {
-		if subPos == objSubUI || subPos == objSubGame {
-			for _, oType := range subType.list {
-				/* Skips some items for WASM */
-				if WASMMode && oType.excludeWASM {
-					continue
-				}
-				toolbarMax++
-				toolbarItems = append(toolbarItems, toolbarItemData{sType: subPos, oType: oType})
-
+		for _, oType := range subType.list {
+			/* Skips some items for WASM */
+			if WASMMode && oType.excludeWASM {
+				continue
 			}
+			toolbarMax++
+			toolbarItems = append(toolbarItems, toolbarItemData{sType: subPos, oType: oType})
+
 		}
 	}
 }
@@ -177,6 +175,5 @@ func drawToolbar(click, hover bool, index int) {
 
 		/* Draw to image */
 		toolbarCache.DrawImage(img, op)
-
 	}
 }
