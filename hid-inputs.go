@@ -91,6 +91,10 @@ func (g *Game) Update() error {
 }
 
 func WASDKeys() {
+	if CommandMode || worldEditMode {
+		return
+	}
+
 	pressedKeys := inpututil.AppendPressedKeys(nil)
 
 	for _, key := range pressedKeys {
@@ -140,6 +144,10 @@ func WASDKeys() {
 }
 
 func settingsHotkeys() {
+	if CommandMode || worldEditMode {
+		return
+	}
+
 	if repeatingKeyPressed(ebiten.KeyN) {
 		if !ChatMode && !CommandMode {
 
@@ -300,6 +308,10 @@ func chatCommands() {
 }
 
 func worldEditor() {
+	if CommandMode || worldEditMode {
+		return
+	}
+
 	if repeatingKeyPressed(ebiten.KeyBackslash) {
 		if worldEditMode {
 			worldEditMode = false
