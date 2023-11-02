@@ -107,7 +107,6 @@ func (g *Game) Update() error {
 
 			MouseX, MouseY = ebiten.TouchPosition(touch)
 			gMouseHeld = true
-
 			break
 		}
 	} else {
