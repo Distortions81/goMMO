@@ -44,7 +44,7 @@ type settingType struct {
 func init() {
 	defer reportPanic("options init")
 	settingItems = []settingType{
-		{ConfigName: "VSYNC", Text: "Limit FPS (VSYNC)", action: toggleVsync, Enabled: true, WASMExclude: true},
+		{ConfigName: "VSYNC", Text: "Limit FPS (VSYNC)", action: toggleVsync, Enabled: true},
 		{ConfigName: "FULLSCREEN", Text: "Full Screen", action: toggleFullscreen},
 		{ConfigName: "FAST-SHADOWS", Text: "Fast Shadows", action: toggleFastShadow},
 		{ConfigName: "MOTION-SMOOTH", Text: "Motion Smoothing", action: toggleSmoothing, Enabled: true},
@@ -180,10 +180,13 @@ func toggleUnits(item int) {
 /* Toggle full-screen */
 func toggleFullscreen(item int) {
 	defer reportPanic("toggleFullscreen")
-	if ebiten.IsFullscreen() {
+
+	if fullscreen {
+		fullscreen = false
 		ebiten.SetFullscreen(false)
 		settingItems[item].Enabled = false
 	} else {
+		fullscreen = true
 		ebiten.SetFullscreen(true)
 		settingItems[item].Enabled = true
 	}

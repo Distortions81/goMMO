@@ -33,6 +33,7 @@ var (
 	rObjects []rayObject
 
 	fastShadow bool
+	fullscreen bool
 )
 
 type line struct {
