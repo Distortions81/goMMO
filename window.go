@@ -26,7 +26,7 @@ var windows []*windowData = []*windowData{
 		title:       "Help & Controls",
 		size:        XYs{X: 300, Y: 270},
 		centered:    false,
-		position:    XYs{X: 16, Y: 16},
+		position:    XYs{X: 8, Y: 46},
 		closeable:   true,
 		windowDraw:  drawHelpWindow,
 		windowInput: handleHelpWindow,

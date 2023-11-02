@@ -27,7 +27,7 @@ const (
 	maxItemType = 255
 
 	/* Toolbar settings */
-	toolBarIconSize   = 48
+	toolBarIconSize   = 32
 	toolBarSpaceRatio = 4
 	tbSelThick        = 2
 	halfSelThick      = tbSelThick / 2
@@ -72,16 +72,14 @@ var subTypes = []subTypeData{
 var uiObjs = []*objTypeData{
 	//Ui Only
 	{
-		base: "help",
-		name: "Help", toolbarAction: toggleHelp,
-		description: "See game controls and help.", qKey: ebiten.KeyF1,
-		image: settingsIcon, excludeWASM: false,
-	},
-	{
 		base: "settings",
 		name: "Options", toolbarAction: settingsToggle,
 		description: "Show game options", qKey: ebiten.KeyF2,
-		image: helpIcon, excludeWASM: false,
+	},
+	{
+		base: "help",
+		name: "Help", toolbarAction: toggleHelp,
+		description: "See game controls and help.", qKey: ebiten.KeyF1,
 	},
 }
 
@@ -90,7 +88,7 @@ func initToolbar() {
 	defer reportPanic("InitToolbar")
 	toolbarMax = 0
 	for subPos, subType := range subTypes {
-		for _, oType := range subType.list {
+		for o, oType := range subType.list {
 			/* Skips some items for WASM */
 			if WASMMode && oType.excludeWASM {
 				continue
@@ -98,6 +96,7 @@ func initToolbar() {
 			toolbarMax++
 			toolbarItems = append(toolbarItems, toolbarItemData{sType: subPos, oType: oType})
 
+			subType.list[o].image = getItemImage(subType.folder, oType.base)
 		}
 	}
 }
@@ -128,6 +127,7 @@ func drawToolbar(click, hover bool, index int) {
 
 		/* Something went wrong, exit */
 		if img == nil {
+			doLog(false, "FAILURE: %v\n", pos)
 			return
 		}
 
