@@ -158,8 +158,8 @@ func closeWindow(window *windowData) {
 	}
 
 	/* Handle window closed while dragging */
-	if dragWindow == window {
-		dragWindow = nil
+	if draggingWindow == window {
+		draggingWindow = nil
 	}
 
 	/* Check all open windows */
@@ -194,17 +194,45 @@ func closeWindow(window *windowData) {
 const closePad = 18
 const closeScale = 0.7
 
-func clampUIWindow() {
-	/* Clamp position */
-	if dragWindow.position.X < 0 {
-		dragWindow.position.X = 0
-	} else if dragWindow.position.X > int32(screenX)-dragWindow.size.X {
-		dragWindow.position.X = int32(screenX) - dragWindow.size.X
+func dragWindow() {
+	windowsLock.Lock()
+	defer windowsLock.Unlock()
+
+	if draggingWindow == nil {
+		return
 	}
-	if dragWindow.position.Y < 0 {
-		dragWindow.position.Y = 0
-	} else if dragWindow.position.Y > int32(screenY)-dragWindow.size.Y {
-		dragWindow.position.Y = int32(screenY) - dragWindow.size.Y
+
+	draggingWindow.position = XYs{X: int32(mouseX) - draggingWindow.dragPos.X, Y: int32(mouseY) - draggingWindow.dragPos.Y}
+	clickCaptured = true
+
+	/* Clamp position */
+	clanWindow(draggingWindow)
+}
+
+func clampUIWindows() {
+	windowsLock.Lock()
+	defer windowsLock.Unlock()
+
+	for _, window := range openWindows {
+		clanWindow(window)
+	}
+}
+
+func clanWindow(w *windowData) {
+	if w == nil {
+		return
+	}
+
+	/* Clamp position */
+	if w.position.X < 0 {
+		w.position.X = 0
+	} else if w.position.X > int32(screenX)-w.size.X {
+		w.position.X = int32(screenX) - w.size.X
+	}
+	if w.position.Y < 0 {
+		w.position.Y = 0
+	} else if w.position.Y > int32(screenY)-w.size.Y {
+		w.position.Y = int32(screenY) - w.size.Y
 	}
 }
 
@@ -381,7 +409,7 @@ func collisionWindow(input XYs, window *windowData) bool {
 /* Check if a click was within a window's close box */
 func handleClose(input XYs, window *windowData) bool {
 	defer reportPanic("handleCLose")
-	if dragWindow != nil {
+	if draggingWindow != nil {
 		return false
 	}
 	if !window.closeable {
@@ -415,7 +443,7 @@ func handleDrag(input XYs, window *windowData) bool {
 	if !window.active {
 		return false
 	}
-	if dragWindow != nil {
+	if draggingWindow != nil {
 		return true
 	}
 
@@ -426,8 +454,8 @@ func handleDrag(input XYs, window *windowData) bool {
 		input.X < winPos.X+window.scaledSize.X &&
 		input.Y > winPos.Y &&
 		input.Y < winPos.Y+int32(window.windowButtons.titleBarHeight) {
-		dragWindow = window
-		dragWindow.dragPos = winOff
+		draggingWindow = window
+		draggingWindow.dragPos = winOff
 		doLog(true, "dragging window '%v'", window.title)
 		return true
 	}

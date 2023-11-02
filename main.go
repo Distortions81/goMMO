@@ -105,7 +105,7 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 		halfScreenY = outsideHeight / 2
 
 		//Keep UI windows from going outside the window
-		clampUIWindow()
+		clampUIWindows()
 	}
 	return int(outsideWidth), int(outsideHeight)
 }

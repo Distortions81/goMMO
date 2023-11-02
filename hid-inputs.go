@@ -17,7 +17,7 @@ var (
 	mouseHeld         bool
 	gRightMouseHeld   bool
 	clickCaptured     bool
-	dragWindow        *windowData
+	draggingWindow    *windowData
 	leftMousePressed  bool
 	rightMousePressed bool
 	mouseX            int
@@ -190,7 +190,7 @@ func getMouseClicks() {
 		mouseHeld = false
 
 		/* Stop dragging window */
-		dragWindow = nil
+		draggingWindow = nil
 
 	} else if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
 		mouseHeld = true
@@ -218,7 +218,7 @@ func getCursor() {
 		if touchDetected {
 			hadTouchEvent = false
 			mouseHeld = false
-			dragWindow = nil
+			draggingWindow = nil
 		}
 		//Now check for mouse events
 		getMouseClicks()
@@ -250,11 +250,7 @@ func handleUI() {
 	}
 
 	/* Handle window drag */
-	if dragWindow != nil {
-		dragWindow.position = XYs{X: int32(mouseX) - dragWindow.dragPos.X, Y: int32(mouseY) - dragWindow.dragPos.Y}
-		clampUIWindow()
-		clickCaptured = true
-	}
+	dragWindow()
 }
 
 func chatCommands() {
