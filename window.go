@@ -24,9 +24,9 @@ var windows []*windowData = []*windowData{
 	},
 	{
 		title:       "Help & Controls",
-		size:        XYs{X: 400, Y: 300},
+		size:        XYs{X: 300, Y: 270},
 		centered:    false,
-		position:    XYs{X: 16, Y: 96},
+		position:    XYs{X: 16, Y: 16},
 		closeable:   true,
 		windowDraw:  drawHelpWindow,
 		windowInput: handleHelpWindow,
@@ -368,9 +368,6 @@ func collisionWindow(input XYs, window *windowData) bool {
 func handleClose(input XYs, window *windowData) bool {
 	defer reportPanic("handleCLose")
 	if gWindowDrag != nil {
-		return false
-	}
-	if !gMouseHeld {
 		return false
 	}
 	if !window.closeable {
