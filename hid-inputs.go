@@ -61,14 +61,13 @@ func getMouseClicks() {
 		/* Stop dragging window */
 		gWindowDrag = nil
 
-		gLastActionPosition = XY{}
 	} else if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
 		gMouseHeld = true
-		gLastActionPosition.X = 0
-		gLastActionPosition.Y = 0
 	}
 
 }
+
+var touchEnabled bool
 
 /* Input interface handler */
 func (g *Game) Update() error {
@@ -99,7 +98,25 @@ func (g *Game) Update() error {
 		gClickCaptured = true //Eat the click
 	}
 
-	getMouseClicks()
+	touchIDs := ebiten.AppendTouchIDs(nil)
+
+	//Ignore multi-touch
+	if len(touchIDs) > 0 {
+		touchEnabled = true
+		for _, touch := range touchIDs {
+
+			MouseX, MouseY = ebiten.TouchPosition(touch)
+			gMouseHeld = true
+
+			break
+		}
+	} else {
+		if touchEnabled {
+			gMouseHeld = false
+			gWindowDrag = nil
+		}
+		getMouseClicks()
+	}
 
 	/* Check if we clicked within a window */
 	if gMouseHeld {
@@ -239,16 +256,6 @@ func (g *Game) Update() error {
 		if !gClickCaptured {
 			if gMouseHeld {
 				newDir = walkXY(MouseX, MouseY)
-			} else {
-				touchIDs := ebiten.AppendTouchIDs(nil)
-				//Ignore multi-touch
-				if len(touchIDs) == 1 {
-					for _, touch := range touchIDs {
-						mx, my := ebiten.TouchPosition(touch)
-						newDir = walkXY(mx, my)
-						break
-					}
-				}
 			}
 		}
 	}
