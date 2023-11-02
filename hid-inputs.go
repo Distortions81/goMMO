@@ -91,7 +91,7 @@ func (g *Game) Update() error {
 }
 
 func WASDKeys() {
-	if CommandMode || worldEditMode {
+	if CommandMode || ChatMode {
 		return
 	}
 
@@ -144,47 +144,38 @@ func WASDKeys() {
 }
 
 func settingsHotkeys() {
-	if CommandMode || worldEditMode {
+	if ChatMode || CommandMode {
 		return
 	}
 
-	if repeatingKeyPressed(ebiten.KeyN) {
-		if !ChatMode && !CommandMode {
+	if keyJustPressed(ebiten.KeyN) {
+		if nightLevel >= 250 {
+			nightLevel = 0
+		} else if nightLevel+42 >= 250 {
+			nightLevel = 255
+		} else {
+			nightLevel += 42
+		}
 
-			if nightLevel >= 250 {
-				nightLevel = 0
-			} else if nightLevel+42 >= 250 {
-				nightLevel = 255
-			} else {
-				nightLevel += 42
-			}
-
-			buf := fmt.Sprintf("Night level: %v%%", int((float32(nightLevel)/255.0)*100.0))
-			chat(buf)
+		buf := fmt.Sprintf("Night level: %v%%", int((float32(nightLevel)/255.0)*100.0))
+		chat(buf)
+	}
+	if keyJustPressed(ebiten.KeyL) {
+		if noSmoothing {
+			noSmoothing = false
+			chat("Motion smoothing now ON!")
+		} else {
+			noSmoothing = true
+			chat("Motion smoothing now OFF! (battery saver)")
 		}
 	}
-	if repeatingKeyPressed(ebiten.KeyL) {
-		if !ChatMode && !CommandMode {
-
-			if noSmoothing {
-				noSmoothing = false
-				chat("Motion smoothing now ON!")
-			} else {
-				noSmoothing = true
-				chat("Motion smoothing now OFF! (battery saver)")
-			}
-		}
-	}
-	if repeatingKeyPressed(ebiten.KeyZ) {
-		if !ChatMode && !CommandMode {
-
-			if fastShadow {
-				fastShadow = false
-				chat("Fast shadows now Off!")
-			} else {
-				fastShadow = true
-				chat("Fast shadows now ON! (Faster/Less battery)")
-			}
+	if keyJustPressed(ebiten.KeyZ) {
+		if fastShadow {
+			fastShadow = false
+			chat("Fast shadows now Off!")
+		} else {
+			fastShadow = true
+			chat("Fast shadows now ON! (Faster/Less battery)")
 		}
 	}
 }
@@ -273,12 +264,12 @@ func chatCommands() {
 			return
 		}
 
-		if repeatingKeyPressed(ebiten.KeyEscape) {
+		if keyJustPressed(ebiten.KeyEscape) {
 			ChatMode = false
 			CommandMode = false
 			ChatText = ""
 		}
-		if repeatingKeyPressed(ebiten.KeyEnter) {
+		if keyJustPressed(ebiten.KeyEnter) {
 
 			if ChatText != "" {
 				if CommandMode {
@@ -291,28 +282,28 @@ func chatCommands() {
 			ChatMode = false
 			CommandMode = false
 			ChatText = ""
-		} else if repeatingKeyPressed(ebiten.KeyBackspace) {
+		} else if keyJustPressed(ebiten.KeyBackspace) {
 			if len(ChatText) >= 1 {
 				ChatText = ChatText[:len(ChatText)-1]
 			}
 
 		}
 		return
-	} else if repeatingKeyPressed(ebiten.KeyEnter) && !CommandMode {
+	} else if keyJustPressed(ebiten.KeyEnter) && !CommandMode {
 		ChatMode = true
 		ChatText = ""
-	} else if repeatingKeyPressed(ebiten.KeyGraveAccent) && !ChatMode {
+	} else if keyJustPressed(ebiten.KeyGraveAccent) && !ChatMode {
 		CommandMode = true
 		ChatText = ""
 	}
 }
 
 func worldEditor() {
-	if CommandMode || worldEditMode {
+	if CommandMode || ChatMode {
 		return
 	}
 
-	if repeatingKeyPressed(ebiten.KeyBackslash) {
+	if keyJustPressed(ebiten.KeyBackslash) {
 		if worldEditMode {
 			worldEditMode = false
 		} else {
@@ -340,11 +331,11 @@ func worldEditor() {
 				rightMousePressed = false
 			}
 		}
-		if repeatingKeyPressed(ebiten.KeyEqual) {
+		if keyJustPressed(ebiten.KeyEqual) {
 			if worldEditID < topSpriteID {
 				worldEditID++
 			}
-		} else if repeatingKeyPressed(ebiten.KeyMinus) {
+		} else if keyJustPressed(ebiten.KeyMinus) {
 			if worldEditID > 0 {
 				worldEditID--
 			}
@@ -378,7 +369,7 @@ func walkXY(mx, my int) DIR {
 	return radiansToDirection(angle)
 }
 
-// repeatingKeyPressed return true when key is pressed considering the repeat state.
+// keyJustPressed return true when key is pressed considering the repeat state.
 func repeatingKeyPressed(key ebiten.Key) bool {
 	const (
 		delay    = 30
@@ -392,6 +383,13 @@ func repeatingKeyPressed(key ebiten.Key) bool {
 		return true
 	}
 	return false
+}
+
+// keyJustPressed return true when key is pressed considering the repeat state.
+func keyJustPressed(key ebiten.Key) bool {
+
+	d := inpututil.KeyPressDuration(key)
+	return d == 1
 }
 
 func sendMove(nextDirection DIR) {

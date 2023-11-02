@@ -443,8 +443,8 @@ func drawDebugEdit(screen *ebiten.Image) {
 		return
 	}
 
-	xPos := float64(int(camPos.X) - int(editPos.X))
-	yPos := float64(int(camPos.Y) - int(editPos.Y))
+	xPos := float64(int(sCamPos.X) - int(editPos.X))
+	yPos := float64(int(sCamPos.Y) - int(editPos.Y))
 
 	op := ebiten.DrawImageOptions{}
 
@@ -460,8 +460,8 @@ func drawDebugEdit(screen *ebiten.Image) {
 	buf := fmt.Sprintf("EDIT MODE ON: ID: %v", worldEditID)
 
 	drawText(buf, monoFont, color.White, colorNameBG,
-		XYf32{X: 1, Y: 1},
-		1, screen, true, false, false)
+		XYf32{X: float32(screenX) - 4, Y: 2},
+		1, screen, false, false, false)
 
 }
 
