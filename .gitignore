@@ -3,4 +3,5 @@ panic.log
 heapDump.dat
 goMMO
 main.wasm.gz
+main.wasm
 data/settings.json
