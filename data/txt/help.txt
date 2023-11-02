@@ -1,1 +1,11 @@
-example text
+Touch/Mouse:
+Click or Touch (and hold) to walk!
+
+Keyboard:
+[WASD] or [Arrow Keys] to walk
+[ENTER] to chat, [~] for command console
+[ESC] to close chat/command
+[\] Edit mode [+] or [-] to cycle objects
+[N] Night level
+[L] Motion smoothing
+[Z] Fast night shadows

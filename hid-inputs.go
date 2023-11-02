@@ -34,7 +34,6 @@ var (
 	gRightMouseHeld  bool
 	gShiftPressed    bool
 	gClickCaptured   bool
-	gCameraDrag      bool
 	gWindowDrag      *windowData
 
 	/* Last object we performed an action on */
@@ -81,8 +80,11 @@ func (g *Game) Update() error {
 
 	/* Check if we clicked within a window */
 	mx, my := ebiten.CursorPosition()
-	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
+	if gMouseHeld {
 		gClickCaptured = collisionWindowsCheck(XYs{X: int32(mx), Y: int32(my)})
+		if gClickCaptured {
+			fmt.Println("Window captured.")
+		}
 	}
 
 	newDir := DIR_NONE
@@ -180,7 +182,7 @@ func (g *Game) Update() error {
 
 	if EditMode {
 		if !gClickCaptured {
-			if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
+			if gMouseHeld {
 				if !LeftMousePressed {
 					editPlaceItem()
 				}
@@ -188,7 +190,7 @@ func (g *Game) Update() error {
 			} else {
 				LeftMousePressed = false
 			}
-			if ebiten.IsMouseButtonPressed(ebiten.MouseButtonRight) {
+			if gRightMouseHeld {
 				if !RightMousePressed {
 					editDeleteItem()
 				}
@@ -208,17 +210,19 @@ func (g *Game) Update() error {
 		}
 
 		editPos = XY{X: smoothCamPos.X - uint32(mx), Y: smoothCamPos.Y - uint32(my)}
-	} else if !gClickCaptured {
-		if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
-			newDir = walkXY(mx, my)
-		} else {
-			touchIDs := ebiten.AppendTouchIDs(nil)
-			//Ignore multi-touch
-			if len(touchIDs) == 1 {
-				for _, touch := range touchIDs {
-					mx, my := ebiten.TouchPosition(touch)
-					newDir = walkXY(mx, my)
-					break
+	} else {
+		if !gClickCaptured {
+			if gMouseHeld {
+				newDir = walkXY(mx, my)
+			} else {
+				touchIDs := ebiten.AppendTouchIDs(nil)
+				//Ignore multi-touch
+				if len(touchIDs) == 1 {
+					for _, touch := range touchIDs {
+						mx, my := ebiten.TouchPosition(touch)
+						newDir = walkXY(mx, my)
+						break
+					}
 				}
 			}
 		}

@@ -17,6 +17,7 @@ import (
 var camPos XY = xyCenter
 var smoothCamPos XY = xyCenter
 
+var disableNightShadow bool
 var nightLevel uint8 = 0
 var startTime time.Time
 var noSmoothing bool = false
@@ -403,6 +404,10 @@ func drawChatLines(screen *ebiten.Image) {
 
 func drawDebugInfo(screen *ebiten.Image) {
 	defer reportPanic("drawDebugInfo")
+
+	if !infoLine {
+		return
+	}
 
 	/* Draw debug info */
 	buf := fmt.Sprintf("FPS: %3v  Arch: %v  Build: v%v",

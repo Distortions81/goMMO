@@ -46,9 +46,9 @@ func init() {
 	settingItems = []settingType{
 		{ConfigName: "VSYNC", Text: "Limit FPS (VSYNC)", action: toggleVsync, Enabled: true, WASMExclude: true},
 		{ConfigName: "FULLSCREEN", Text: "Full Screen", action: toggleFullscreen},
-		{ConfigName: "MAGNIFY", Text: "Magnify UI", action: toggleMagnify},
-		{ConfigName: "DEBUG", Text: "Debug mode", action: toggleDebug, WASMExclude: true},
-		{ConfigName: "HYPERTHREAD", Text: "Use hyper-threading", action: toggleHyper, WASMExclude: true},
+		{ConfigName: "FAST-SHADOWS", Text: "Fast Shadows", action: toggleFastShadow},
+		{ConfigName: "MOTION-SMOOTH", Text: "Motion Smoothing", action: toggleSmoothing, Enabled: true},
+		{ConfigName: "NIGHT-MODE", Text: "Disable Shadows", action: toggleNightShadow},
 		{ConfigName: "DEBUG-TEXT", Text: "Debug info-text", action: toggleInfoLine},
 	}
 }
@@ -154,16 +154,14 @@ func toggleInfoLine(item int) {
 }
 
 /* Toggle the use of hyper-threading */
-func toggleHyper(item int) {
-	defer reportPanic("toggleHyper")
-	if useHyper {
-		useHyper = false
+func toggleNightShadow(item int) {
+	defer reportPanic("toggleNightShadow")
+	if disableNightShadow {
+		disableNightShadow = false
 		settingItems[item].Enabled = false
-		detectCPUs(false)
 	} else {
-		useHyper = true
+		disableNightShadow = true
 		settingItems[item].Enabled = true
-		detectCPUs(true)
 	}
 }
 
@@ -196,13 +194,13 @@ func toggleFullscreen(item int) {
 }
 
 /* Toggle UI magnification */
-func toggleMagnify(item int) {
-	defer reportPanic("toggleMagnify")
-	if magnify {
-		magnify = false
+func toggleFastShadow(item int) {
+	defer reportPanic("toggleFastShadow")
+	if fastShadow {
+		fastShadow = false
 		settingItems[item].Enabled = false
 	} else {
-		magnify = true
+		fastShadow = true
 		settingItems[item].Enabled = true
 	}
 
@@ -215,13 +213,13 @@ func toggleMagnify(item int) {
 }
 
 /* Toggle debug mode */
-func toggleDebug(item int) {
-	defer reportPanic("toggleDebug")
-	if debugMode {
-		debugMode = false
+func toggleSmoothing(item int) {
+	defer reportPanic("toggleSmoothing")
+	if !noSmoothing {
+		noSmoothing = true
 		settingItems[item].Enabled = false
 	} else {
-		debugMode = true
+		noSmoothing = false
 		settingItems[item].Enabled = true
 	}
 	buf := fmt.Sprintf("%v is now %v.",
@@ -232,7 +230,7 @@ func toggleDebug(item int) {
 
 /* Toggle autosave */
 func toggleAutosave(item int) {
-	defer reportPanic("toggleDebug")
+	defer reportPanic("toggleAutosave")
 	if autoSave {
 		autoSave = false
 		settingItems[item].Enabled = false

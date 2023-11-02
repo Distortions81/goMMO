@@ -24,7 +24,7 @@ var windows []*windowData = []*windowData{
 	},
 	{
 		title:       "Help & Controls",
-		size:        XYs{X: 300, Y: 300},
+		size:        XYs{X: 400, Y: 300},
 		centered:    false,
 		position:    XYs{X: 16, Y: 96},
 		closeable:   true,

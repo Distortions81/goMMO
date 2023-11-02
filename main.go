@@ -59,6 +59,7 @@ func main() {
 	ebiten.SetWindowSize(screenWidth, screenHeight)
 	ebiten.SetWindowTitle("goMMO")
 
+	helpText, _ = getText("help")
 	loadTest()
 
 	if err := ebiten.RunGameWithOptions(newGame(), &ebiten.RunGameOptions{GraphicsLibrary: ebiten.GraphicsLibraryOpenGL}); err != nil {
@@ -71,7 +72,8 @@ func newGame() *Game {
 	go connectServer()
 
 	initWindows()
-	settingsToggle()
+	//settingsToggle()
+	toggleHelp()
 
 	HscreenWidth = screenWidth / 2
 	HscreenHeight = screenHeight / 2
