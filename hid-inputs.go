@@ -87,18 +87,6 @@ func (g *Game) Update() error {
 
 	gClickCaptured = false
 
-	/* Clamp to window */
-	MouseX, MouseY = ebiten.CursorPosition()
-	if MouseX < 0 || MouseX > int(screenWidth) ||
-		MouseY < 0 || MouseY > int(screenHeight) {
-		MouseX = lastMouseX
-		MouseY = lastMouseY
-
-		/* Stop dragging window if we go off-screen */
-		gWindowDrag = nil
-		gClickCaptured = true //Eat the click
-	}
-
 	touchIDs := ebiten.AppendTouchIDs(nil)
 
 	//Ignore multi-touch
@@ -119,6 +107,19 @@ func (g *Game) Update() error {
 			gWindowDrag = nil
 		}
 		getMouseClicks()
+	}
+
+	/* Clamp to window */
+	MouseX, MouseY = ebiten.CursorPosition()
+	if MouseX < 0 || MouseX > int(screenWidth) ||
+		MouseY < 0 || MouseY > int(screenHeight) {
+		MouseX = lastMouseX
+		MouseY = lastMouseY
+
+		/* Stop dragging window if we go off-screen */
+		gWindowDrag = nil
+		gClickCaptured = true //Eat the click
+		gMouseHeld = false
 	}
 
 	/* Check if we clicked within a window */

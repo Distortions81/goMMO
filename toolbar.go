@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"image/color"
 	"sync"
 	"time"
 
@@ -168,7 +170,7 @@ func drawToolbar(click, hover bool, index int) {
 				}()
 			} else if hover {
 				vector.DrawFilledRect(toolbarCache, float32(pos)*(iconSize+spacing),
-					0, iconSize+spacing, iconSize+spacing, ColorAqua, false)
+					0, iconSize+spacing, iconSize+spacing, ColorDarkTeal, false)
 				toolbarHover = true
 			}
 
@@ -220,5 +222,66 @@ func handleToolbar() bool {
 			return true
 		}
 	}
+	return false
+}
+
+var lastVal int
+
+func toolBarTooltip(screen *ebiten.Image) bool {
+	defer reportPanic("toolBarTooltip")
+
+	iconSize := float32(uiScale * toolBarIconSize)
+	spacing := float32(iconSize / toolBarSpaceRatio)
+
+	/* Calculate item */
+	val := int(MouseX / int(iconSize+spacing))
+
+	/* Check if mouse is on top of the toolbar */
+	if MouseY <= int(iconSize) &&
+		val < toolbarMax && val >= 0 {
+
+		/* Calculate toolbar item */
+		item := toolbarItems[val]
+		var toolTip string
+
+		/* Show item description if it exists */
+		if item.oType.description != "" {
+
+			/* Show item hot key if found */
+			keyName := ""
+			if item.oType.qKey != 0 {
+				//keyName = " ( " + item.oType.qKey.String() + " key )"
+			}
+
+			toolTip = fmt.Sprintf("%v\n%v\n%v", item.oType.name, item.oType.description, keyName)
+		} else {
+			/* Otherwise, just display item name */
+			toolTip = fmt.Sprintf("%v\n", item.oType.name)
+		}
+
+		/* Draw text */
+		drawText(toolTip, toolTipFont, color.White, ColorToolTipBG,
+			XYf32{X: float32(MouseX) + 10, Y: float32(MouseY) + 10}, 0, screen,
+			true, false, false)
+
+		/* Don't redraw if item has not changed */
+		if lastVal != val {
+			lastVal = val
+			drawToolbar(false, true, val)
+		}
+		return true
+	}
+
+	/* Erase toolbar hover highlight when mouse moves off */
+	if toolbarHover {
+		drawToolbar(false, false, 0)
+		toolbarHover = false
+	}
+
+	/* Not on toolbar, reset lastVal if needed */
+	if lastVal != -1 {
+		lastVal = -1
+	}
+
 	return false
 }

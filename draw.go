@@ -136,6 +136,8 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		screen.DrawImage(toolbarCache, nil)
 		toolbarCacheLock.RUnlock()
 
+		toolBarTooltip(screen)
+
 	} else {
 		op := &ebiten.DrawImageOptions{}
 		var imgSize float64 = 1024.0
@@ -338,8 +340,8 @@ func drawText(input string, face font.Face, color color.Color, bgcolor color.Col
 
 	if alpha > 0 {
 		vector.DrawFilledRect(
-			screen, tmx-pad, tmy-float32(tRect.Dy())-(float32(pad)/2.0),
-			float32(tRect.Dx())+pad*2, float32(tRect.Dy())+pad*2, bgcolor, false,
+			screen, tmx-2, tmy-12,
+			float32(tRect.Dx())+4, float32(tRect.Dy())+4, bgcolor, false,
 		)
 	}
 	text.Draw(screen, input, face, int(tmx), int(tmy), color)
@@ -362,9 +364,8 @@ const (
 	/* Default fade out time */
 	chatFadeTime = time.Second * 3
 
-	padding     = 8
-	scaleFactor = 1.5
-	linePad     = 2
+	padding = 8
+	linePad = 2
 )
 
 func drawChatLines(screen *ebiten.Image) {

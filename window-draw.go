@@ -10,6 +10,8 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/vector"
 )
 
+const scaleFactor = 1.5
+
 /* Calculate spacing and order based on DPI and scale */
 func setupOptionsWindow(window *windowData) {
 	defer reportPanic("setupOptionsWindow")
@@ -49,10 +51,6 @@ func drawHelpWindow(window *windowData) {
 		XYf32{X: float32(window.scaledSize.X / 2), Y: float32(window.scaledSize.Y / 2)},
 		0, window.cache, false, false, true)
 }
-
-/* Draw the help window content */
-var updateVersion string
-var downloadURL string
 
 /* Draw options window content */
 const checkScale = 0.5
