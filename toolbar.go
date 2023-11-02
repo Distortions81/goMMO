@@ -12,7 +12,8 @@ var (
 	toolbarCache     *ebiten.Image
 	toolbarCacheLock sync.RWMutex
 	toolbarMax       int
-	toolbarItems     = []toolbarItemData{}
+	toolbarItems           = []toolbarItemData{}
+	selectedItemType uint8 = maxItemType
 
 	toolbarHover bool
 )
@@ -176,4 +177,47 @@ func drawToolbar(click, hover bool, index int) {
 		/* Draw to image */
 		toolbarCache.DrawImage(img, op)
 	}
+}
+
+/* Handle clicks that end up within the toolbar */
+func handleToolbar() bool {
+	defer reportPanic("handleToolbar")
+	iconSize := float32(uiScale * toolBarIconSize)
+	spacing := float32(toolBarIconSize / toolBarSpaceRatio)
+
+	tbLength := float32((toolbarMax * int(iconSize+spacing)))
+
+	fmx := float32(MouseX)
+	fmy := float32(MouseY)
+
+	/* If the click isn't off the right of the toolbar */
+	if fmx <= tbLength {
+		/* If the click isn't below the toolbar */
+		if fmy <= iconSize {
+
+			tbItem := int(fmx / float32(iconSize+spacing))
+			len := len(toolbarItems) - 1
+			if tbItem > len {
+				tbItem = len
+			} else if tbItem < 0 {
+				tbItem = 0
+			}
+			item := toolbarItems[tbItem].oType
+
+			/* Draw item hover */
+			drawToolbar(true, false, tbItem)
+
+			/* Actions */
+			if item.toolbarAction != nil {
+				item.toolbarAction()
+				drawToolbar(true, false, tbItem)
+			}
+
+			/* Eat this mouse event */
+			gMouseHeld = false
+			gClickCaptured = true
+			return true
+		}
+	}
+	return false
 }
