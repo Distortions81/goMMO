@@ -68,6 +68,7 @@ func getMouseClicks() {
 }
 
 var touchEnabled bool
+var lastTouch bool
 
 /* Input interface handler */
 func (g *Game) Update() error {
@@ -104,13 +105,16 @@ func (g *Game) Update() error {
 	if len(touchIDs) > 0 {
 		touchEnabled = true
 		for _, touch := range touchIDs {
-
 			MouseX, MouseY = ebiten.TouchPosition(touch)
-			gMouseHeld = true
+			if !lastTouch {
+				gMouseHeld = true
+				lastTouch = true
+			}
 			break
 		}
 	} else {
 		if touchEnabled {
+			lastTouch = false
 			gMouseHeld = false
 			gWindowDrag = nil
 		}

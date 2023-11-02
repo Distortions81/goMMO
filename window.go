@@ -3,7 +3,6 @@ package main
 import (
 	"image/color"
 	"sync"
-	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/text"
@@ -322,12 +321,8 @@ func collisionWindowsCheck(input XYs) bool {
 	if gClickCaptured {
 		return true
 	}
-	if time.Since(lastClick) < time.Millisecond*500 {
-		return false
-	}
 	for _, win := range openWindows {
 		if collisionWindow(input, win) {
-			lastClick = time.Now()
 			return true
 		}
 	}

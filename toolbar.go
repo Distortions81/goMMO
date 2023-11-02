@@ -179,15 +179,9 @@ func drawToolbar(click, hover bool, index int) {
 	}
 }
 
-var lastClick time.Time
-
 /* Handle clicks that end up within the toolbar */
 func handleToolbar() bool {
 	defer reportPanic("handleToolbar")
-
-	if time.Since(lastClick) < time.Millisecond*500 {
-		return false
-	}
 
 	iconSize := float32(uiScale * toolBarIconSize)
 	spacing := float32(toolBarIconSize / toolBarSpaceRatio)
@@ -217,7 +211,6 @@ func handleToolbar() bool {
 			/* Actions */
 			if item.toolbarAction != nil {
 				item.toolbarAction()
-				lastClick = time.Now()
 				drawToolbar(true, false, tbItem)
 			}
 
