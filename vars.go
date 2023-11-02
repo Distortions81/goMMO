@@ -7,53 +7,43 @@ import (
 )
 
 var (
-	WASMMode bool = false
+	WASMMode bool = false //web assembly mode
 
-	dataDirty bool = true
-	gDevMode  bool
+	dataDirty bool = true //If new network data has been rendered or not
+	gDevMode  bool        //-dev argument
 
-	/* Game Mode */
-	gameMode     = MODE_START
+	gameMode     = MODE_START //Login, playing, reconnect, etc
 	gameModeLock sync.Mutex
 
-	/* Local player */
-	localPlayer playerData
-	playerNames map[uint32]pNameData
+	localPlayer playerData           //Our local player's data (id, etc)
+	playerNames map[uint32]pNameData //Player ID to name map
 
-	goDir DIR
+	goDir DIR //Direction we are walking
 
-	ourPos    XY
-	ourOldPos XY
+	localPlayerPos    XY //Our position from server
+	oldLocalPlayerPos XY
 
-	playerList map[uint32]*playerData
+	playerList map[uint32]*playerData //Players from server
 	drawLock   sync.Mutex
 
-	wObjList []*worldObject
+	wObjList []*worldObject //World object list
 
-	/* Name BG Color */
+	//Player name BG color
 	colorNameBG = color.RGBA{R: 32, G: 32, B: 32, A: 160}
 
-	/* Networking */
+	//Server URL
 	authSite = "https://gommo.go-game.net/gs"
 
-	/* Ping */
-	statusTime time.Time
+	//Reconnect throttle
+	reconnectTime time.Time
 
-	/* Reconnect */
+	//Reconnect count and cap
 	ReconnectCount     = 0
 	RecconnectDelayCap = 30
 
-	debugMode        = false
-	helpText  string = ""
+	windowDebugMode        = false
+	helpText        string = ""
 
-	/* Number of tocks per worker */
-	numWorkers int
-
-	magnify = true
-
-	vSync    bool = true
-	usUnits  bool = false
-	useHyper bool = false
-	infoLine bool = false
-	autoSave bool = true
+	vSync     bool = true
+	debugLine bool = false
 )

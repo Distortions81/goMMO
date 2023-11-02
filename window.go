@@ -135,7 +135,7 @@ func openWindow(window *windowData) {
 					Y: int32(screenHeight/2) - (window.scaledSize.Y / 2)}
 			}
 
-			if debugMode {
+			if windowDebugMode {
 				doLog(true, "Window '%v' added to open list.", window.title)
 			}
 
@@ -167,7 +167,7 @@ func closeWindow(window *windowData) {
 		if openWindows[winPos] == window {
 			window.active = false
 
-			if debugMode {
+			if windowDebugMode {
 				doLog(true, "Window '%v' removed from open list.", window.title)
 			}
 			/* Remove item */
@@ -178,7 +178,7 @@ func closeWindow(window *windowData) {
 
 	/* Dispose window image cache if needed */
 	if !window.keepCache && window.cache != nil {
-		if debugMode {
+		if windowDebugMode {
 			doLog(true, "Window '%v' closed, disposing cache.", window.title)
 		}
 		window.cache.Dispose()
@@ -219,7 +219,7 @@ func drawWindow(screen *ebiten.Image, window *windowData) {
 	/* If there is no window cache, init it */
 	if window.cache == nil {
 		window.cache = ebiten.NewImage(int(window.scaledSize.X), int(window.scaledSize.Y))
-		if debugMode {
+		if windowDebugMode {
 			doLog(true, "Window '%v' cache initalized.", window.title)
 		}
 	} else {

@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"image/color"
-	"sync"
 	"time"
 
 	"nhooyr.io/websocket"
@@ -45,8 +44,7 @@ type playerData struct {
 	spos   XY
 	areaid uint16
 
-	lastPos    XY
-	lastUpdate time.Time
+	lastPos XY
 
 	direction DIR
 	walkFrame int
@@ -66,17 +64,6 @@ type chatLineData struct {
 
 	timestamp time.Time
 	lifetime  time.Duration
-}
-
-type areaData struct {
-	arealock sync.RWMutex
-	chunks   map[XY]*chunkData
-}
-
-type chunkData struct {
-	worldObjects []*worldObject
-	players      []*playerData
-	chunkLock    sync.RWMutex
 }
 
 type worldObject struct {

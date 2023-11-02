@@ -14,19 +14,12 @@ var (
 	toolbarCache     *ebiten.Image
 	toolbarCacheLock sync.RWMutex
 	toolbarMax       int
-	toolbarItems           = []toolbarItemData{}
-	selectedItemType uint8 = maxItemType
+	toolbarItems     = []toolbarItemData{}
 
 	toolbarHover bool
 )
 
 const (
-	/* Game data structures */
-	/* Subtypes */
-	objSubUI   = 0
-	objSubGame = 1
-	objOverlay = 2
-
 	maxItemType = 255
 
 	/* Toolbar settings */
@@ -99,7 +92,7 @@ func initToolbar() {
 			toolbarMax++
 			toolbarItems = append(toolbarItems, toolbarItemData{sType: subPos, oType: oType})
 
-			subType.list[o].image = getItemImage(subType.folder, oType.base)
+			subType.list[o].image = findItemImage(subType.folder, oType.base)
 		}
 	}
 }
@@ -249,9 +242,11 @@ func toolBarTooltip(screen *ebiten.Image) bool {
 
 			/* Show item hot key if found */
 			keyName := ""
-			if item.oType.qKey != 0 {
-				//keyName = " ( " + item.oType.qKey.String() + " key )"
-			}
+			/*
+				if item.oType.qKey != 0 {
+					keyName = " ( " + item.oType.qKey.String() + " key )"
+				}
+			*/
 
 			toolTip = fmt.Sprintf("%v\n%v\n%v", item.oType.name, item.oType.description, keyName)
 		} else {

@@ -13,180 +13,133 @@ import (
 )
 
 var (
+	/* UI states */
+	gMouseHeld        bool
+	gRightMouseHeld   bool
+	gClickCaptured    bool
+	gWindowDrag       *windowData
 	LeftMousePressed  bool
 	RightMousePressed bool
+	MouseX            int
+	MouseY            int
+	lastMouseX        int
+	lastMouseY        int
 
+	//World edit states
 	EditMode bool
 	EditID   uint32
 	editPos  XY = xyCenter
 
+	//Chat command states
 	ChatMode    bool
 	CommandMode bool
 	ChatText    string
 
-	lastSent time.Time
+	//Net write throttle
+	lastNetSend        time.Time
+	directionKeepAlive = time.Millisecond * 250
+	directionThrottle  = time.Millisecond * 10
 
-	sendInterval = time.Millisecond * 250
-
-	/* UI state */
-	gMouseHeld       bool
-	gMiddleMouseHeld bool
-	gRightMouseHeld  bool
-	gShiftPressed    bool
-	gClickCaptured   bool
-	gWindowDrag      *windowData
-
-	MouseX int
-	MouseY int
-
-	lastMouseX int
-	lastMouseY int
-	/* Last object we performed an action on */
-	gLastActionPosition XY
+	//Direction player will be going this tick
+	newPlayerDirection DIR
 )
 
 const (
-	maxChat     = 256
-	maxSendRate = time.Millisecond * 10
+	//Max chat length
+	maxChatLen = 256
 )
 
-/* Record mouse clicks, send clicks to toolbar */
-func getMouseClicks() {
-	defer reportPanic("getMouseClicks")
-
-	/* Mouse clicks */
-	if inpututil.IsMouseButtonJustReleased(ebiten.MouseButtonLeft) {
-		gMouseHeld = false
-
-		/* Stop dragging window */
-		gWindowDrag = nil
-
-	} else if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
-		gMouseHeld = true
-	}
-
-}
-
-var touchEnabled bool
-var lastTouch bool
-
-/* Input interface handler */
+// Ebiten input handler
 func (g *Game) Update() error {
 
-	/* Ignore if game not focused */
+	// Ignore if game not focused
 	if !ebiten.IsFocused() {
 		return nil
 	}
 
+	newPlayerDirection = DIR_NONE
+
+	//Don't update during draw
 	drawLock.Lock()
 	defer drawLock.Unlock()
 
-	/* Save mouse coords */
-	lastMouseX = MouseX
-	lastMouseY = MouseY
+	//Get mouse / touch
+	getCursor()
 
-	gClickCaptured = false
+	//Clamp cursor and clicks to screen
+	clampCursor()
 
-	touchIDs := ebiten.AppendTouchIDs(nil)
+	//In-game UI
+	handleUI()
 
-	//Ignore multi-touch
-	if len(touchIDs) > 0 {
-		touchEnabled = true
-		for _, touch := range touchIDs {
-			MouseX, MouseY = ebiten.TouchPosition(touch)
-			if !lastTouch {
-				gMouseHeld = true
-				lastTouch = true
-			}
-			break
-		}
-	} else {
-		if touchEnabled {
-			lastTouch = false
-			gMouseHeld = false
-			gWindowDrag = nil
-		}
-		getMouseClicks()
-	}
+	//Chat and command system
+	chatCommands()
 
-	/* Clamp to window */
-	MouseX, MouseY = ebiten.CursorPosition()
-	if MouseX < 0 || MouseX > int(screenWidth) ||
-		MouseY < 0 || MouseY > int(screenHeight) {
-		MouseX = lastMouseX
-		MouseY = lastMouseY
+	//World-edit mode
+	worldEditor()
 
-		/* Stop dragging window if we go off-screen */
-		gWindowDrag = nil
-		gClickCaptured = true //Eat the click
-		gMouseHeld = false
-	}
+	//handle settings hotkeys
+	settingsHotkeys()
 
-	/* Check if we clicked within a window */
-	if gMouseHeld {
-		gClickCaptured = handleToolbar()
-		gClickCaptured = collisionWindowsCheck(XYs{X: int32(MouseX), Y: int32(MouseY)})
-	}
+	//Handle WASD and arrow keys
+	WASDKeys()
 
-	/* Handle window drag */
-	if gWindowDrag != nil {
-		gWindowDrag.position = XYs{X: int32(MouseX) - gWindowDrag.dragPos.X, Y: int32(MouseY) - gWindowDrag.dragPos.Y}
-		gClickCaptured = true
-	}
+	//Send current player direction
+	sendMove(newPlayerDirection)
 
-	newDir := DIR_NONE
+	return nil
+}
 
-	if ChatMode || CommandMode {
-		start := []rune{}
-		runes := ebiten.AppendInputChars(start[:0])
-		if len(ChatText) < maxChat {
-			ChatText += string(runes)
-		} else {
-			chat("Sorry, that is the max message length!")
-			return nil
-		}
+func WASDKeys() {
+	pressedKeys := inpututil.AppendPressedKeys(nil)
 
-		if repeatingKeyPressed(ebiten.KeyEscape) {
-			ChatMode = false
-			CommandMode = false
-			ChatText = ""
-		}
-		if repeatingKeyPressed(ebiten.KeyEnter) {
-
-			if ChatText != "" {
-				if CommandMode {
-					sendCommand(CMD_COMMAND, []byte(ChatText))
-				} else if ChatMode {
-					sendCommand(CMD_CHAT, []byte(ChatText))
+	for _, key := range pressedKeys {
+		if !ChatMode {
+			if key == ebiten.KeyW ||
+				key == ebiten.KeyArrowUp {
+				if newPlayerDirection == DIR_NONE {
+					newPlayerDirection = DIR_N
+				} else if newPlayerDirection == DIR_E {
+					newPlayerDirection = DIR_NE
+				} else if newPlayerDirection == DIR_W {
+					newPlayerDirection = DIR_NW
 				}
-
 			}
-			ChatMode = false
-			CommandMode = false
-			ChatText = ""
-		} else if repeatingKeyPressed(ebiten.KeyBackspace) {
-			if len(ChatText) >= 1 {
-				ChatText = ChatText[:len(ChatText)-1]
+			if key == ebiten.KeyA ||
+				key == ebiten.KeyArrowLeft {
+				if newPlayerDirection == DIR_NONE {
+					newPlayerDirection = DIR_W
+				} else if newPlayerDirection == DIR_N {
+					newPlayerDirection = DIR_NW
+				} else if newPlayerDirection == DIR_S {
+					newPlayerDirection = DIR_SW
+				}
 			}
-
+			if key == ebiten.KeyS ||
+				key == ebiten.KeyArrowDown {
+				if newPlayerDirection == DIR_NONE {
+					newPlayerDirection = DIR_S
+				} else if newPlayerDirection == DIR_E {
+					newPlayerDirection = DIR_SE
+				} else if newPlayerDirection == DIR_W {
+					newPlayerDirection = DIR_SW
+				}
+			}
+			if key == ebiten.KeyD ||
+				key == ebiten.KeyArrowRight {
+				if newPlayerDirection == DIR_NONE {
+					newPlayerDirection = DIR_E
+				} else if newPlayerDirection == DIR_N {
+					newPlayerDirection = DIR_NE
+				} else if newPlayerDirection == DIR_S {
+					newPlayerDirection = DIR_SE
+				}
+			}
 		}
-		return nil
-	} else if repeatingKeyPressed(ebiten.KeyEnter) && !CommandMode {
-		ChatMode = true
-		ChatText = ""
-	} else if repeatingKeyPressed(ebiten.KeyGraveAccent) && !ChatMode {
-		CommandMode = true
-		ChatText = ""
 	}
+}
 
-	if repeatingKeyPressed(ebiten.KeyBackslash) {
-		if EditMode {
-			EditMode = false
-		} else {
-			EditMode = true
-			chat("Click to place an item, right-click to delete an item, + and - cycle item IDs.")
-		}
-	}
+func settingsHotkeys() {
 	if repeatingKeyPressed(ebiten.KeyN) {
 		if !ChatMode && !CommandMode {
 
@@ -226,6 +179,140 @@ func (g *Game) Update() error {
 			}
 		}
 	}
+}
+
+/* Record mouse clicks, send clicks to toolbar */
+func getMouseClicks() {
+	defer reportPanic("getMouseClicks")
+
+	/* Mouse clicks */
+	if inpututil.IsMouseButtonJustReleased(ebiten.MouseButtonLeft) {
+		gMouseHeld = false
+
+		/* Stop dragging window */
+		gWindowDrag = nil
+
+	} else if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
+		gMouseHeld = true
+	}
+
+}
+
+func getCursor() {
+	// Save mouse coords
+	lastMouseX = MouseX
+	lastMouseY = MouseY
+	gClickCaptured = false
+
+	//Handle mouse/touch events
+	touchIDs := ebiten.AppendTouchIDs(nil)
+	if len(touchIDs) > 0 {
+		touchEnabled = true
+
+		MouseX, MouseY = ebiten.TouchPosition(touchIDs[0])
+		if !lastTouch {
+			gMouseHeld = true
+			lastTouch = true
+		}
+	} else {
+		if touchEnabled {
+			lastTouch = false
+			gMouseHeld = false
+			gWindowDrag = nil
+		}
+		getMouseClicks()
+	}
+}
+
+var touchEnabled bool
+var lastTouch bool
+
+func clampCursor() {
+	// Clamp mouse/touch to window
+	MouseX, MouseY = ebiten.CursorPosition()
+	if MouseX < 0 || MouseX > int(screenWidth) ||
+		MouseY < 0 || MouseY > int(screenHeight) {
+		MouseX = lastMouseX
+		MouseY = lastMouseY
+
+		// Stop dragging window if we go off-screen
+		gWindowDrag = nil
+
+		//Eat clicks
+		gClickCaptured = true
+		gMouseHeld = false
+	}
+}
+
+func handleUI() {
+	// Check if we clicked within a window
+	if gMouseHeld {
+		gClickCaptured = handleToolbar()
+		gClickCaptured = collisionWindowsCheck(XYs{X: int32(MouseX), Y: int32(MouseY)})
+	}
+
+	/* Handle window drag */
+	if gWindowDrag != nil {
+		gWindowDrag.position = XYs{X: int32(MouseX) - gWindowDrag.dragPos.X, Y: int32(MouseY) - gWindowDrag.dragPos.Y}
+		gClickCaptured = true
+	}
+}
+
+func chatCommands() {
+	//Chat and command handler
+	if ChatMode || CommandMode {
+		start := []rune{}
+		runes := ebiten.AppendInputChars(start[:0])
+		if len(ChatText) < maxChatLen {
+			ChatText += string(runes)
+		} else {
+			chat("Sorry, that is the max message length!")
+			return
+		}
+
+		if repeatingKeyPressed(ebiten.KeyEscape) {
+			ChatMode = false
+			CommandMode = false
+			ChatText = ""
+		}
+		if repeatingKeyPressed(ebiten.KeyEnter) {
+
+			if ChatText != "" {
+				if CommandMode {
+					sendCommand(CMD_COMMAND, []byte(ChatText))
+				} else if ChatMode {
+					sendCommand(CMD_CHAT, []byte(ChatText))
+				}
+
+			}
+			ChatMode = false
+			CommandMode = false
+			ChatText = ""
+		} else if repeatingKeyPressed(ebiten.KeyBackspace) {
+			if len(ChatText) >= 1 {
+				ChatText = ChatText[:len(ChatText)-1]
+			}
+
+		}
+		return
+	} else if repeatingKeyPressed(ebiten.KeyEnter) && !CommandMode {
+		ChatMode = true
+		ChatText = ""
+	} else if repeatingKeyPressed(ebiten.KeyGraveAccent) && !ChatMode {
+		CommandMode = true
+		ChatText = ""
+	}
+}
+
+func worldEditor() {
+	if repeatingKeyPressed(ebiten.KeyBackslash) {
+		if EditMode {
+			EditMode = false
+		} else {
+			EditMode = true
+			chat("Click to place an item, right-click to delete an item, + and - cycle item IDs.")
+		}
+	}
 
 	if EditMode {
 		if !gClickCaptured {
@@ -260,61 +347,10 @@ func (g *Game) Update() error {
 	} else {
 		if !gClickCaptured {
 			if gMouseHeld {
-				newDir = walkXY(MouseX, MouseY)
+				newPlayerDirection = walkXY(MouseX, MouseY)
 			}
 		}
 	}
-
-	pressedKeys := inpututil.AppendPressedKeys(nil)
-
-	for _, key := range pressedKeys {
-		if !ChatMode {
-			if key == ebiten.KeyW ||
-				key == ebiten.KeyArrowUp {
-				if newDir == DIR_NONE {
-					newDir = DIR_N
-				} else if newDir == DIR_E {
-					newDir = DIR_NE
-				} else if newDir == DIR_W {
-					newDir = DIR_NW
-				}
-			}
-			if key == ebiten.KeyA ||
-				key == ebiten.KeyArrowLeft {
-				if newDir == DIR_NONE {
-					newDir = DIR_W
-				} else if newDir == DIR_N {
-					newDir = DIR_NW
-				} else if newDir == DIR_S {
-					newDir = DIR_SW
-				}
-			}
-			if key == ebiten.KeyS ||
-				key == ebiten.KeyArrowDown {
-				if newDir == DIR_NONE {
-					newDir = DIR_S
-				} else if newDir == DIR_E {
-					newDir = DIR_SE
-				} else if newDir == DIR_W {
-					newDir = DIR_SW
-				}
-			}
-			if key == ebiten.KeyD ||
-				key == ebiten.KeyArrowRight {
-				if newDir == DIR_NONE {
-					newDir = DIR_E
-				} else if newDir == DIR_N {
-					newDir = DIR_NE
-				} else if newDir == DIR_S {
-					newDir = DIR_SE
-				}
-			}
-		}
-	}
-
-	sendMove(newDir)
-
-	return nil
 }
 
 func walkXY(mx, my int) DIR {
@@ -357,12 +393,12 @@ func sendMove(newDir DIR) {
 	if newDir == goDir {
 		if goDir == DIR_NONE {
 			return
-		} else if time.Since(lastSent) < sendInterval {
+		} else if time.Since(lastNetSend) < directionKeepAlive {
 			return
 		}
 	}
 
-	if time.Since(lastSent) < maxSendRate {
+	if time.Since(lastNetSend) < directionThrottle {
 		return
 	}
 
@@ -375,7 +411,7 @@ func sendMove(newDir DIR) {
 	binary.Write(outbuf, binary.LittleEndian, &goDir)
 	sendCommand(CMD_MOVE, outbuf.Bytes())
 
-	lastSent = time.Now()
+	lastNetSend = time.Now()
 }
 
 func editPlaceItem() {

@@ -10,10 +10,9 @@ import (
 const indexFileName = "index.dat"
 
 type sectionData struct {
-	id       uint32
-	name     string
-	filePath string
-	items    map[uint32]*sectionItemData
+	id    uint32
+	name  string
+	items map[uint32]*sectionItemData
 }
 
 type sectionItemData struct {

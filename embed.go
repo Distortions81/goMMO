@@ -20,16 +20,15 @@ var (
 	testlight *ebiten.Image
 	testLogin *ebiten.Image
 
-	checkOn      *ebiten.Image
-	checkOff     *ebiten.Image
-	closeBox     *ebiten.Image
-	settingsIcon *ebiten.Image
-	helpIcon     *ebiten.Image
+	checkOn  *ebiten.Image
+	checkOff *ebiten.Image
+	closeBox *ebiten.Image
 
 	spritelist []*sectionItemData
 	numSprites uint32
 )
 
+// Read text files
 func getText(name string) (string, error) {
 	file, err := efs.Open(txtDir + name + ".txt")
 	if err != nil {
@@ -52,7 +51,8 @@ func getText(name string) (string, error) {
 
 }
 
-func loadTest() {
+// Load sprites
+func loadSprites() {
 
 	var x, y uint32
 	numTypes := uint32(len(itemTypesList))
@@ -64,7 +64,7 @@ func loadTest() {
 			itemData := typeData.items[y]
 
 			doLog(true, "loading %v:%v", typeData.name, itemData.fileName)
-			imageData, err := getSpriteImage(typeData.name+"/"+itemData.fileName, false)
+			imageData, err := loadSprite(typeData.name+"/"+itemData.fileName, false)
 			if err != nil {
 				log.Fatalln(err)
 			}
@@ -74,22 +74,17 @@ func loadTest() {
 		}
 	}
 
-	testGrass = getItemImage("terrain", "grass-1")
-	testChar = getItemImage("characters", "player")
-	testlight = getItemImage("effects", "light")
-	testLogin = getItemImage("effects", "login")
+	testGrass = findItemImage("terrain", "grass-1")
+	testChar = findItemImage("characters", "player")
+	testlight = findItemImage("effects", "light")
+	testLogin = findItemImage("effects", "login")
 
-	checkOn = getItemImage("ui", "check on")
-	checkOff = getItemImage("ui", "check off")
-	closeBox = getItemImage("ui", "close box")
-	settingsIcon = getItemImage("ui", "settings")
-	helpIcon = getItemImage("ui", "help")
-
-	initToolbar()
-	drawToolbar(false, false, maxItemType)
+	checkOn = findItemImage("ui", "check on")
+	checkOff = findItemImage("ui", "check off")
+	closeBox = findItemImage("ui", "close box")
 }
 
-func getItemImage(typeName string, itemName string) *ebiten.Image {
+func findItemImage(typeName string, itemName string) *ebiten.Image {
 
 	var typeID uint32
 	for itemid, item := range itemTypesList {
@@ -123,6 +118,7 @@ func getItemImage(typeName string, itemName string) *ebiten.Image {
 	return item.image
 }
 
+// Read fonts
 func getFont(name string) []byte {
 	data, err := efs.ReadFile(gfxDir + "fonts/" + name)
 	if err != nil {
@@ -132,7 +128,8 @@ func getFont(name string) []byte {
 
 }
 
-func getSpriteImage(name string, unmanaged bool) (*ebiten.Image, error) {
+// Load sprites
+func loadSprite(name string, unmanaged bool) (*ebiten.Image, error) {
 
 	if cLoadEmbedSprites {
 		gpng, err := efs.Open(gfxDir + name)

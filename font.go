@@ -16,19 +16,9 @@ var (
 
 	/* Fonts */
 	toolTipFont  font.Face
-	toolTipFontH int
-
-	monoFont  font.Face
-	monoFontH int
-
+	monoFont     font.Face
 	generalFont  font.Face
 	generalFontH int
-
-	largeGeneralFont  font.Face
-	largeGeneralFontH int
-
-	objectFont  font.Face
-	objectFontH int
 )
 
 func updateFonts() {
@@ -82,28 +72,6 @@ func updateFonts() {
 	}
 	generalFontH = getFontHeight(generalFont)
 
-	/* Large general font */
-	largeGeneralFont, err = opentype.NewFace(tt, &opentype.FaceOptions{
-		Size:    20,
-		DPI:     fontDPI,
-		Hinting: font.HintingFull,
-	})
-	if err != nil {
-		log.Fatal(err)
-	}
-	largeGeneralFontH = getFontHeight(largeGeneralFont)
-
-	/* Missing texture font */
-	objectFont, err = opentype.NewFace(tt, &opentype.FaceOptions{
-		Size:    6,
-		DPI:     fontDPI,
-		Hinting: font.HintingFull,
-	})
-	if err != nil {
-		log.Fatal(err)
-	}
-	objectFontH = getFontHeight(objectFont)
-
 	/* Tooltip font */
 	toolTipFont, err = opentype.NewFace(tt, &opentype.FaceOptions{
 		Size:    8,
@@ -113,7 +81,6 @@ func updateFonts() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	toolTipFontH = getFontHeight(toolTipFont)
 
 	/* Mono font */
 	monoFont, err = opentype.NewFace(mono, &opentype.FaceOptions{
@@ -124,7 +91,6 @@ func updateFonts() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	monoFontH = getFontHeight(monoFont)
 
 }
 

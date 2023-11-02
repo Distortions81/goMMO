@@ -7,11 +7,9 @@ import (
 	"image/color"
 	"io"
 	"math"
-	"runtime"
 	"strings"
 	"time"
 
-	"github.com/shirou/gopsutil/cpu"
 	"github.com/twpayne/go-geom"
 	"github.com/twpayne/go-geom/xy"
 )
@@ -106,10 +104,6 @@ func CompressZip(data []byte) []byte {
 	return b.Bytes()
 }
 
-func convPos(pos XY) XYs {
-	return XYs{X: int32(pos.X - xyHalf), Y: int32(pos.Y - xyHalf)}
-}
-
 /* Trim lines from chat */
 func deleteOldLines() {
 	defer reportPanic("deleteOldLines")
@@ -193,43 +187,4 @@ func PosWithinRect(pos XY, rect image.Rectangle, pad uint32) bool {
 		}
 	}
 	return false
-}
-
-/* Detect logical and virtual CPUs, set number of workers */
-func detectCPUs(hyper bool) {
-	defer reportPanic("detectCPUs")
-
-	if WASMMode {
-		numWorkers = 1
-		return
-	}
-
-	/* Detect logical CPUs, failing that... use numcpu */
-	var lCPUs int = runtime.NumCPU()
-	if lCPUs <= 1 {
-		lCPUs = 1
-	}
-	numWorkers = lCPUs
-	doLog(true, "Virtual CPUs: %v", lCPUs)
-
-	if hyper {
-		numWorkers = lCPUs
-		doLog(true, "Number of workers: %v", lCPUs)
-		return
-	}
-
-	/* Logical CPUs */
-	count, err := cpu.Counts(false)
-
-	if err == nil {
-		if count > 1 {
-			lCPUs = (count - 1)
-		} else {
-			lCPUs = 1
-		}
-		doLog(true, "Logical CPUs: %v", count)
-	}
-
-	doLog(true, "Number of workers: %v", lCPUs)
-	numWorkers = lCPUs
 }

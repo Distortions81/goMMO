@@ -14,13 +14,16 @@ import (
 	"golang.org/x/image/font"
 )
 
-var camPos XY = xyCenter
-var smoothCamPos XY = xyCenter
+var (
+	camPos       XY = xyCenter
+	smoothCamPos XY = xyCenter
 
-var disableNightShadow bool
-var nightLevel uint8 = 0
-var startTime time.Time
-var noSmoothing bool = false
+	disableNightShadow bool
+	nightLevel         uint8 = 0
+	startTime          time.Time
+	noSmoothing        bool = false
+	normal             float64
+)
 
 type xySort []*playerData
 
@@ -36,11 +39,9 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 	if gameMode == MODE_PLAYING {
 
-		startTime = time.Now()
-
+		// If not smoothing, don't draw if there isn't new data
 		if noSmoothing {
-			//Update every frame if dragging window
-			if !dataDirty && gWindowDrag == nil {
+			if !dataDirty {
 				return
 			}
 		}
@@ -48,97 +49,89 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		drawLock.Lock()
 		defer drawLock.Unlock()
 
-		/* Extrapolate position */
-		since := startTime.Sub(lastUpdate)
-		remaining := FrameSpeedNS - since.Nanoseconds()
-		normal := (float64(remaining) / float64(FrameSpeedNS))
+		//We are drawing now, we can clear this flag
+		dataDirty = false
 
-		if !noSmoothing && !dataDirty {
-			var smoothPos XY
+		/* Motion smoothing */
+		if !noSmoothing {
+			// Extrapolate position
+			startTime = time.Now()
+			since := startTime.Sub(lastNetUpdate)
+			remaining := FrameSpeedNS - since.Nanoseconds()
+			normal = (float64(remaining) / float64(FrameSpeedNS))
+
+			//Extrapolation limits
 			if normal < 0 {
 				normal = 0
 			} else if normal > 1 {
 				normal = 1
 			}
 
-			smoothPos.X = uint32(float64(ourOldPos.X) - ((float64(ourPos.X) - float64(ourOldPos.X)) * normal))
-			smoothPos.Y = uint32(float64(ourOldPos.Y) - ((float64(ourPos.Y) - float64(ourOldPos.Y)) * normal))
+			// If there ins't new data yet, extrapolate
+			if !dataDirty {
+				var smoothPos XY
 
-			smoothCamPos.X = (uint32(HscreenWidth)) + smoothPos.X
-			smoothCamPos.Y = (uint32(HscreenHeight)) + smoothPos.Y
-		}
+				//Extrapolated local player position
+				smoothPos.X = uint32(float64(oldLocalPlayerPos.X) - ((float64(localPlayerPos.X) - float64(oldLocalPlayerPos.X)) * normal))
+				smoothPos.Y = uint32(float64(oldLocalPlayerPos.Y) - ((float64(localPlayerPos.Y) - float64(oldLocalPlayerPos.Y)) * normal))
 
-		camPos.X = (uint32(HscreenWidth)) + ourPos.X
-		camPos.Y = (uint32(HscreenHeight)) + ourPos.Y
+				//Extrapolated camera position
+				smoothCamPos.X = (uint32(HscreenWidth)) + smoothPos.X
+				smoothCamPos.Y = (uint32(HscreenHeight)) + smoothPos.Y
 
-		if noSmoothing {
+				//Extrapolated remote players
+				for p, player := range playerList {
+					var psmooth XY
+					psmooth.X = uint32(float64(player.lastPos.X) - ((float64(player.pos.X) - float64(player.lastPos.X)) * normal))
+					psmooth.Y = uint32(float64(player.lastPos.Y) - ((float64(player.pos.Y) - float64(player.lastPos.Y)) * normal))
+					playerList[p].spos = XY{X: uint32(psmooth.X), Y: uint32(psmooth.Y)}
+				}
+			}
+		} else {
+			/* Standard mode, just copy data over */
+			camPos.X = (uint32(HscreenWidth)) + localPlayerPos.X
+			camPos.Y = (uint32(HscreenHeight)) + localPlayerPos.Y
 			smoothCamPos = camPos
-			for o, _ := range playerList {
+			for o := range playerList {
 				playerList[o].spos = playerList[o].pos
 			}
 		}
-
-		if !noSmoothing && !dataDirty {
-			for p, player := range playerList {
-
-				/* Extrapolate position */
-				since := startTime.Sub(lastUpdate)
-				remaining := FrameSpeedNS - since.Nanoseconds()
-				normal := (float64(remaining) / float64(FrameSpeedNS))
-
-				var psmooth XY
-
-				if normal < 0 {
-					normal = 0
-				} else if normal > 1 {
-					normal = 1
-				}
-
-				psmooth.X = uint32(float64(player.lastPos.X) - ((float64(player.pos.X) - float64(player.lastPos.X)) * normal))
-				psmooth.Y = uint32(float64(player.lastPos.Y) - ((float64(player.pos.Y) - float64(player.lastPos.Y)) * normal))
-				playerList[p].spos = XY{X: uint32(psmooth.X), Y: uint32(psmooth.Y)}
-
-			}
-		}
-
-		dataDirty = false
 
 		/* Draw grass */
 		for x := -32; x <= screenWidth; x += 32 {
 			for y := -32; y <= screenHeight; y += 32 {
 				op := ebiten.DrawImageOptions{}
-
 				op.GeoM.Scale(2, 2)
 				op.GeoM.Translate(float64(x+int(smoothCamPos.X%32)), float64(y+int(smoothCamPos.Y%32)))
-
 				screen.DrawImage(testGrass, &op)
 			}
-
 		}
 
 		if EditMode {
 			drawDebugEdit(screen)
 		}
 
-		drawWorld(screen)
+		drawWorldObjs(screen)
+
 		drawPlayers(screen)
 
-		drawLight(screen)
+		drawNightVignette(screen)
 
 		drawDebugInfo(screen)
+
 		drawChatLines(screen)
+
 		drawChatBar(screen)
 
 		drawOpenWindows(screen)
 
-		/* Draw toolbar */
-		toolbarCacheLock.RLock()
-		screen.DrawImage(toolbarCache, nil)
-		toolbarCacheLock.RUnlock()
+		showToolbarCache(screen)
 
 		toolBarTooltip(screen)
 
 	} else {
+
+		/* Boot screen */
 		op := &ebiten.DrawImageOptions{}
 		var imgSize float64 = 1024.0
 
@@ -152,8 +145,15 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	}
 }
 
-func drawWorld(screen *ebiten.Image) {
-	/* Draw obj */
+func showToolbarCache(screen *ebiten.Image) {
+	toolbarCacheLock.RLock()
+	screen.DrawImage(toolbarCache, nil)
+	toolbarCacheLock.RUnlock()
+}
+
+func drawWorldObjs(screen *ebiten.Image) {
+
+	//Draw on-ground objects first
 	for _, obj := range wObjList {
 		if !obj.itemData.OnGround {
 			continue
@@ -163,18 +163,16 @@ func drawWorld(screen *ebiten.Image) {
 		yPos := float64(int(smoothCamPos.Y) - int(obj.pos.Y))
 
 		op := ebiten.DrawImageOptions{}
-
 		op.GeoM.Scale(2, 2)
-
-		//camera - object, TODO: get sprite size
 		op.GeoM.Translate(xPos-48.0, yPos-48.0)
 
-		//Draw sub-image
 		screen.DrawImage(spritelist[obj.itemId].image, &op)
 	}
 
-	drawRays(screen)
+	//Draw night shadows
+	drawNightShadows(screen)
 
+	//Draw other objects (buildings/trees)
 	for _, obj := range wObjList {
 		if obj.itemData.OnGround {
 			continue
@@ -184,25 +182,24 @@ func drawWorld(screen *ebiten.Image) {
 		yPos := float64(int(smoothCamPos.Y) - int(obj.pos.Y))
 
 		op := ebiten.DrawImageOptions{}
-
 		op.GeoM.Scale(2, 2)
-
-		//camera - object, TODO: get sprite size
 		op.GeoM.Translate(xPos-48.0, yPos-48.0)
 
-		//Draw sub-image
 		screen.DrawImage(spritelist[obj.itemId].image, &op)
 	}
 
 }
 
-func drawLight(screen *ebiten.Image) {
+func drawNightVignette(screen *ebiten.Image) {
 
 	if nightLevel == 0 {
 		return
 	}
 
-	op := ebiten.DrawImageOptions{}
+	//Use linear filter for this
+	op := ebiten.DrawImageOptions{Filter: ebiten.FilterLinear}
+
+	/* Fit this onto the screen */
 	var screenSize int
 	if screenHeight > screenWidth {
 		screenSize = screenHeight
@@ -265,11 +262,11 @@ func drawPlayers(screen *ebiten.Image) {
 		screen.DrawImage(getCharFrame(player).(*ebiten.Image), &op)
 	}
 
-	/* Draw name */
+	/* Draw player name */
 	for _, player := range pList {
 
 		var pname string
-		pnameStr := getName(player.id)
+		pnameStr := playerIdToName(player.id)
 		if pnameStr != "" {
 			pname = pnameStr
 		} else {
@@ -413,7 +410,7 @@ func drawChatLines(screen *ebiten.Image) {
 func drawDebugInfo(screen *ebiten.Image) {
 	defer reportPanic("drawDebugInfo")
 
-	if !infoLine {
+	if !debugLine {
 		return
 	}
 
@@ -468,7 +465,7 @@ func drawChatBar(screen *ebiten.Image) {
 		if ChatMode {
 			text = "say: " + ChatText
 		} else if CommandMode {
-			text = "> " + ChatText
+			text = " > " + ChatText
 		}
 	}
 

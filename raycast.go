@@ -190,7 +190,7 @@ func rayVertices(x1, y1, x2, y2, x3, y3 float64) []ebiten.Vertex {
 	}
 }
 
-func drawRays(screen *ebiten.Image) {
+func drawNightShadows(screen *ebiten.Image) {
 
 	if nightLevel == 0 || disableNightShadow {
 		return

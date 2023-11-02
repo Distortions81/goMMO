@@ -12,29 +12,36 @@ import (
 	"nhooyr.io/websocket"
 )
 
-const netReadLimit = 1024 * 1000
+const (
+	netReadLimit = 1024 * 1024 // 1 MB
+	bootSleep    = time.Millisecond * 500
+)
 
 func connectServer() {
 
-	changeGameMode(MODE_BOOT, 500*time.Millisecond)
+	changeGameMode(MODE_BOOT, 0)
 
 	for !doConnect() {
 		ReconnectCount++
 		offset := ReconnectCount
+
 		if offset > RecconnectDelayCap {
 			offset = RecconnectDelayCap
 		}
-		timeFuzz := rand.Int63n(200000000) //2 seconds of random delay
+
+		//2 seconds of random delay to spread out load on server reboot
+		timeFuzz := rand.Int63n(200000000)
 		delay := float64(3 + offset + int(float64(timeFuzz)/100000000.0))
-		statusTime = time.Now().Add(time.Duration(delay) * time.Second)
+		reconnectTime = time.Now().Add(time.Duration(delay) * time.Second)
 
 		changeGameMode(MODE_RECONNECT, time.Millisecond*500)
-		buf := fmt.Sprintf("Connect %v failed, retrying in %v ...", ReconnectCount, time.Until(statusTime).Round(time.Second).String())
+		buf := fmt.Sprintf("Connect %v failed, retrying in %v ...", ReconnectCount, time.Until(reconnectTime).Round(time.Second).String())
 		doLog(true, buf)
 		chat(buf)
+
 		time.Sleep(time.Duration(delay) * time.Second)
 	}
-	time.Sleep(time.Millisecond * 500)
+	time.Sleep(bootSleep)
 	changeGameMode(MODE_PLAYING, 0)
 }
 
@@ -46,14 +53,13 @@ func doConnect() bool {
 
 	changeGameMode(MODE_CONNECT, 0)
 	doLog(true, "Connecting...")
-
-	netCount = 0
 	chat("Connecting to server...")
 
 	ctx, cancel := context.WithCancel(context.Background())
 	localPlayer.context = ctx
 	localPlayer.cancel = cancel
 
+	//Two versions of this, standard and WASM
 	conn, err := platformDial(localPlayer.context)
 
 	if err != nil {
@@ -61,8 +67,8 @@ func doConnect() bool {
 		localPlayer.cancel()
 		return false
 	}
-	localPlayer.conn = conn
 
+	localPlayer.conn = conn
 	localPlayer.conn.SetReadLimit(netReadLimit)
 
 	var buf []byte
@@ -70,25 +76,20 @@ func doConnect() bool {
 
 	binary.Write(outbuf, binary.LittleEndian, &netProtoVersion)
 
+	//Send INIT to server
 	go sendCommand(CMD_INIT, outbuf.Bytes())
+
 	doLog(true, "Connected!")
-
 	chat("Connected!")
-	time.Sleep(time.Millisecond * 100)
-
-	/*
-		chatDetailed("Use WASD keys, mouse-click-hold or touch to walk!", color.White, time.Second*30)
-		chatDetailed("Press [RETURN] to open chat bar", color.White, time.Second*30)
-		chatDetailed("Press ` to open command bar", color.White, time.Second*30)
-	*/
 
 	changeGameMode(MODE_CONNECTED, 0)
-	go readNet()
 
+	//Start read loop on new thread and exit
+	go readNet()
 	return true
 }
 
-func getName(id uint32) string {
+func playerIdToName(id uint32) string {
 
 	for _, pname := range playerNames {
 		if pname.id == id {
@@ -102,8 +103,8 @@ func getName(id uint32) string {
 	return ""
 }
 
-var netCount int
-var lastUpdate time.Time
+// Used for motion smoothing
+var lastNetUpdate time.Time
 
 func readNet() {
 
@@ -196,12 +197,14 @@ func readNet() {
 			var numPlayers uint16
 			binary.Read(inbuf, binary.LittleEndian, &numPlayers)
 
+			//Mark players, so we know if we can remove them
 			for _, player := range playerList {
 				player.unmark = true
 			}
 
+			//Mark time here, used for motion smoothing
+			lastNetUpdate = time.Now()
 			if numPlayers > 0 {
-				lastUpdate = time.Now()
 
 				var x uint16
 				for x = 0; x < numPlayers; x++ {
@@ -224,7 +227,6 @@ func readNet() {
 						break
 					}
 
-					//Eventually move me to an event
 					var health int8
 					err = binary.Read(inbuf, binary.LittleEndian, &health)
 					if err != nil {
@@ -234,11 +236,12 @@ func readNet() {
 					if playerList[nid] == nil {
 						playerList[nid] = &playerData{id: nid, pos: XY{X: nx, Y: ny}, direction: DIR_S}
 					} else {
+
 						/* Update local player pos */
 						if localPlayer.id == nid {
-							ourOldPos = ourPos
-							ourPos.X = nx
-							ourPos.Y = ny
+							oldLocalPlayerPos = localPlayerPos
+							localPlayerPos.X = nx
+							localPlayerPos.Y = ny
 						}
 
 						playerList[nid].lastPos = playerList[nid].pos
@@ -262,12 +265,14 @@ func readNet() {
 				}
 			}
 
+			//Delete players that are no longer found
 			for p, player := range playerList {
 				if player.unmark {
 					delete(playerList, p)
 				}
 			}
 
+			//Read dynamic world objects
 			var numObj uint16
 			err = binary.Read(inbuf, binary.LittleEndian, &numObj)
 			if err != nil {
@@ -304,7 +309,7 @@ func readNet() {
 				}
 			}
 
-			netCount++
+			//Mark that there is new data to be rendered, used if motion smoothing is OFF.
 			dataDirty = true
 
 		default:

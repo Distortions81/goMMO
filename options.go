@@ -144,11 +144,11 @@ func saveOptions() {
 /* Toggle the debug bottom-screen text */
 func toggleInfoLine(item int) {
 	defer reportPanic("toggleInfoLine")
-	if infoLine {
-		infoLine = false
+	if debugLine {
+		debugLine = false
 		settingItems[item].Enabled = false
 	} else {
-		infoLine = true
+		debugLine = true
 		settingItems[item].Enabled = true
 	}
 }
@@ -161,18 +161,6 @@ func toggleNightShadow(item int) {
 		settingItems[item].Enabled = false
 	} else {
 		disableNightShadow = true
-		settingItems[item].Enabled = true
-	}
-}
-
-/* Toggle units */
-func toggleUnits(item int) {
-	defer reportPanic("toggleUnits")
-	if usUnits {
-		usUnits = false
-		settingItems[item].Enabled = false
-	} else {
-		usUnits = true
 		settingItems[item].Enabled = true
 	}
 }
@@ -223,22 +211,6 @@ func toggleSmoothing(item int) {
 		settingItems[item].Enabled = false
 	} else {
 		noSmoothing = false
-		settingItems[item].Enabled = true
-	}
-	buf := fmt.Sprintf("%v is now %v.",
-		settingItems[item].Text,
-		BoolToOnOff(settingItems[item].Enabled))
-	chatDetailed(buf, ColorOrange, time.Second*5)
-}
-
-/* Toggle autosave */
-func toggleAutosave(item int) {
-	defer reportPanic("toggleAutosave")
-	if autoSave {
-		autoSave = false
-		settingItems[item].Enabled = false
-	} else {
-		autoSave = true
 		settingItems[item].Enabled = true
 	}
 	buf := fmt.Sprintf("%v is now %v.",
