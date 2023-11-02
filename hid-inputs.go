@@ -120,6 +120,7 @@ func (g *Game) Update() error {
 
 	/* Check if we clicked within a window */
 	if gMouseHeld {
+		gClickCaptured = handleToolbar()
 		gClickCaptured = collisionWindowsCheck(XYs{X: int32(MouseX), Y: int32(MouseY)})
 	}
 

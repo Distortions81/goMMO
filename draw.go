@@ -423,7 +423,7 @@ func drawDebugInfo(screen *ebiten.Image) {
 	)
 
 	drawText(buf, monoFont, color.White, colorNameBG,
-		XYf32{X: 4, Y: 24},
+		XYf32{X: float32(toolbarCache.Bounds().Dx()) + 10, Y: 10},
 		1, screen, true, false, false)
 
 }

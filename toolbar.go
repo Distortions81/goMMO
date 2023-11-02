@@ -215,7 +215,6 @@ func handleToolbar() bool {
 
 			/* Eat this mouse event */
 			gMouseHeld = false
-			gClickCaptured = true
 			return true
 		}
 	}

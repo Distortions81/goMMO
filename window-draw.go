@@ -74,12 +74,12 @@ func drawOptionsWindow(window *windowData) {
 			txt = item.Text
 		}
 
-		if d%2 == 0 {
+		if d%2 != 0 {
 			vector.DrawFilledRect(window.cache,
 				float32(b.Min.X),
-				float32(b.Max.Y),
+				float32(b.Min.Y)+4,
 				float32(b.Size().X/2),
-				float32(b.Size().Y),
+				float32(b.Size().Y/2)-6,
 				color.NRGBA{R: 255, G: 255, B: 255, A: 16}, false)
 		}
 
@@ -104,7 +104,7 @@ func drawOptionsWindow(window *windowData) {
 				op.GeoM.Scale(uiScale*checkScale, uiScale*checkScale)
 				op.GeoM.Translate(
 					float64(window.scaledSize.X)-(float64(check.Bounds().Dx())*uiScale)-(padding*uiScale),
-					float64(item.TextPosY)-(float64(check.Bounds().Dy())*uiScale*checkScale))
+					float64(item.TextPosY-5)-(float64(check.Bounds().Dy())*uiScale*checkScale))
 				window.cache.DrawImage(check, op)
 			}
 			d++
