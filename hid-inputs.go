@@ -36,6 +36,11 @@ var (
 	gClickCaptured   bool
 	gWindowDrag      *windowData
 
+	MouseX int
+	MouseY int
+
+	lastMouseX int
+	lastMouseY int
 	/* Last object we performed an action on */
 	gLastActionPosition XY
 )
@@ -62,6 +67,7 @@ func getMouseClicks() {
 		gLastActionPosition.X = 0
 		gLastActionPosition.Y = 0
 	}
+
 }
 
 /* Input interface handler */
@@ -75,16 +81,35 @@ func (g *Game) Update() error {
 	drawLock.Lock()
 	defer drawLock.Unlock()
 
+	/* Save mouse coords */
+	lastMouseX = MouseX
+	lastMouseY = MouseY
+
 	gClickCaptured = false
+
+	/* Clamp to window */
+	MouseX, MouseY = ebiten.CursorPosition()
+	if MouseX < 0 || MouseX > int(screenWidth) ||
+		MouseY < 0 || MouseY > int(screenHeight) {
+		MouseX = lastMouseX
+		MouseY = lastMouseY
+
+		/* Stop dragging window if we go off-screen */
+		gWindowDrag = nil
+		gClickCaptured = true //Eat the click
+	}
+
 	getMouseClicks()
 
 	/* Check if we clicked within a window */
-	mx, my := ebiten.CursorPosition()
 	if gMouseHeld {
-		gClickCaptured = collisionWindowsCheck(XYs{X: int32(mx), Y: int32(my)})
-		if gClickCaptured {
-			fmt.Println("Window captured.")
-		}
+		gClickCaptured = collisionWindowsCheck(XYs{X: int32(MouseX), Y: int32(MouseY)})
+	}
+
+	/* Handle window drag */
+	if gWindowDrag != nil {
+		gWindowDrag.position = XYs{X: int32(MouseX) - gWindowDrag.dragPos.X, Y: int32(MouseY) - gWindowDrag.dragPos.Y}
+		gClickCaptured = true
 	}
 
 	newDir := DIR_NONE
@@ -209,11 +234,11 @@ func (g *Game) Update() error {
 			}
 		}
 
-		editPos = XY{X: smoothCamPos.X - uint32(mx), Y: smoothCamPos.Y - uint32(my)}
+		editPos = XY{X: smoothCamPos.X - uint32(MouseX), Y: smoothCamPos.Y - uint32(MouseY)}
 	} else {
 		if !gClickCaptured {
 			if gMouseHeld {
-				newDir = walkXY(mx, my)
+				newDir = walkXY(MouseX, MouseY)
 			} else {
 				touchIDs := ebiten.AppendTouchIDs(nil)
 				//Ignore multi-touch
