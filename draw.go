@@ -39,7 +39,8 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		startTime = time.Now()
 
 		if noSmoothing {
-			if !dataDirty {
+			//Update every frame if dragging window
+			if !dataDirty && gWindowDrag == nil {
 				return
 			}
 		}
