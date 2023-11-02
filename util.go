@@ -169,7 +169,9 @@ func chatDetailed(text string, color color.Color, life time.Duration) {
 
 	sepLines := strings.Split(text, "\n")
 	for _, sep := range sepLines {
-		chatLines = append(chatLines, chatLineData{text: sep, color: color, bgColor: colorNameBG, lifetime: life, timestamp: time.Now()})
+		chatLines = append(chatLines,
+			chatLineData{text: sep, color: color, bgColor: colorNameBG,
+				lifetime: life, timestamp: time.Now()})
 		chatLinesTop++
 	}
 

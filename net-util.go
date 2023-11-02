@@ -2,7 +2,6 @@ package main
 
 import (
 	"sync"
-	"time"
 
 	"nhooyr.io/websocket"
 )
@@ -37,12 +36,10 @@ func sendCommand(header CMD, data []byte) bool {
 
 		doLog(true, "sendCommand error: %v", err)
 
-		changeGameMode(MODE_Reconnect, time.Second)
-		chatLines = []chatLineData{}
-		chatLinesTop = 0
-
-		chat("Connection lost!")
-
+		if gameMode == MODE_Playing {
+			chat("Connection lost!")
+			connectServer()
+		}
 		return false
 	}
 

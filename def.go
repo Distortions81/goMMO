@@ -1,6 +1,6 @@
 package main
 
-var netProtoVersion uint16 = 7
+var netProtoVersion uint16 = 8
 
 const FrameSpeedNS = 66666666
 

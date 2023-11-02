@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/binary"
 	"fmt"
+	"image/color"
 	"log"
 	"math/rand"
 	"time"
@@ -19,9 +20,9 @@ const (
 
 func connectServer() {
 
-	changeGameMode(MODE_Boot, 0)
-
+	changeGameMode(MODE_Connect, 0)
 	for !doConnect() {
+
 		ReconnectCount++
 		offset := ReconnectCount
 
@@ -34,7 +35,7 @@ func connectServer() {
 		delay := float64(3 + offset + int(float64(timeFuzz)/100000000.0))
 		reconnectTime = time.Now().Add(time.Duration(delay) * time.Second)
 
-		changeGameMode(MODE_Reconnect, time.Millisecond*500)
+		changeGameMode(MODE_Reconnect, 0)
 		buf := fmt.Sprintf("Connect %v failed, retrying in %v ...", ReconnectCount, time.Until(reconnectTime).Round(time.Second).String())
 		doLog(true, buf)
 		chat(buf)
@@ -42,13 +43,16 @@ func connectServer() {
 		time.Sleep(time.Duration(delay) * time.Second)
 	}
 	time.Sleep(bootSleep)
-	changeGameMode(MODE_Playing, 0)
 }
 
 func doConnect() bool {
 
 	if playerNames == nil {
 		playerNames = make(map[uint32]pNameData)
+	}
+
+	if gameMode != MODE_Connect && gameMode != MODE_Reconnect {
+		return true
 	}
 
 	changeGameMode(MODE_Connect, 0)
@@ -116,13 +120,10 @@ func readNet() {
 		if err != nil {
 			doLog(true, "readNet error: %v", err)
 
-			//TODO: Notify player here
-			changeGameMode(MODE_Reconnect, time.Second)
-
-			chatLines = []chatLineData{}
-			chatLinesTop = 0
-			chat("Connection lost!")
-			connectServer()
+			if gameMode == MODE_Playing {
+				chat("Connection lost!")
+				connectServer()
+			}
 			return
 		}
 
@@ -152,7 +153,12 @@ func readNet() {
 
 		switch d {
 		case CMD_Init:
-			chat("Server rejected connection: invalid version.")
+			chatDetailed("Server rejected connection: Client version not supported.",
+				color.White, time.Hour*72)
+			if WASMMode {
+				chatDetailed("Please refresh your browser!",
+					color.White, time.Hour*72)
+			}
 			changeGameMode(MODE_Error, 0)
 
 		case CMD_Login:

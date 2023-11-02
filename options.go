@@ -181,7 +181,7 @@ func toggleFullscreen(item int) {
 	buf := fmt.Sprintf("%v is now %v.",
 		settingItems[item].Text,
 		BoolToOnOff(settingItems[item].Enabled))
-	chatDetailed(buf, ColorOrange, time.Second*5)
+	chatDetailed(buf, ColorDarkOrange, time.Second*5)
 }
 
 // Toggle UI magnification
@@ -200,7 +200,7 @@ func toggleFastShadow(item int) {
 	buf := fmt.Sprintf("%v is now %v.",
 		settingItems[item].Text,
 		BoolToOnOff(settingItems[item].Enabled))
-	chatDetailed(buf, ColorOrange, time.Second*5)
+	chatDetailed(buf, ColorDarkOrange, time.Second*5)
 }
 
 // Toggle debug mode
@@ -216,7 +216,7 @@ func toggleSmoothing(item int) {
 	buf := fmt.Sprintf("%v is now %v.",
 		settingItems[item].Text,
 		BoolToOnOff(settingItems[item].Enabled))
-	chatDetailed(buf, ColorOrange, time.Second*5)
+	chatDetailed(buf, ColorDarkOrange, time.Second*5)
 }
 
 func toggleVsync(item int) {
@@ -233,5 +233,5 @@ func toggleVsync(item int) {
 	buf := fmt.Sprintf("%v is now %v.",
 		settingItems[item].Text,
 		BoolToOnOff(settingItems[item].Enabled))
-	chatDetailed(buf, ColorOrange, time.Second*5)
+	chatDetailed(buf, ColorDarkOrange, time.Second*5)
 }

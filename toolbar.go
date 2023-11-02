@@ -242,10 +242,11 @@ func toolBarTooltip(screen *ebiten.Image) bool {
 
 			// Show item hot key if found
 			keyName := ""
-			//
-			if item.oType.qKey != 0 {
-				keyName = " ( " + item.oType.qKey.String() + " key )"
-			}
+			/*
+				if item.oType.qKey != 0 {
+					keyName = " ( " + item.oType.qKey.String() + " key )"
+				}
+			*/
 
 			toolTip = fmt.Sprintf("%v\n%v\n%v", item.oType.name, item.oType.description, keyName)
 		} else {

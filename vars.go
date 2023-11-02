@@ -38,7 +38,7 @@ var (
 	wObjList []*worldObject
 
 	//Player name BG color
-	colorNameBG = color.RGBA{R: 32, G: 32, B: 32, A: 160}
+	colorNameBG = color.RGBA{R: 16, G: 16, B: 16, A: 128}
 
 	//Server URL
 	authSite = "https://gommo.go-game.net/gs"
