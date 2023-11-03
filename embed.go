@@ -2,7 +2,6 @@ package main
 
 import (
 	"embed"
-	"fmt"
 	"image"
 	"io"
 	"log"
@@ -53,13 +52,13 @@ func getText(name string) (string, error) {
 func loadSprites() {
 
 	var x, y uint32
-	for x = 0; x < uint32(topSection); x++ {
+	for x = 0; x <= uint32(topSection); x++ {
 		if itemTypesList[x] == nil {
 			continue
 		}
 		typeData := itemTypesList[x]
 
-		for y = 0; y < uint32(topItem); y++ {
+		for y = 0; y <= uint32(topItem); y++ {
 			if typeData.items[y] == nil {
 				continue
 			}
@@ -91,7 +90,6 @@ func findItemImage(typeName string, itemName string) *ebiten.Image {
 		if item == nil {
 			continue
 		}
-		fmt.Println(item.name)
 		if item.name == typeName {
 			typeID = item.id
 			continue
