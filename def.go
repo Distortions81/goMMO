@@ -41,9 +41,9 @@ var modeNames map[PMode]*playerModeData
 
 func loadPlayerModes() {
 	modeNames = make(map[PMode]*playerModeData)
-	modeNames[PMODE_PASSIVE] = &playerModeData{name: "PMODE_PASSIVE", imgName: "passive"}
-	modeNames[PMODE_ATTACK] = &playerModeData{name: "PMODE_ATTACK", imgName: "attack"}
-	modeNames[PMODE_HEAL] = &playerModeData{name: "PMODE_HEAL", imgName: "heal"}
+	modeNames[PMODE_PASSIVE] = &playerModeData{printName: "Passive", name: "PMODE_PASSIVE", imgName: "passive"}
+	modeNames[PMODE_ATTACK] = &playerModeData{printName: "Attack", name: "PMODE_ATTACK", imgName: "attack"}
+	modeNames[PMODE_HEAL] = &playerModeData{printName: "Heal", name: "PMODE_HEAL", imgName: "heal"}
 
 	//Load images
 	for m, mode := range modeNames {
@@ -52,9 +52,10 @@ func loadPlayerModes() {
 }
 
 type playerModeData struct {
-	name    string
-	imgName string
-	image   *ebiten.Image
+	printName string
+	name      string
+	imgName   string
+	image     *ebiten.Image
 }
 
 type PMode uint8

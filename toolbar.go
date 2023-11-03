@@ -105,7 +105,7 @@ var uiObjs = []*objTypeData{
 var pmodeButtons = []*objTypeData{
 	{
 		base: "passive",
-		name: "player mode", toolbarAction: changePlayerMode,
+		name: "Player mode", toolbarAction: changePlayerMode,
 		description: "Change modes: Passive, Attack or Heal.", qKey: ebiten.KeyF3,
 	},
 }
@@ -264,6 +264,10 @@ var lastVal int
 func toolBarTooltip(screen *ebiten.Image) bool {
 	defer reportPanic("toolBarTooltip")
 
+	if hadTouchEvent {
+		return false
+	}
+
 	iconSize := float32(uiScale * toolBarIconSize)
 	spacing := float32(iconSize / toolBarSpaceRatio)
 
@@ -289,7 +293,12 @@ func toolBarTooltip(screen *ebiten.Image) bool {
 				}
 			*/
 
-			toolTip = fmt.Sprintf("%v\n%v\n%v", item.oType.name, item.oType.description, keyName)
+			if item.oType.base == "passive" {
+				toolTip = fmt.Sprintf("%v (%v)\n%v\n%v", item.oType.name, modeNames[playerMode].printName, item.oType.description, keyName)
+			} else {
+				toolTip = fmt.Sprintf("%v\n%v\n%v", item.oType.name, item.oType.description, keyName)
+			}
+
 		} else {
 			// Otherwise, just display item name
 			toolTip = fmt.Sprintf("%v\n", item.oType.name)
