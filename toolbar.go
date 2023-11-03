@@ -1,6 +1,8 @@
 package main
 
 import (
+	"bytes"
+	"encoding/binary"
 	"fmt"
 	"image/color"
 	"sync"
@@ -64,18 +66,38 @@ var subTypes = []subTypeData{
 	},
 }
 
+func changePlayerMode() {
+
+	var buf []byte
+	outbuf := bytes.NewBuffer(buf)
+
+	if playerMode < PMODE_HEAL {
+		playerMode++
+	} else {
+		playerMode = PMODE_PASSIVE
+	}
+
+	binary.Write(outbuf, binary.LittleEndian, &playerMode)
+	sendCommand(CMD_PlayerMode, outbuf.Bytes())
+}
+
 // Toolbar actions and images
 var uiObjs = []*objTypeData{
 	//Ui Only
 	{
 		base: "settings",
 		name: "Options", toolbarAction: settingsToggle,
-		description: "Show game options", qKey: ebiten.KeyF2,
+		description: "Show game options", qKey: ebiten.KeyF1,
 	},
 	{
 		base: "help",
 		name: "Help", toolbarAction: toggleHelp,
-		description: "See game controls and help.", qKey: ebiten.KeyF1,
+		description: "See game controls and help.", qKey: ebiten.KeyF2,
+	},
+	{
+		base: "player-mode",
+		name: "Player mode", toolbarAction: changePlayerMode,
+		description: "Change modes: peaceful, attack or heal", qKey: ebiten.KeyF3,
 	},
 }
 

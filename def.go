@@ -1,11 +1,13 @@
 package main
 
-var netProtoVersion uint16 = 9
+import "github.com/hajimehoshi/ebiten/v2"
+
+var netProtoVersion uint16 = 10
 
 const FrameSpeedNS = 66666666
 
 const (
-	gameVersion = "0.0.10"
+	gameVersion = "0.0.11"
 
 	// Files and directories
 	dataDir = "data/"
@@ -48,6 +50,39 @@ const (
 	MODE_Error
 )
 
+// Directions
+type PMode uint8
+
+var playerMode PMode
+
+const (
+	// Directions
+	PMODE_PASSIVE PMode = iota
+	PMODE_ATTACK
+	PMODE_HEAL
+)
+
+// Used for debug messages, this could be better
+var modeNames map[PMode]*playerModeData
+
+func loadPlayerModes() {
+	modeNames = make(map[PMode]*playerModeData)
+	modeNames[PMODE_PASSIVE] = &playerModeData{name: "PMODE_PASSIVE", imgName: "passive"}
+	modeNames[PMODE_ATTACK] = &playerModeData{name: "PMODE_ATTACK", imgName: "attack"}
+	modeNames[PMODE_HEAL] = &playerModeData{name: "PMODE_HEAL", imgName: "heal"}
+
+	//Load images
+	for m, mode := range modeNames {
+		modeNames[m].image = findItemImage("player-modes", mode.imgName)
+	}
+}
+
+type playerModeData struct {
+	name    string
+	imgName string
+	image   *ebiten.Image
+}
+
 // Network commands
 type CMD uint8
 
@@ -59,6 +94,8 @@ const (
 	CMD_WorldUpdate
 	CMD_Chat
 	CMD_Command
+	CMD_PlayerMode
+
 	CMD_WorldData
 	CMD_PlayerNames
 	CMD_EditPlaceItem
@@ -77,6 +114,8 @@ func init() {
 	cmdNames[CMD_WorldUpdate] = "CMD_WorldUpdate"
 	cmdNames[CMD_Chat] = "CMD_Chat"
 	cmdNames[CMD_Command] = "CMD_Command"
+	cmdNames[CMD_PlayerMode] = "CMD_PlayerMode"
+
 	cmdNames[CMD_WorldData] = "CMD_WorldData"
 	cmdNames[CMD_PlayerNames] = "CMD_PlayerNames"
 	cmdNames[CMD_EditPlaceItem] = "CMD_EditPlaceItem"

@@ -1,16 +1,13 @@
 Edit mode:
-Characters marked mod or on dev mode only?
+Characters marked mod
 (save/load players, quick login creation)
 
-Optimize CPU: cache each chunk's data serialization for one frame?
 Test bit-packed networking.
 
 Make flags for world objects:
 live (not in world file on client),
 physical (collisions)/(otherwise, draw on ground), radius (collision circle), rect (collision rect),
-locked (confirm delete), dirty (unsaved)
-
-Load area files into client.
+locked (confirm delete)
 
 Look into a system to convert live objects to standard...
 Maybe a command at connect to download new items, and to all players connected when changes are made.
@@ -19,8 +16,6 @@ I think it would be best if we do this at X amount per frame to throttle the dow
 Controller inputs (mouse/touch walk added)
 Don't pixel-double on very small windows (mobile)
 
-
-possibly skip caching chunk if not needed.
 only check chunks within radius of player!
 
 ##############################

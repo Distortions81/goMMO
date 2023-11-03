@@ -78,6 +78,7 @@ func newGame() *Game {
 	//settingsToggle()
 	toggleHelp()
 	loadOptions()
+	loadPlayerModes()
 
 	halfScreenX = screenX / 2
 	halfScreenY = screenY / 2
