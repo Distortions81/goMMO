@@ -80,7 +80,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 func drawBootScreen(screen *ebiten.Image) {
 	// Boot screen
-	op := &ebiten.DrawImageOptions{}
+	op := &ebiten.DrawImageOptions{Filter: ebiten.FilterLinear}
 	var imgSize float64 = 1024.0
 
 	scalew := 1.0 / (imgSize / float64(screenX))
