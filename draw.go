@@ -454,23 +454,29 @@ func drawDebugEdit(screen *ebiten.Image) {
 	op.GeoM.Translate(xPos, yPos)
 
 	// Draw debug info
-	var buf = "EDIT MODE: Invalid item"
-	defer drawText(buf, monoFont, color.White, colorNameBG,
-		XYf32{X: float32(screenX) - 4, Y: 2},
-		1, screen, false, false, false)
+	var buf = fmt.Sprintf("EDIT MODE: ID: %v:%v - Invalid item", worldEditID.section, worldEditID.num)
 
 	section := itemTypesList[worldEditID.section]
 	if section == nil {
+		drawText(buf, monoFont, color.White, colorNameBG,
+			XYf32{X: float32(screenX) - 4, Y: 2},
+			1, screen, false, false, false)
 		return
 	}
 	item := section.items[worldEditID.num]
 	if item == nil {
+		drawText(buf, monoFont, color.White, colorNameBG,
+			XYf32{X: float32(screenX) - 4, Y: 2},
+			1, screen, false, false, false)
 		return
 	}
-	buf = fmt.Sprintf("EDIT MODE: %v:%v Type: %v Name: %v",
+	buf = fmt.Sprintf("EDIT MODE: ID: %v:%v, Type: %v, Name: %v",
 		worldEditID.section, worldEditID.num, section.name, item.name)
 
 	screen.DrawImage(item.image, &op)
+	drawText(buf, monoFont, color.White, colorNameBG,
+		XYf32{X: float32(screenX) - 4, Y: 2},
+		1, screen, false, false, false)
 
 }
 

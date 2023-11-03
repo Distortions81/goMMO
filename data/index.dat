@@ -1,44 +1,45 @@
 # Modified 11-03-2023
-#Format:
+# Format:
 #Sections:
 # id:type:
 #Items:
 # id:name:fileName <or> id:name:fileName:xsize:ysize
 # blank lines, or lines starting with # are ignored
+# IDs start at 1
 
 version 2
 
-1:characters:
-1:player:test-player.png
-2:player-dead:test-player-dead.png
+0:characters:
+0:player:test-player.png
+1:player-dead:test-player-dead.png
 
-2:ground:
-1:grass:grass.png
-2:grass-1:grass1.png
+1:ground:
+0:grass:grass.png
+1:grass-1:grass1.png
 
-3:deco:
-1:blue mushroom:blue-mush.png
-2:red mushroom:red-mush.png
-3:tiny rock:tiny-rock.png
-4:tiny shrub:tiny-shrub.png
-5:tiny tree stump:tiny-tree-stump.png
+2:deco:
+0:blue mushroom:blue-mush.png
+1:red mushroom:red-mush.png
+2:tiny rock:tiny-rock.png
+3:tiny shrub:tiny-shrub.png
+4:tiny tree stump:tiny-tree-stump.png
 
-4:wobjects:
-1:tree-1:tree1.png:60:60
-2:tree-2:tree2.png:60:60
+3:wobjects:
+0:tree-1:tree1.png:60:60
+1:tree-2:tree2.png:60:60
 
-5:effects:
-1:light:light.png
+4:effects:
+0:light:light.png
 
-6:ui:
-1:login:login.png
-2:check on:check-on.png
-3:check off:check-off.png
-4:close box:close.png
-5:settings:settings.png
-6:help:help.png
+5:ui:
+0:login:login.png
+1:check on:check-on.png
+2:check off:check-off.png
+3:close box:close.png
+4:settings:settings.png
+5:help:help.png
 
-7:player-modes:
-1:passive:passive.png
-2:attack:attack.png
-3:heal:heal.png
+6:player-modes:
+0:passive:passive.png
+1:attack:attack.png
+2:heal:heal.png

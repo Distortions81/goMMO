@@ -167,7 +167,7 @@ func drawToolbar(click, hover bool, index int) {
 
 		// Something went wrong, exit
 		if img == nil {
-			doLog(false, "FAILURE: %v\n", pos)
+			//doLog(false, "FAILURE: %v\n", pos)
 			return
 		}
 

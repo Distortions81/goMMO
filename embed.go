@@ -2,6 +2,7 @@ package main
 
 import (
 	"embed"
+	"fmt"
 	"image"
 	"io"
 	"log"
@@ -85,13 +86,14 @@ func loadSprites() {
 
 func findItemImage(typeName string, itemName string) *ebiten.Image {
 
-	var typeID int
-	for itemid, item := range itemTypesList {
+	var typeID uint8
+	for _, item := range itemTypesList {
 		if item == nil {
-			continue
+			break
 		}
+		fmt.Println(item.name)
 		if item.name == typeName {
-			typeID = itemid
+			typeID = item.id
 			break
 		}
 	}
@@ -101,13 +103,13 @@ func findItemImage(typeName string, itemName string) *ebiten.Image {
 		return nil
 	}
 
-	var itemID int
-	for itemid, item := range iType.items {
+	var itemID uint8
+	for _, item := range iType.items {
 		if item == nil {
-			continue
+			break
 		}
 		if item.name == itemName {
-			itemID = itemid
+			itemID = item.id.num
 			break
 		}
 	}

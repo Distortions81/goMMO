@@ -107,7 +107,7 @@ func readIndex() bool {
 			continue
 		}
 
-		//Section data
+		//Item data
 		if currentSection != nil {
 			words := strings.Split(line, ":")
 			numWords := len(words)
@@ -128,7 +128,6 @@ func readIndex() bool {
 				sizeH, _ := strconv.ParseUint(words[5], 10, 16)
 				newItem.SizeH = uint16(sizeH)
 			}
-			itemID++
 			currentSection.items[newItem.id.num] = newItem
 
 			if devMode {

@@ -327,7 +327,7 @@ func worldEditor() {
 			}
 		}
 		var shiftKey bool
-		if repeatingKeyPressed(ebiten.KeyShift) {
+		if keyPressed(ebiten.KeyShift) {
 			shiftKey = true
 		}
 		if keyJustPressed(ebiten.KeyEqual) {
@@ -391,6 +391,13 @@ func repeatingKeyPressed(key ebiten.Key) bool {
 }
 
 // keyJustPressed return true when key is pressed considering the repeat state.
+func keyPressed(key ebiten.Key) bool {
+
+	d := inpututil.KeyPressDuration(key)
+	return d > 0
+}
+
+// keyJustPressed return true when key is pressed considering the repeat state.
 func keyJustPressed(key ebiten.Key) bool {
 
 	d := inpututil.KeyPressDuration(key)
@@ -434,7 +441,7 @@ func editPlaceItem() {
 		return
 	}
 
-	if itemType.name != "wobjects" {
+	if itemType.name != "wobjects" && itemType.name != "deco" {
 		return
 	}
 
