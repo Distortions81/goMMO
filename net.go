@@ -44,7 +44,11 @@ func connectServer() {
 		doLog(true, buf)
 		chat(buf)
 
-		time.Sleep(time.Duration(delay) * time.Second)
+		if devMode {
+			time.Sleep(time.Second)
+		} else {
+			time.Sleep(time.Duration(delay) * time.Second)
+		}
 	}
 	time.Sleep(bootSleep)
 }
