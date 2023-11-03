@@ -38,7 +38,7 @@ type playerData struct {
 	context context.Context
 	cancel  context.CancelFunc
 
-	health int8
+	health int16
 
 	pos    XY
 	spos   XY

@@ -241,7 +241,7 @@ func readNet() {
 						break
 					}
 
-					var health int8
+					var health int16
 					err = binary.Read(inbuf, binary.LittleEndian, &health)
 					if err != nil {
 						doLog(true, "%v", err.Error())
