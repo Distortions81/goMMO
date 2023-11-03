@@ -22,3 +22,4 @@ only check chunks within radius of player!
 ## Write object data sending
 ## Then add basic attack
 ## player login
+## finish player mode, editor delete/move
