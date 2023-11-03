@@ -75,6 +75,9 @@ func (g *Game) Update() error {
 	//Chat and command system
 	chatCommands()
 
+	//Mouse / touch walk
+	mouseTouchWalk()
+
 	//World-edit mode
 	worldEditor()
 
@@ -144,7 +147,7 @@ func WASDKeys() {
 }
 
 func settingsHotkeys() {
-	if ChatMode || CommandMode {
+	if ChatMode || CommandMode || !devMode {
 		return
 	}
 
@@ -159,24 +162,6 @@ func settingsHotkeys() {
 
 		buf := fmt.Sprintf("Night level: %v%%", int((float32(nightLevel)/255.0)*100.0))
 		chat(buf)
-	}
-	if keyJustPressed(ebiten.KeyL) {
-		if noSmoothing {
-			noSmoothing = false
-			chat("Motion smoothing now ON!")
-		} else {
-			noSmoothing = true
-			chat("Motion smoothing now OFF! (battery saver)")
-		}
-	}
-	if keyJustPressed(ebiten.KeyZ) {
-		if fastShadow {
-			fastShadow = false
-			chat("Fast shadows now Off!")
-		} else {
-			fastShadow = true
-			chat("Fast shadows now ON! (Faster/Less battery)")
-		}
 	}
 }
 
@@ -298,8 +283,16 @@ func chatCommands() {
 	}
 }
 
+func mouseTouchWalk() {
+	if !worldEditMode && !clickCaptured {
+		if mouseHeld {
+			newPlayerDir = walkXY(mouseX, mouseY)
+		}
+	}
+}
+
 func worldEditor() {
-	if CommandMode || ChatMode {
+	if CommandMode || ChatMode || !devMode {
 		return
 	}
 
@@ -342,12 +335,6 @@ func worldEditor() {
 		}
 
 		editPos = XY{X: sCamPos.X - uint32(mouseX), Y: sCamPos.Y - uint32(mouseY)}
-	} else {
-		if !clickCaptured {
-			if mouseHeld {
-				newPlayerDir = walkXY(mouseX, mouseY)
-			}
-		}
 	}
 }
 

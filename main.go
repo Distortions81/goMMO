@@ -32,12 +32,12 @@ func main() {
 	StartLog()
 	LogDaemon()
 
-	devMode := flag.Bool("dev", false, "dev mode enable")
+	dMode := flag.Bool("dev", false, "dev mode enable")
 	flag.Parse()
 
 	// Temporary for testing
-	if *devMode {
-		gDevMode = true
+	if *dMode {
+		devMode = true
 		authSite = "https://127.0.0.1/gs"
 		transport.TLSClientConfig.InsecureSkipVerify = true
 	}

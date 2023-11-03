@@ -75,7 +75,7 @@ func readIndex() bool {
 			currentSection = nil
 			itemTypesList = map[uint32]*sectionData{}
 
-			if gDevMode {
+			if devMode {
 				doLog(true, "version header found.")
 			}
 			continue
@@ -95,7 +95,7 @@ func readIndex() bool {
 				itemTypesList[newSection.id].items = make(map[uint32]*sectionItemData)
 			}
 
-			if gDevMode {
+			if devMode {
 				doLog(false, "")
 				doLog(true, "section found: (%v) %v", newSection.id, newSection.name)
 			}
@@ -125,7 +125,7 @@ func readIndex() bool {
 			itemID++
 			currentSection.items[newItem.id] = newItem
 
-			if gDevMode {
+			if devMode {
 				doLog(true, "item found: %v:%v", newItem.id, newItem.name)
 			}
 			continue

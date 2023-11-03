@@ -13,7 +13,7 @@ var (
 	//If new network data has been rendered or not
 	dataDirty bool = true
 	//-dev argument
-	gDevMode bool
+	devMode bool
 
 	//Login, playing, reconnect, etc
 	gameMode     = MODE_Start
