@@ -305,15 +305,15 @@ func drawPlayers(screen *ebiten.Image) {
 
 			vector.DrawFilledRect(
 				screen,
-				float32(int(sCamPos.X)-int(player.pos.X))-12+4-1,
-				float32(int(sCamPos.Y)-int(player.pos.Y))+24-1,
+				float32(int(sCamPos.X)-int(player.spos.X))-12+4-1,
+				float32(int(sCamPos.Y)-int(player.spos.Y))+24-1,
 				27, 4, colorNameBG,
 				false)
 
 			vector.DrawFilledRect(
 				screen,
-				float32(int(sCamPos.X)-int(player.pos.X))-12+4,
-				float32(int(sCamPos.Y)-int(player.pos.Y))+24,
+				float32(int(sCamPos.X)-int(player.spos.X))-12+4,
+				float32(int(sCamPos.Y)-int(player.spos.Y))+24,
 				25-((100.0-float32(player.health))/4.0), 2, healthColor,
 				false)
 		}
