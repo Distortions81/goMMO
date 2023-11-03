@@ -23,9 +23,6 @@ var (
 	checkOn  *ebiten.Image
 	checkOff *ebiten.Image
 	closeBox *ebiten.Image
-
-	spritelist  []*sectionItemData
-	topSpriteID uint32
 )
 
 // Read text files
@@ -55,12 +52,16 @@ func getText(name string) (string, error) {
 func loadSprites() {
 
 	var x, y uint32
-	numTypes := uint32(len(itemTypesList))
-	for x = 0; x < numTypes; x++ {
+	for x = 0; x < assetArraySize; x++ {
+		if itemTypesList[x] == nil {
+			break
+		}
 		typeData := itemTypesList[x]
 
-		numItems := uint32(len(typeData.items))
-		for y = 0; y < numItems; y++ {
+		for y = 0; y < assetArraySize; y++ {
+			if typeData.items[y] == nil {
+				break
+			}
 			itemData := typeData.items[y]
 
 			doLog(true, "loading %v:%v", typeData.name, itemData.fileName)
@@ -69,15 +70,13 @@ func loadSprites() {
 				log.Fatalln(err)
 			}
 			itemTypesList[x].items[y].image = imageData
-			spritelist = append(spritelist, itemTypesList[x].items[y])
-			topSpriteID++
 		}
 	}
 
-	testGrass = findItemImage("terrain", "grass-1")
+	testGrass = findItemImage("ground", "grass-1")
 	playerSprite = findItemImage("characters", "player")
 	testlight = findItemImage("effects", "light")
-	splashScreen = findItemImage("effects", "login")
+	splashScreen = findItemImage("ui", "login")
 
 	checkOn = findItemImage("ui", "check on")
 	checkOff = findItemImage("ui", "check off")
@@ -86,8 +85,11 @@ func loadSprites() {
 
 func findItemImage(typeName string, itemName string) *ebiten.Image {
 
-	var typeID uint32
+	var typeID int
 	for itemid, item := range itemTypesList {
+		if item == nil {
+			continue
+		}
 		if item.name == typeName {
 			typeID = itemid
 			break
@@ -99,8 +101,11 @@ func findItemImage(typeName string, itemName string) *ebiten.Image {
 		return nil
 	}
 
-	var itemID uint32
+	var itemID int
 	for itemid, item := range iType.items {
+		if item == nil {
+			continue
+		}
 		if item.name == itemName {
 			itemID = itemid
 			break

@@ -67,7 +67,7 @@ type chatLineData struct {
 }
 
 type worldObject struct {
-	itemId uint32
+	itemId IID
 	pos    XY
 
 	itemData *sectionItemData

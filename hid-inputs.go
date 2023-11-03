@@ -27,7 +27,7 @@ var (
 
 	//World edit states
 	worldEditMode bool
-	worldEditID   uint32
+	worldEditID   IID
 	editPos       XY = worldCenter
 
 	//Chat command states
@@ -326,13 +326,29 @@ func worldEditor() {
 				rightMousePressed = false
 			}
 		}
+		var shiftKey bool
+		if repeatingKeyPressed(ebiten.KeyShift) {
+			shiftKey = true
+		}
 		if keyJustPressed(ebiten.KeyEqual) {
-			if worldEditID < topSpriteID {
-				worldEditID++
+			if shiftKey {
+				if worldEditID.section < assetArraySize {
+					worldEditID.section++
+				}
+			} else {
+				if worldEditID.num < assetArraySize {
+					worldEditID.num++
+				}
 			}
 		} else if keyJustPressed(ebiten.KeyMinus) {
-			if worldEditID > 0 {
-				worldEditID--
+			if shiftKey {
+				if worldEditID.section > 0 {
+					worldEditID.section--
+				}
+			} else {
+				if worldEditID.num > 0 {
+					worldEditID.num--
+				}
 			}
 		}
 
@@ -413,18 +429,17 @@ func editPlaceItem() {
 	var buf []byte
 	outbuf := bytes.NewBuffer(buf)
 
-	if worldEditID >= topSpriteID {
+	itemType := itemTypesList[worldEditID.section]
+	if itemType == nil {
 		return
 	}
 
-	iType := spritelist[worldEditID].itemType
-	typeName := itemTypesList[iType].name
-
-	if typeName != "world-objects" {
+	if itemType.name != "wobjects" {
 		return
 	}
 
-	binary.Write(outbuf, binary.LittleEndian, worldEditID)
+	binary.Write(outbuf, binary.LittleEndian, worldEditID.section)
+	binary.Write(outbuf, binary.LittleEndian, worldEditID.num)
 	binary.Write(outbuf, binary.LittleEndian, editPos.X)
 	binary.Write(outbuf, binary.LittleEndian, editPos.Y)
 	sendCommand(CMD_EditPlaceItem, outbuf.Bytes())

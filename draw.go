@@ -174,7 +174,7 @@ func drawWorldObjs(screen *ebiten.Image) {
 		op.GeoM.Scale(2, 2)
 		op.GeoM.Translate(xPos-48.0, yPos-48.0)
 
-		screen.DrawImage(spritelist[obj.itemId].image, &op)
+		screen.DrawImage(obj.itemData.image, &op)
 	}
 
 	//Draw night shadows
@@ -193,7 +193,7 @@ func drawWorldObjs(screen *ebiten.Image) {
 		op.GeoM.Scale(2, 2)
 		op.GeoM.Translate(xPos-48.0, yPos-48.0)
 
-		screen.DrawImage(spritelist[obj.itemId].image, &op)
+		screen.DrawImage(obj.itemData.image, &op)
 	}
 
 }
@@ -451,22 +451,26 @@ func drawDebugEdit(screen *ebiten.Image) {
 	op.GeoM.Scale(2, 2)
 
 	//Draw edit sprite
-	if worldEditID < topSpriteID {
-		op.GeoM.Translate(xPos, yPos)
-		screen.DrawImage(spritelist[worldEditID].image, &op)
-	}
+	op.GeoM.Translate(xPos, yPos)
 
 	// Draw debug info
 	var buf = "EDIT MODE: Invalid item"
-	if worldEditID < topSpriteID {
-		iType := spritelist[worldEditID].itemType
-		itemName := spritelist[worldEditID].name
-		typeName := itemTypesList[iType].name
-		buf = fmt.Sprintf("EDIT MODE: ID: %v, Type: %v, Name: %v", worldEditID, typeName, itemName)
-	}
-	drawText(buf, monoFont, color.White, colorNameBG,
+	defer drawText(buf, monoFont, color.White, colorNameBG,
 		XYf32{X: float32(screenX) - 4, Y: 2},
 		1, screen, false, false, false)
+
+	section := itemTypesList[worldEditID.section]
+	if section == nil {
+		return
+	}
+	item := section.items[worldEditID.num]
+	if item == nil {
+		return
+	}
+	buf = fmt.Sprintf("EDIT MODE: %v:%v Type: %v Name: %v",
+		worldEditID.section, worldEditID.num, section.name, item.name)
+
+	screen.DrawImage(item.image, &op)
 
 }
 

@@ -298,12 +298,19 @@ func readNet() {
 
 				wObjList = []*worldObject{}
 				for x := 0; x < int(numObj); x++ {
-					var itemId, posx, posy uint32
+					var sectionID, itemId uint8
+					var posx, posy uint32
+					err = binary.Read(inbuf, binary.LittleEndian, &sectionID)
+					if err != nil {
+						doLog(true, "%v", err.Error())
+						break
+					}
 					err = binary.Read(inbuf, binary.LittleEndian, &itemId)
 					if err != nil {
 						doLog(true, "%v", err.Error())
 						break
 					}
+
 					err = binary.Read(inbuf, binary.LittleEndian, &posx)
 					if err != nil {
 						doLog(true, "%v", err.Error())
@@ -317,7 +324,14 @@ func readNet() {
 
 					pos := XY{X: posx, Y: posy}
 
-					object := &worldObject{itemId: itemId, pos: pos, itemData: spritelist[itemId]}
+					var itemdata *sectionItemData
+
+					section := itemTypesList[sectionID]
+					if section != nil {
+						itemdata = section.items[itemId]
+					}
+					object := &worldObject{
+						itemId: IID{section: sectionID, num: itemId}, pos: pos, itemData: itemdata}
 					wObjList = append(wObjList, object)
 
 				}

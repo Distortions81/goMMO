@@ -8,18 +8,24 @@ import (
 )
 
 const indexFileName = "index.dat"
+const assetArraySize = 255
+
+type IID struct {
+	section uint8
+	num     uint8
+}
 
 type sectionData struct {
-	id    uint32
+	id    uint8
 	name  string
-	items map[uint32]*sectionItemData
+	items [assetArraySize]*sectionItemData
 }
 
 type sectionItemData struct {
 	name     string
 	fileName string
 	itemType uint32
-	id       uint32
+	id       IID
 	OnGround bool
 	SizeW    uint16
 	SizeH    uint16
@@ -27,12 +33,9 @@ type sectionItemData struct {
 	image *ebiten.Image
 }
 
-var itemTypesList map[uint32]*sectionData
+var itemTypesList [assetArraySize]*sectionData
 
 func readIndex() bool {
-
-	var sectionID uint32
-	var itemID uint32
 
 	data, err := efs.ReadFile(dataDir + indexFileName)
 	if err != nil {
@@ -66,14 +69,13 @@ func readIndex() bool {
 				doLog(true, "No version header found, line: %v: '%v %v'", lnum, words[0], words[1])
 				return false
 			}
-			if !strings.EqualFold("1", words[1]) {
+			if !strings.EqualFold("2", words[1]) {
 				doLog(true, "Index version not supported, line: %v", lnum)
 				return false
 			}
 
 			//Reset data
 			currentSection = nil
-			itemTypesList = map[uint32]*sectionData{}
 
 			if devMode {
 				doLog(true, "version header found.")
@@ -83,17 +85,20 @@ func readIndex() bool {
 
 		//Section
 		if strings.HasSuffix(line, ":") {
-			itemID = 0
 			sName := strings.TrimSuffix(line, ":")
-			newSection := &sectionData{name: sName, id: uint32(sectionID)}
-			sectionID++
+			words := strings.Split(sName, ":")
+			numWords := len(words)
+
+			if numWords != 2 {
+				doLog(true, "Section header invalid: %v words, not 2", numWords)
+				return false
+			}
+
+			secID, _ := strconv.ParseUint(words[0], 10, 8)
+			newSection := &sectionData{name: words[1], id: uint8(secID)}
 
 			itemTypesList[newSection.id] = newSection
 			currentSection = newSection
-
-			if itemTypesList[newSection.id].items == nil {
-				itemTypesList[newSection.id].items = make(map[uint32]*sectionItemData)
-			}
 
 			if devMode {
 				doLog(false, "")
@@ -110,20 +115,21 @@ func readIndex() bool {
 				doLog(true, "Item doesn't have correct number of entries on line %v.", lnum)
 				return false
 			}
+			itemID, _ := strconv.ParseUint(words[0], 10, 8)
 			newItem := &sectionItemData{
-				name: words[0], fileName: words[1],
-				id: uint32(itemID), itemType: currentSection.id}
-			if numWords == 5 {
-				if words[2] == "true" {
+				name: words[1], fileName: words[2],
+				id: IID{section: currentSection.id, num: uint8(itemID)}}
+			if numWords == 6 {
+				if words[3] == "true" {
 					newItem.OnGround = true
 				}
-				sizeW, _ := strconv.ParseUint(words[3], 10, 16)
+				sizeW, _ := strconv.ParseUint(words[4], 10, 16)
 				newItem.SizeW = uint16(sizeW)
-				sizeH, _ := strconv.ParseUint(words[4], 10, 16)
+				sizeH, _ := strconv.ParseUint(words[5], 10, 16)
 				newItem.SizeH = uint16(sizeH)
 			}
 			itemID++
-			currentSection.items[newItem.id] = newItem
+			currentSection.items[newItem.id.num] = newItem
 
 			if devMode {
 				doLog(true, "item found: %v:%v", newItem.id, newItem.name)
