@@ -20,6 +20,7 @@ const (
 
 func connectServer() {
 
+	time.Sleep(time.Second * 3)
 	changeGameMode(MODE_Connect, 0)
 
 	for !doConnect() {

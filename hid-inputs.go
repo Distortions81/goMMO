@@ -188,6 +188,8 @@ func getCursor() {
 	lastMouseY = mouseY
 	clickCaptured = false
 
+	mouseX, mouseY = ebiten.CursorPosition()
+
 	//Handle mouse/touch events
 	touchIDs := ebiten.AppendTouchIDs(nil)
 	if len(touchIDs) > 0 {
