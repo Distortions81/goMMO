@@ -14,4 +14,4 @@ cp main.wasm.gz ../goMMOServ/www/
 echo "copied..."
 
 scp -P 5313 main.wasm.gz dist@gosnake.go-game.net:~/goMMOServ/www/
-#rm main.wasm.gz
+rm main.wasm.gz
