@@ -11,8 +11,9 @@ version 2
 
 0:characters:
 0:player:test-player.png
-1:player:test-player-heal.png
+1:player-heal:test-player-heal.png
 2:player-dead:test-player-dead.png
+3:player-dead-heal:test-player-dead-heal.png
 
 1:ground:
 0:grass:grass.png

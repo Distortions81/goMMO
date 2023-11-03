@@ -88,7 +88,15 @@ func doConnect() bool {
 
 	binary.Write(outbuf, binary.LittleEndian, &netProtoVersion)
 
-	//Send INIT to server
+	//Send INIT to server, reset everything
+	goingDirection = DIR_NONE
+	playerNames = make(map[uint32]pNameData)
+	localPlayerPos = worldCenter
+	oldLocalPlayerPos = worldCenter
+	wObjList = []*worldObject{}
+	playerList = make(map[uint32]*playerData)
+	playerMode = PMODE_PASSIVE
+
 	go sendCommand(CMD_Init, outbuf.Bytes())
 
 	doLog(true, "Connected!")

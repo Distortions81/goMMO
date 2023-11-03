@@ -360,7 +360,7 @@ func walkXY(mx, my int) DIR {
 
 	distance := distance(XY{X: uint32(halfScreenX), Y: uint32(halfScreenY)}, XY{X: uint32(mx), Y: uint32(my)})
 
-	if distance < playerSpriteSize ||
+	if distance < (playerSpriteSize/2) ||
 		mx > screenX || my > screenY ||
 		mx < 0 || my < 0 {
 		return DIR_NONE
