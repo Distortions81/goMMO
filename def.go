@@ -7,7 +7,7 @@ var netProtoVersion uint16 = 10
 const FrameSpeedNS = 66666666
 
 const (
-	gameVersion = "0.0.11"
+	gameVersion = "0.0.12"
 
 	// Files and directories
 	dataDir = "data/"

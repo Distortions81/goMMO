@@ -52,7 +52,15 @@ func main() {
 	}
 
 	// Set up ebiten and window
-	ebiten.SetVsyncEnabled(true)
+	if WASMMode {
+		vSync = false
+		ebiten.SetVsyncEnabled(false)
+		settingItems[0].Enabled = false
+	} else {
+		vSync = true
+		ebiten.SetVsyncEnabled(true)
+		settingItems[0].Enabled = true
+	}
 	ebiten.SetTPS(ebiten.SyncWithFPS)
 	ebiten.SetScreenClearedEveryFrame(false)
 	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeEnabled)

@@ -203,9 +203,10 @@ func getCursor() {
 			hadTouchEvent = false
 			mouseHeld = false
 			draggingWindow = nil
+			mouseX, mouseY = halfScreenX, halfScreenY
+		} else {
+			getMouseClicks()
 		}
-		//Now check for mouse events
-		getMouseClicks()
 	}
 }
 
@@ -214,7 +215,6 @@ var hadTouchEvent bool
 
 func clampCursor() {
 	// Clamp mouse/touch to window
-	mouseX, mouseY = ebiten.CursorPosition()
 	if mouseX < 0 || mouseX > int(screenX) ||
 		mouseY < 0 || mouseY > int(screenY) {
 		mouseX = lastMouseX
