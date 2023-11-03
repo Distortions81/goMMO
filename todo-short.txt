@@ -23,3 +23,6 @@ only check chunks within radius of player!
 ## Then add basic attack
 ## player login
 ## finish player mode, editor delete/move
+
+Switch sprite sheets for sword/heal,
+start work on attack/heal sprite sheets and logic.
