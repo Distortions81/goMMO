@@ -30,3 +30,10 @@ start work on attack/heal sprite sheets and logic.
 ***
 $$$ don't stop walking if UI/window eat event
 ***
+
+
+
+
+** from discord **
+Basic passive/attack/heal modes added. Needs event rates, effectiveness and the animations... oh i also need to make people die from no health and stuff. 
+But still, progress.
