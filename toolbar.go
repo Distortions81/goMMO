@@ -81,6 +81,9 @@ func changePlayerMode() {
 		playerMode = PMODE_PASSIVE
 	}
 
+	cbuf := fmt.Sprintf("Mode changed to: %v", modeNames[playerMode].printName)
+	chat(cbuf)
+
 	drawToolbar(false, false, maxItemType)
 
 	binary.Write(outbuf, binary.LittleEndian, &playerMode)
