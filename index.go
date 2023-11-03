@@ -24,7 +24,6 @@ type sectionData struct {
 type sectionItemData struct {
 	name     string
 	fileName string
-	itemType uint32
 	id       IID
 	OnGround bool
 	SizeW    uint16
