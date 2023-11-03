@@ -81,6 +81,8 @@ func changePlayerMode() {
 		playerMode = PMODE_PASSIVE
 	}
 
+	drawToolbar(false, false, maxItemType)
+
 	binary.Write(outbuf, binary.LittleEndian, &playerMode)
 	sendCommand(CMD_PlayerMode, outbuf.Bytes())
 }
@@ -149,6 +151,16 @@ func drawToolbar(click, hover bool, index int) {
 
 		// Get main image
 		img := item.oType.image
+
+		if item.oType.base == "passive" {
+			if playerMode == PMODE_PASSIVE {
+				img = findItemImage("player-modes", "passive")
+			} else if playerMode == PMODE_ATTACK {
+				img = findItemImage("player-modes", "attack")
+			} else if playerMode == PMODE_HEAL {
+				img = findItemImage("player-modes", "heal")
+			}
+		}
 
 		// Something went wrong, exit
 		if img == nil {
