@@ -303,7 +303,7 @@ func worldEditor() {
 			worldEditMode = false
 		} else {
 			worldEditMode = true
-			chat("Click to place an item, right-click to delete an item, + and - cycle item IDs.")
+			chat("[+] and [-] cycles items, [SHIFT]-[+] or [-] changes type")
 		}
 	}
 
