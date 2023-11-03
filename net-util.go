@@ -18,7 +18,7 @@ func sendCommand(header CMD, data []byte) bool {
 	}
 
 	cmdName := cmdNames[header]
-	if header != 0 {
+	if header != CMD_Move {
 		if cmdName == "" {
 			doLog(true, "Sent: 0x%02X", header)
 		} else {

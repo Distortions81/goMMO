@@ -15,17 +15,15 @@ var (
 	//go:embed data
 	efs embed.FS
 
-	playerSprite *ebiten.Image
-	testGrass    *ebiten.Image
-	testlight    *ebiten.Image
-	splashScreen *ebiten.Image
+	playerSprite     *ebiten.Image
+	deadPlayerSprite *ebiten.Image
+	testGrass        *ebiten.Image
+	testlight        *ebiten.Image
+	splashScreen     *ebiten.Image
 
 	checkOn  *ebiten.Image
 	checkOff *ebiten.Image
 	closeBox *ebiten.Image
-
-	spritelist  []*sectionItemData
-	topSpriteID uint32
 )
 
 // Read text files
@@ -55,12 +53,16 @@ func getText(name string) (string, error) {
 func loadSprites() {
 
 	var x, y uint32
-	numTypes := uint32(len(itemTypesList))
-	for x = 0; x < numTypes; x++ {
+	for x = 0; x <= uint32(topSection); x++ {
+		if itemTypesList[x] == nil {
+			continue
+		}
 		typeData := itemTypesList[x]
 
-		numItems := uint32(len(typeData.items))
-		for y = 0; y < numItems; y++ {
+		for y = 0; y <= uint32(topItem); y++ {
+			if typeData.items[y] == nil {
+				continue
+			}
 			itemData := typeData.items[y]
 
 			doLog(true, "loading %v:%v", typeData.name, itemData.fileName)
@@ -69,15 +71,14 @@ func loadSprites() {
 				log.Fatalln(err)
 			}
 			itemTypesList[x].items[y].image = imageData
-			spritelist = append(spritelist, itemTypesList[x].items[y])
-			topSpriteID++
 		}
 	}
 
-	testGrass = findItemImage("terrain", "grass-1")
+	testGrass = findItemImage("ground", "grass-1")
 	playerSprite = findItemImage("characters", "player")
+	deadPlayerSprite = findItemImage("characters", "player-dead")
 	testlight = findItemImage("effects", "light")
-	splashScreen = findItemImage("effects", "login")
+	splashScreen = findItemImage("ui", "login")
 
 	checkOn = findItemImage("ui", "check on")
 	checkOff = findItemImage("ui", "check off")
@@ -86,11 +87,14 @@ func loadSprites() {
 
 func findItemImage(typeName string, itemName string) *ebiten.Image {
 
-	var typeID uint32
-	for itemid, item := range itemTypesList {
+	var typeID uint8
+	for _, item := range itemTypesList {
+		if item == nil {
+			continue
+		}
 		if item.name == typeName {
-			typeID = itemid
-			break
+			typeID = item.id
+			continue
 		}
 	}
 	iType := itemTypesList[typeID]
@@ -99,11 +103,14 @@ func findItemImage(typeName string, itemName string) *ebiten.Image {
 		return nil
 	}
 
-	var itemID uint32
-	for itemid, item := range iType.items {
+	var itemID uint8
+	for _, item := range iType.items {
+		if item == nil {
+			continue
+		}
 		if item.name == itemName {
-			itemID = itemid
-			break
+			itemID = item.id.num
+			continue
 		}
 	}
 	item := iType.items[itemID]

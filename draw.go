@@ -174,7 +174,7 @@ func drawWorldObjs(screen *ebiten.Image) {
 		op.GeoM.Scale(2, 2)
 		op.GeoM.Translate(xPos-48.0, yPos-48.0)
 
-		screen.DrawImage(spritelist[obj.itemId].image, &op)
+		screen.DrawImage(obj.itemData.image, &op)
 	}
 
 	//Draw night shadows
@@ -193,7 +193,7 @@ func drawWorldObjs(screen *ebiten.Image) {
 		op.GeoM.Scale(2, 2)
 		op.GeoM.Translate(xPos-48.0, yPos-48.0)
 
-		screen.DrawImage(spritelist[obj.itemId].image, &op)
+		screen.DrawImage(obj.itemData.image, &op)
 	}
 
 }
@@ -293,7 +293,7 @@ func drawPlayers(screen *ebiten.Image) {
 
 	// Draw health
 	for _, player := range pList {
-		if player.health < 100 {
+		if player.health < 100 && player.health > 0 {
 
 			var healthColor color.RGBA
 			r := int(float32(100-player.health) * 5)
@@ -451,19 +451,29 @@ func drawDebugEdit(screen *ebiten.Image) {
 	op.GeoM.Scale(2, 2)
 
 	//Draw edit sprite
-	if worldEditID < topSpriteID {
-		op.GeoM.Translate(xPos, yPos)
-		screen.DrawImage(spritelist[worldEditID].image, &op)
-	}
+	op.GeoM.Translate(xPos, yPos)
 
 	// Draw debug info
-	var buf = "EDIT MODE: Invalid item"
-	if worldEditID < topSpriteID {
-		iType := spritelist[worldEditID].itemType
-		itemName := spritelist[worldEditID].name
-		typeName := itemTypesList[iType].name
-		buf = fmt.Sprintf("EDIT MODE: ID: %v, Type: %v, Name: %v", worldEditID, typeName, itemName)
+	var buf = fmt.Sprintf("EDIT MODE: ID: %v:%v - Invalid item", worldEditID.section, worldEditID.num)
+
+	section := itemTypesList[worldEditID.section]
+	if section == nil {
+		drawText(buf, monoFont, color.White, colorNameBG,
+			XYf32{X: float32(screenX) - 4, Y: 2},
+			1, screen, false, false, false)
+		return
 	}
+	item := section.items[worldEditID.num]
+	if item == nil {
+		drawText(buf, monoFont, color.White, colorNameBG,
+			XYf32{X: float32(screenX) - 4, Y: 2},
+			1, screen, false, false, false)
+		return
+	}
+	buf = fmt.Sprintf("EDIT MODE: ID: %v:%v, Type: %v, Name: %v",
+		worldEditID.section, worldEditID.num, section.name, item.name)
+
+	screen.DrawImage(item.image, &op)
 	drawText(buf, monoFont, color.White, colorNameBG,
 		XYf32{X: float32(screenX) - 4, Y: 2},
 		1, screen, false, false, false)

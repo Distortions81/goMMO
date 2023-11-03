@@ -27,7 +27,7 @@ var (
 
 	//World edit states
 	worldEditMode bool
-	worldEditID   uint32
+	worldEditID   IID
 	editPos       XY = worldCenter
 
 	//Chat command states
@@ -303,7 +303,7 @@ func worldEditor() {
 			worldEditMode = false
 		} else {
 			worldEditMode = true
-			chat("Click to place an item, right-click to delete an item, + and - cycle item IDs.")
+			chat("[+] and [-] cycles items, [SHIFT]-[+] or [-] changes type")
 		}
 	}
 
@@ -326,13 +326,29 @@ func worldEditor() {
 				rightMousePressed = false
 			}
 		}
+		var shiftKey bool
+		if keyPressed(ebiten.KeyShift) {
+			shiftKey = true
+		}
 		if keyJustPressed(ebiten.KeyEqual) {
-			if worldEditID < topSpriteID {
-				worldEditID++
+			if shiftKey {
+				if worldEditID.section < assetArraySize {
+					worldEditID.section++
+				}
+			} else {
+				if worldEditID.num < assetArraySize {
+					worldEditID.num++
+				}
 			}
 		} else if keyJustPressed(ebiten.KeyMinus) {
-			if worldEditID > 0 {
-				worldEditID--
+			if shiftKey {
+				if worldEditID.section > 0 {
+					worldEditID.section--
+				}
+			} else {
+				if worldEditID.num > 0 {
+					worldEditID.num--
+				}
 			}
 		}
 
@@ -375,6 +391,13 @@ func repeatingKeyPressed(key ebiten.Key) bool {
 }
 
 // keyJustPressed return true when key is pressed considering the repeat state.
+func keyPressed(key ebiten.Key) bool {
+
+	d := inpututil.KeyPressDuration(key)
+	return d > 0
+}
+
+// keyJustPressed return true when key is pressed considering the repeat state.
 func keyJustPressed(key ebiten.Key) bool {
 
 	d := inpututil.KeyPressDuration(key)
@@ -413,18 +436,17 @@ func editPlaceItem() {
 	var buf []byte
 	outbuf := bytes.NewBuffer(buf)
 
-	if worldEditID >= topSpriteID {
+	itemType := itemTypesList[worldEditID.section]
+	if itemType == nil {
 		return
 	}
 
-	iType := spritelist[worldEditID].itemType
-	typeName := itemTypesList[iType].name
-
-	if typeName != "world-objects" {
+	if itemType.name != "wobjects" && itemType.name != "deco" {
 		return
 	}
 
-	binary.Write(outbuf, binary.LittleEndian, worldEditID)
+	binary.Write(outbuf, binary.LittleEndian, worldEditID.section)
+	binary.Write(outbuf, binary.LittleEndian, worldEditID.num)
 	binary.Write(outbuf, binary.LittleEndian, editPos.X)
 	binary.Write(outbuf, binary.LittleEndian, editPos.Y)
 	sendCommand(CMD_EditPlaceItem, outbuf.Bytes())
