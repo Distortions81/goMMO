@@ -18,7 +18,7 @@ var (
 	playerSprite *ebiten.Image
 	testGrass    *ebiten.Image
 	testlight    *ebiten.Image
-	testLogin    *ebiten.Image
+	splashScreen *ebiten.Image
 
 	checkOn  *ebiten.Image
 	checkOff *ebiten.Image
@@ -77,7 +77,7 @@ func loadSprites() {
 	testGrass = findItemImage("terrain", "grass-1")
 	playerSprite = findItemImage("characters", "player")
 	testlight = findItemImage("effects", "light")
-	testLogin = findItemImage("effects", "login")
+	splashScreen = findItemImage("effects", "login")
 
 	checkOn = findItemImage("ui", "check on")
 	checkOff = findItemImage("ui", "check off")

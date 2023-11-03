@@ -19,22 +19,6 @@ const (
 	chunkDiv         = 128
 )
 
-// Directions
-type DIR uint8
-
-const (
-	// Directions
-	DIR_N DIR = iota
-	DIR_NE
-	DIR_E
-	DIR_SE
-	DIR_S
-	DIR_SW
-	DIR_W
-	DIR_NW
-	DIR_NONE
-)
-
 // Game modes
 type MODE uint8
 
@@ -50,17 +34,7 @@ const (
 	MODE_Error
 )
 
-// Directions
-type PMode uint8
-
 var playerMode PMode
-
-const (
-	// Directions
-	PMODE_PASSIVE PMode = iota
-	PMODE_ATTACK
-	PMODE_HEAL
-)
 
 // Used for debug messages, this could be better
 var modeNames map[PMode]*playerModeData
@@ -82,6 +56,31 @@ type playerModeData struct {
 	imgName string
 	image   *ebiten.Image
 }
+
+type PMode uint8
+
+// Directions
+type DIR uint8
+
+const (
+	// Directions
+	DIR_N DIR = iota
+	DIR_NE
+	DIR_E
+	DIR_SE
+	DIR_S
+	DIR_SW
+	DIR_W
+	DIR_NW
+	DIR_NONE
+)
+
+const (
+	// Directions
+	PMODE_PASSIVE PMode = iota
+	PMODE_ATTACK
+	PMODE_HEAL
+)
 
 // Network commands
 type CMD uint8

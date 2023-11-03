@@ -88,7 +88,7 @@ func drawBootScreen(screen *ebiten.Image) {
 
 	op.GeoM.Scale(scalew, scaleh)
 
-	screen.DrawImage(testLogin, op)
+	screen.DrawImage(splashScreen, op)
 	drawChatLines(screen)
 }
 

@@ -20,7 +20,9 @@ const (
 
 func connectServer() {
 
+	time.Sleep(time.Second * 4)
 	changeGameMode(MODE_Connect, 0)
+
 	for !doConnect() {
 
 		ReconnectCount++

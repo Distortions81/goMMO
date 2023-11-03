@@ -35,4 +35,6 @@ settings:settings.png
 help:help.png
 
 player-modes:
-attack:axe.png
+passive:passive.png
+attack:attack.png
+heal:heal.png

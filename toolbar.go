@@ -64,6 +64,10 @@ var subTypes = []subTypeData{
 		folder: "ui",
 		list:   uiObjs,
 	},
+	{
+		folder: "player-modes",
+		list:   pmodeButtons,
+	},
 }
 
 func changePlayerMode() {
@@ -94,10 +98,13 @@ var uiObjs = []*objTypeData{
 		name: "Help", toolbarAction: toggleHelp,
 		description: "See game controls and help.", qKey: ebiten.KeyF2,
 	},
+}
+
+var pmodeButtons = []*objTypeData{
 	{
-		base: "player-mode",
-		name: "Player mode", toolbarAction: changePlayerMode,
-		description: "Change modes: peaceful, attack or heal", qKey: ebiten.KeyF3,
+		base: "passive",
+		name: "player mode", toolbarAction: changePlayerMode,
+		description: "Change modes: Passive, Attack or Heal.", qKey: ebiten.KeyF3,
 	},
 }
 
