@@ -1,11 +1,11 @@
-# Modified 11-03-2023
 # Format:
-#Sections:
+
+##Sections:
 # id:type:
-#Items:
-# id:name:fileName <or> id:name:fileName:xsize:ysize
-# blank lines, or lines starting with # are ignored
-# IDs start at 1
+
+##Items:
+# id:name:fileName <or> id:name:fileName:xsize:ysize (physics, shadows)
+# blank lines, or lines starting with # are ignored, IDs start at 0.
 
 version 2
 

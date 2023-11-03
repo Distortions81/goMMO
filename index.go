@@ -10,6 +10,8 @@ import (
 const indexFileName = "index.dat"
 const assetArraySize = 255
 
+var topSection, topItem uint8
+
 type IID struct {
 	section uint8
 	num     uint8
@@ -95,6 +97,9 @@ func readIndex() bool {
 
 			secID, _ := strconv.ParseUint(words[0], 10, 8)
 			newSection := &sectionData{name: words[1], id: uint8(secID)}
+			if secID > uint64(topSection) {
+				topSection = uint8(secID)
+			}
 
 			itemTypesList[newSection.id] = newSection
 			currentSection = newSection
@@ -118,6 +123,9 @@ func readIndex() bool {
 			newItem := &sectionItemData{
 				name: words[1], fileName: words[2],
 				id: IID{section: currentSection.id, num: uint8(itemID)}}
+			if itemID > uint64(topItem) {
+				topItem = uint8(itemID)
+			}
 			if numWords == 6 {
 				if words[3] == "true" {
 					newItem.OnGround = true

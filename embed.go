@@ -53,15 +53,15 @@ func getText(name string) (string, error) {
 func loadSprites() {
 
 	var x, y uint32
-	for x = 0; x < assetArraySize; x++ {
+	for x = 0; x < uint32(topSection); x++ {
 		if itemTypesList[x] == nil {
-			break
+			continue
 		}
 		typeData := itemTypesList[x]
 
-		for y = 0; y < assetArraySize; y++ {
+		for y = 0; y < uint32(topItem); y++ {
 			if typeData.items[y] == nil {
-				break
+				continue
 			}
 			itemData := typeData.items[y]
 
@@ -89,12 +89,12 @@ func findItemImage(typeName string, itemName string) *ebiten.Image {
 	var typeID uint8
 	for _, item := range itemTypesList {
 		if item == nil {
-			break
+			continue
 		}
 		fmt.Println(item.name)
 		if item.name == typeName {
 			typeID = item.id
-			break
+			continue
 		}
 	}
 	iType := itemTypesList[typeID]
@@ -106,11 +106,11 @@ func findItemImage(typeName string, itemName string) *ebiten.Image {
 	var itemID uint8
 	for _, item := range iType.items {
 		if item == nil {
-			break
+			continue
 		}
 		if item.name == itemName {
 			itemID = item.id.num
-			break
+			continue
 		}
 	}
 	item := iType.items[itemID]
