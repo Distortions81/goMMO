@@ -1,7 +1,10 @@
 #!/bin/bash
 echo "compiling..."
 
-GOOS=js GOMAXPROCS=1 GOARCH=wasm go build -tags=ebitensinglethread -pgo=auto -trimpath -gcflags=all="-B" -ldflags="-s -w" -o main.wasm
+GOOS=js GOMAXPROCS=1 GOARCH=wasm go build -tags=ebitensinglethread -pgo=auto -trimpath -gcflags=all="-B" -ldflags="-s -w" -o input.wasm
+echo "optimizing..."
+wasm-opt --enable-bulk-memory -O3 -o main.wasm input.wasm
+rm input.wasm
 
 echo "compressing..."
 rm main.wasm.gz
@@ -11,4 +14,4 @@ cp main.wasm.gz ../goMMOServ/www/
 echo "copied..."
 
 scp -P 5313 main.wasm.gz dist@gosnake.go-game.net:~/goMMOServ/www/
-rm main.wasm.gz
+#rm main.wasm.gz

@@ -3,8 +3,11 @@ package main
 import (
 	"crypto/tls"
 	"flag"
+	"log"
 	"net/http"
+	"os"
 	"runtime"
+	"runtime/pprof"
 	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -33,7 +36,22 @@ func main() {
 	LogDaemon()
 
 	dMode := flag.Bool("dev", false, "dev mode enable")
+	var cpuprofile = flag.String("cpuprofile", "", "write cpu profile to file")
 	flag.Parse()
+
+	if *cpuprofile != "" {
+		f, err := os.Create(*cpuprofile)
+		if err != nil {
+			log.Fatal(err)
+		}
+		doLog(true, "pprof started")
+		pprof.StartCPUProfile(f)
+		go func() {
+			time.Sleep(time.Minute)
+			pprof.StopCPUProfile()
+			doLog(true, "pprof complete")
+		}()
+	}
 
 	// Temporary for testing
 	if *dMode {
@@ -64,6 +82,7 @@ func main() {
 	ebiten.SetTPS(ebiten.SyncWithFPS)
 	ebiten.SetScreenClearedEveryFrame(false)
 	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeEnabled)
+	ebiten.SetWindowSizeLimits(640, 360, 8192, 8192)
 	ebiten.SetWindowSize(screenX, screenY)
 	ebiten.SetWindowTitle("goMMO")
 
