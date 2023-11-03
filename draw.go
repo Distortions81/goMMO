@@ -293,7 +293,7 @@ func drawPlayers(screen *ebiten.Image) {
 
 	// Draw health
 	for _, player := range pList {
-		if player.health < 100 {
+		if player.health < 100 && player.health > 0 {
 
 			var healthColor color.RGBA
 			r := int(float32(100-player.health) * 5)

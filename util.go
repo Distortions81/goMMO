@@ -73,6 +73,10 @@ func radiansToDirection(in float64) DIR {
 func getCharFrame(player *playerData) image.Image {
 	defer reportPanic("getCharFrame")
 
+	if player.health < 1 {
+		return deadPlayerSprite
+	}
+
 	if player.pos.X != player.lastPos.X || player.pos.Y != player.lastPos.Y {
 
 		p1 := geom.Coord{float64(player.pos.X), float64(player.pos.Y), 0}
@@ -98,7 +102,6 @@ func getCharFrame(player *playerData) image.Image {
 	rect.Max.Y = playerSpriteSize + dirOff
 
 	return playerSprite.SubImage(rect)
-
 }
 
 // Generic unzip []byte
