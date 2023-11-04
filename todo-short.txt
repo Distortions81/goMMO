@@ -31,6 +31,10 @@ $$$ don't stop walking if UI/window eat event
 
 ** from discord **
 Needs event rates (swing), effectiveness and the animations...
+I will replace it later, when I make the new sprite system. It needs to take several sprites (parts) and composite them and cache it.
+For different weapons, clothing, etc.
+(so I don't have to draw/make a million sprites)
+
 
 Working on:
 Network bandwidth optimizations
