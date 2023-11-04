@@ -14,3 +14,7 @@ player guest / login / create login
 
 add first few sounds, at least one enemy (zombie)
 
+Healing:
+Add effect or sprites for being healed while attacking.
+maybe also different sprite for the healer?
+Need to think about how we can do the effect without new sprites.
