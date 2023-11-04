@@ -74,7 +74,11 @@ func getCharFrame(player *playerData) image.Image {
 	defer reportPanic("getCharFrame")
 
 	if player.health < 1 {
-		return deadPlayerSprite
+		if player.effect == EFFECT_HEAL {
+			return deadHealPlayerSprite
+		} else {
+			return deadPlayerSprite
+		}
 	}
 
 	if player.pos.X != player.lastPos.X || player.pos.Y != player.lastPos.Y {
