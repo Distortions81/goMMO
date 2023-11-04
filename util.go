@@ -97,7 +97,9 @@ func getCharFrame(player *playerData) image.Image {
 	dirOff := playerDirSpriteOffset(player.direction)
 
 	var newFrame int
-	if player.isWalking {
+	if player.effect == EFFECT_ATTACK {
+		newFrame = int((netTick/4)%3) + 1
+	} else if player.isWalking {
 		newFrame = ((player.walkFrame) % 3) + 1
 	} else {
 		newFrame = 0
@@ -115,6 +117,8 @@ func getCharFrame(player *playerData) image.Image {
 		} else {
 			return healPlayerSprite2.SubImage(rect)
 		}
+	} else if player.effect == EFFECT_ATTACK {
+		return attackPlayerSprite.SubImage(rect)
 	} else {
 		return playerSprite.SubImage(rect)
 	}

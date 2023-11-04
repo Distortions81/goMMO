@@ -24,6 +24,8 @@ var (
 	deadHealPlayerSprite,
 	deadHealPlayerSprite2,
 
+	attackPlayerSprite,
+
 	testGrass,
 	testlight,
 	splashScreen,
@@ -90,6 +92,8 @@ func loadSprites() {
 	deadPlayerSprite = findItemImage("characters", "player-dead")
 	deadHealPlayerSprite = findItemImage("characters", "player-dead-heal")
 	deadHealPlayerSprite2 = findItemImage("characters", "player-dead-heal2")
+
+	attackPlayerSprite = findItemImage("characters", "player-attack")
 
 	testlight = findItemImage("effects", "light")
 	splashScreen = findItemImage("ui", "login")

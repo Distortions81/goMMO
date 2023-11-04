@@ -18,6 +18,8 @@ version 2
 4:player-dead-heal:test-player-dead-heal.png
 5:player-dead-heal2:test-player-dead-heal2.png
 
+6:player-attack:test-player-attack.png
+
 1:ground:
 0:grass:grass.png
 1:grass-1:grass1.png

@@ -33,6 +33,7 @@ type EFF uint8
 const (
 	EFFECT_NONE EFF = iota
 	EFFECT_HEAL
+	EFFECT_ATTACK
 )
 
 type pNameData struct {
@@ -54,9 +55,10 @@ type playerData struct {
 
 	lastPos XY
 
-	direction DIR
-	walkFrame int
-	isWalking bool
+	direction   DIR
+	walkFrame   int
+	attackFrame int
+	isWalking   bool
 
 	unmark bool
 
