@@ -15,21 +15,21 @@ var (
 	//go:embed data
 	efs embed.FS
 
-	healPlayerSprite  *ebiten.Image
-	healPlayerSprite2 *ebiten.Image
+	healPlayerSprite,
+	healPlayerSprite2,
 
-	playerSprite     *ebiten.Image
-	deadPlayerSprite *ebiten.Image
+	playerSprite,
+	deadPlayerSprite,
 
-	deadHealPlayerSprite  *ebiten.Image
-	deadHealPlayerSprite2 *ebiten.Image
+	deadHealPlayerSprite,
+	deadHealPlayerSprite2,
 
-	testGrass    *ebiten.Image
-	testlight    *ebiten.Image
-	splashScreen *ebiten.Image
+	testGrass,
+	testlight,
+	splashScreen,
 
-	checkOn  *ebiten.Image
-	checkOff *ebiten.Image
+	checkOn,
+	checkOff,
 	closeBox *ebiten.Image
 )
 
