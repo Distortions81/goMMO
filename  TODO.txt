@@ -17,3 +17,4 @@ add first few sounds, at least one enemy (zombie)
 Healing:
 maybe also different sprite for the healer?
 Need to think about how we can do the effect without new sprites.
+Eventually use target system for targeted, add flags.
