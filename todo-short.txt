@@ -27,7 +27,7 @@ only check chunks within radius of player!
 Switch sprite sheets for sword/heal,
 start work on attack/heal sprite sheets and logic.
 
-** FIX HEALING IF TARGET MOVES
+targeting system needs to handle multiple players... right now would break with two healers.
 
 ***
 $$$ don't stop walking if UI/window eat event
