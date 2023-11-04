@@ -194,29 +194,6 @@ func readNet() {
 			chat("> " + string(data))
 		case CMD_WorldData:
 			fmt.Printf("WorldData %v\n", string(data))
-		case CMD_PlayerNames:
-			var numNames uint32
-			binary.Read(inbuf, binary.LittleEndian, &numNames)
-
-			if numNames == 0 {
-				continue
-			}
-
-			for x := 0; x < int(numNames); x++ {
-				var id uint32
-				binary.Read(inbuf, binary.LittleEndian, &id)
-				var nameLen uint16
-				binary.Read(inbuf, binary.LittleEndian, &nameLen)
-
-				var name string
-				for y := 0; y < int(nameLen); y++ {
-					var nameRune rune
-					binary.Read(inbuf, binary.LittleEndian, &nameRune)
-					name += string(nameRune)
-				}
-
-				playerNames[id] = pNameData{name: name, id: id}
-			}
 		case CMD_PlayerNamesComp:
 
 			//Decompress
