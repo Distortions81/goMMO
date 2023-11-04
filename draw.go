@@ -255,6 +255,34 @@ func drawPlayers(screen *ebiten.Image) {
 	}
 	sort.Sort(xySort(pList))
 
+	// Draw health
+	for _, player := range pList {
+		if player.health < 100 && player.health > 0 {
+
+			var healthColor color.RGBA
+			r := int(float32(100-player.health) * 5)
+			if r > 255 {
+				r = 255
+			}
+			healthColor.R = uint8(r)
+			healthColor.G = uint8(float32(player.health) * 1.5)
+
+			vector.DrawFilledRect(
+				screen,
+				float32(int(sCamPos.X)-int(player.spos.X))-25+4-1,
+				float32(int(sCamPos.Y)-int(player.spos.Y))+27-1,
+				53, 4, color.Black,
+				false)
+
+			vector.DrawFilledRect(
+				screen,
+				float32(int(sCamPos.X)-int(player.spos.X))-22+2,
+				float32(int(sCamPos.Y)-int(player.spos.Y))+27,
+				50-((100.0-float32(player.health))/2.0), 2, healthColor,
+				false)
+		}
+	}
+
 	// Draw player name
 	for _, player := range pList {
 
@@ -291,33 +319,6 @@ func drawPlayers(screen *ebiten.Image) {
 		screen.DrawImage(getCharFrame(player).(*ebiten.Image), &op)
 	}
 
-	// Draw health
-	for _, player := range pList {
-		if player.health < 100 && player.health > 0 {
-
-			var healthColor color.RGBA
-			r := int(float32(100-player.health) * 5)
-			if r > 255 {
-				r = 255
-			}
-			healthColor.R = uint8(r)
-			healthColor.G = uint8(float32(player.health) * 1.5)
-
-			vector.DrawFilledRect(
-				screen,
-				float32(int(sCamPos.X)-int(player.spos.X))-25+4-1,
-				float32(int(sCamPos.Y)-int(player.spos.Y))+27-1,
-				53, 4, color.Black,
-				false)
-
-			vector.DrawFilledRect(
-				screen,
-				float32(int(sCamPos.X)-int(player.spos.X))-22+2,
-				float32(int(sCamPos.Y)-int(player.spos.Y))+27,
-				50-((100.0-float32(player.health))/2.0), 2, healthColor,
-				false)
-		}
-	}
 }
 
 func drawText(input string, face font.Face, color color.Color, bgcolor color.Color, pos XYf32,
