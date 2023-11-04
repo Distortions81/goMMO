@@ -15,10 +15,14 @@ var (
 	//go:embed data
 	efs embed.FS
 
-	healPlayerSprite     *ebiten.Image
-	playerSprite         *ebiten.Image
-	deadPlayerSprite     *ebiten.Image
-	deadHealPlayerSprite *ebiten.Image
+	healPlayerSprite  *ebiten.Image
+	healPlayerSprite2 *ebiten.Image
+
+	playerSprite     *ebiten.Image
+	deadPlayerSprite *ebiten.Image
+
+	deadHealPlayerSprite  *ebiten.Image
+	deadHealPlayerSprite2 *ebiten.Image
 
 	testGrass    *ebiten.Image
 	testlight    *ebiten.Image
@@ -81,9 +85,11 @@ func loadSprites() {
 
 	playerSprite = findItemImage("characters", "player")
 	healPlayerSprite = findItemImage("characters", "player-heal")
+	healPlayerSprite2 = findItemImage("characters", "player-heal2")
 
 	deadPlayerSprite = findItemImage("characters", "player-dead")
 	deadHealPlayerSprite = findItemImage("characters", "player-dead-heal")
+	deadHealPlayerSprite2 = findItemImage("characters", "player-dead-heal2")
 
 	testlight = findItemImage("effects", "light")
 	splashScreen = findItemImage("ui", "login")

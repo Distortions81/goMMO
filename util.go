@@ -75,7 +75,11 @@ func getCharFrame(player *playerData) image.Image {
 
 	if player.health < 1 {
 		if player.effect == EFFECT_HEAL {
-			return deadHealPlayerSprite
+			if (netTick/2)%2 == 0 {
+				return deadHealPlayerSprite
+			} else {
+				return deadHealPlayerSprite2
+			}
 		} else {
 			return deadPlayerSprite
 		}
@@ -106,7 +110,11 @@ func getCharFrame(player *playerData) image.Image {
 	rect.Max.Y = playerSpriteSize + dirOff
 
 	if player.effect == EFFECT_HEAL {
-		return healPlayerSprite.SubImage(rect)
+		if (netTick/2)%2 == 0 {
+			return healPlayerSprite.SubImage(rect)
+		} else {
+			return healPlayerSprite2.SubImage(rect)
+		}
 	} else {
 		return playerSprite.SubImage(rect)
 	}
