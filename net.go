@@ -6,6 +6,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"image/color"
+	"io"
 	"log"
 	"math/rand"
 	"time"
@@ -14,7 +15,7 @@ import (
 )
 
 const (
-	netReadLimit = 1024 * 10240 // 10 MB
+	netReadLimit = 1024 * 300 // 300kb
 	bootSleep    = time.Millisecond * 500
 )
 
@@ -211,6 +212,41 @@ func readNet() {
 				for y := 0; y < int(nameLen); y++ {
 					var nameRune rune
 					binary.Read(inbuf, binary.LittleEndian, &nameRune)
+					name += string(nameRune)
+				}
+
+				playerNames[id] = pNameData{name: name, id: id}
+			}
+		case CMD_PlayerNamesComp:
+
+			//Decompress
+			buf, err := io.ReadAll(inbuf)
+			var decompBytes []byte
+			if err != nil {
+				return
+			}
+			decompBytes = UncompressZip(buf)
+
+			newbuf := bytes.NewBuffer(decompBytes)
+
+			//Process as normal
+			var numNames uint32
+			binary.Read(newbuf, binary.LittleEndian, &numNames)
+
+			if numNames == 0 {
+				continue
+			}
+
+			for x := 0; x < int(numNames); x++ {
+				var id uint32
+				binary.Read(newbuf, binary.LittleEndian, &id)
+				var nameLen uint16
+				binary.Read(newbuf, binary.LittleEndian, &nameLen)
+
+				var name string
+				for y := 0; y < int(nameLen); y++ {
+					var nameRune rune
+					binary.Read(newbuf, binary.LittleEndian, &nameRune)
 					name += string(nameRune)
 				}
 
