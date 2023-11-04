@@ -98,6 +98,7 @@ func doConnect() bool {
 	wObjList = []*worldObject{}
 	playerList = make(map[uint32]*playerData)
 	playerMode = PMODE_PASSIVE
+	drawToolbar(false, false, maxItemType)
 
 	go sendCommand(CMD_Init, outbuf.Bytes())
 
