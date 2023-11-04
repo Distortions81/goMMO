@@ -147,7 +147,7 @@ func WASDKeys() {
 }
 
 func settingsHotkeys() {
-	if ChatMode || CommandMode || !devMode {
+	if ChatMode || CommandMode {
 		return
 	}
 

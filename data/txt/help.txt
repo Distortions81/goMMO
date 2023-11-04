@@ -5,3 +5,4 @@ Keyboard:
 [WASD] or [Arrow Keys] to walk
 [ENTER] to chat, [~] for console
 [ESC] to close, or [ENTER] to send.
+[N] cycle game time (night/day)

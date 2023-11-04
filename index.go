@@ -126,13 +126,10 @@ func readIndex() bool {
 			if itemID > uint64(topItem) {
 				topItem = uint8(itemID)
 			}
-			if numWords == 6 {
-				if words[3] == "true" {
-					newItem.OnGround = true
-				}
-				sizeW, _ := strconv.ParseUint(words[4], 10, 16)
+			if numWords == 5 {
+				sizeW, _ := strconv.ParseUint(words[3], 10, 16)
 				newItem.SizeW = uint16(sizeW)
-				sizeH, _ := strconv.ParseUint(words[5], 10, 16)
+				sizeH, _ := strconv.ParseUint(words[4], 10, 16)
 				newItem.SizeH = uint16(sizeH)
 			}
 			currentSection.items[newItem.id.num] = newItem
