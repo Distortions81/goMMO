@@ -27,21 +27,16 @@ only check chunks within radius of player!
 Switch sprite sheets for sword/heal,
 start work on attack/heal sprite sheets and logic.
 
-targeting system needs to handle multiple players... right now would break with two healers.
-
-***
 $$$ don't stop walking if UI/window eat event
-***
-
-
-
 
 ** from discord **
-Basic passive/attack/heal modes added. Needs event rates, effectiveness and the animations... oh i also need to make people die from no health and stuff. 
-But still, progress.
+Needs event rates (swing), effectiveness and the animations...
 
 Working on:
 Network bandwidth optimizations
 Passive/Attack/Heal modes -- WIP
 Guest Login, create login
 Editor mode move/delete 
+
+*** change targeting to collison for simplicity and multi-target.
+Use closest target if not allowing multi-target.
