@@ -27,6 +27,8 @@ only check chunks within radius of player!
 Switch sprite sheets for sword/heal,
 start work on attack/heal sprite sheets and logic.
 
+** FIX HEALING IF TARGET MOVES
+
 ***
 $$$ don't stop walking if UI/window eat event
 ***
