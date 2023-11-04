@@ -164,7 +164,7 @@ func readNet() {
 
 			// Log event
 			if cmdName == "" {
-				doLog(true, "Received: 0x%02X (%vb)", d, inputLen)
+				doLog(true, "Received: 0x%x (%vb)", d, inputLen)
 			} else {
 				doLog(true, "Received: %v (%vb)", cmdName, inputLen)
 			}
@@ -360,7 +360,7 @@ func readNet() {
 			dataDirty = true
 
 		default:
-			doLog(true, "Received invalid: 0x%02X\n", d)
+			doLog(true, "Received invalid: %x\n", d)
 			localPlayer.conn.Close(websocket.StatusNormalClosure, "closed")
 			changeGameMode(MODE_Error, 0)
 		}
