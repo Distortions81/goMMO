@@ -74,7 +74,7 @@ func getCharFrame(player *playerData) image.Image {
 	defer reportPanic("getCharFrame")
 
 	if player.health < 1 {
-		if player.effect == EFFECT_HEAL {
+		if hasEffects(player, EFFECT_HEAL) {
 			if (netTick/2)%2 == 0 {
 				return deadHealPlayerSprite
 			} else {
@@ -97,7 +97,7 @@ func getCharFrame(player *playerData) image.Image {
 	dirOff := playerDirSpriteOffset(player.direction)
 
 	var newFrame int
-	if player.effect == EFFECT_ATTACK {
+	if hasEffects(player, EFFECT_ATTACK) {
 		newFrame = int((netTick/4)%3) + 1
 	} else if player.isWalking {
 		newFrame = ((player.walkFrame) % 3) + 1
@@ -111,13 +111,13 @@ func getCharFrame(player *playerData) image.Image {
 	rect.Min.Y = dirOff
 	rect.Max.Y = playerSpriteSize + dirOff
 
-	if player.effect == EFFECT_HEAL {
+	if hasEffects(player, EFFECT_HEAL) {
 		if (netTick/2)%2 == 0 {
 			return healPlayerSprite.SubImage(rect)
 		} else {
 			return healPlayerSprite2.SubImage(rect)
 		}
-	} else if player.effect == EFFECT_ATTACK {
+	} else if hasEffects(player, EFFECT_ATTACK) {
 		return attackPlayerSprite.SubImage(rect)
 	} else {
 		return playerSprite.SubImage(rect)

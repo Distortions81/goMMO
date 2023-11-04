@@ -259,14 +259,14 @@ func readNet() {
 						break
 					}
 
-					var effect EFF
-					err = binary.Read(inbuf, binary.LittleEndian, &effect)
+					var effects EFF
+					err = binary.Read(inbuf, binary.LittleEndian, &effects)
 					if err != nil {
 						doLog(true, "%v", err.Error())
 						break
 					}
 					if playerList[nid] == nil {
-						playerList[nid] = &playerData{id: nid, pos: XY{X: nx, Y: ny}, direction: DIR_S, effect: effect}
+						playerList[nid] = &playerData{id: nid, pos: XY{X: nx, Y: ny}, direction: DIR_S, effects: effects}
 					} else {
 
 						// Update local player pos
@@ -282,7 +282,7 @@ func readNet() {
 						playerList[nid].pos.Y = ny
 
 						playerList[nid].health = health
-						playerList[nid].effect = effect
+						playerList[nid].effects = effects
 
 						if playerList[nid].lastPos.X != playerList[nid].pos.X ||
 							playerList[nid].lastPos.Y != playerList[nid].pos.Y {

@@ -31,7 +31,7 @@ type Game struct {
 type EFF uint8
 
 const (
-	EFFECT_NONE EFF = iota
+	EFFECT_NONE EFF = 1 << iota
 	EFFECT_HEAL
 	EFFECT_ATTACK
 )
@@ -48,10 +48,10 @@ type playerData struct {
 
 	health int16
 
-	pos    XY
-	spos   XY
-	areaid uint16
-	effect EFF
+	pos     XY
+	spos    XY
+	areaid  uint16
+	effects EFF
 
 	lastPos XY
 

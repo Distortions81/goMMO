@@ -2,6 +2,22 @@ package main
 
 import "io"
 
+func setEffect(player *playerData, flag EFF) {
+	player.effects = (player.effects | flag)
+}
+
+func removeEffect(player *playerData, flag EFF) {
+	player.effects = (player.effects &^ flag)
+}
+
+func hasEffects(player *playerData, flag EFF) bool {
+	return player.effects&flag == flag
+}
+
+func hasAnyEffects(player *playerData, flag EFF) bool {
+	return player.effects&flag != 0
+}
+
 type BitReader struct {
 	reader io.ByteReader
 	byte   byte
