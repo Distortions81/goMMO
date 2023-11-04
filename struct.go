@@ -28,6 +28,13 @@ type XYf32 struct {
 type Game struct {
 }
 
+type EFF uint8
+
+const (
+	EFFECT_NONE EFF = iota
+	EFFECT_HEAL
+)
+
 type pNameData struct {
 	name string
 	id   uint32
@@ -43,6 +50,7 @@ type playerData struct {
 	pos    XY
 	spos   XY
 	areaid uint16
+	effect EFF
 
 	lastPos XY
 

@@ -18,6 +18,8 @@ const (
 	bootSleep    = time.Millisecond * 500
 )
 
+var netTick uint64
+
 func connectServer() {
 
 	if !devMode {
@@ -215,7 +217,7 @@ func readNet() {
 			}
 
 		case CMD_WorldUpdate:
-
+			netTick++
 			var numPlayers uint16
 			binary.Read(inbuf, binary.LittleEndian, &numPlayers)
 
@@ -255,8 +257,15 @@ func readNet() {
 						doLog(true, "%v", err.Error())
 						break
 					}
+
+					var effect EFF
+					err = binary.Read(inbuf, binary.LittleEndian, &effect)
+					if err != nil {
+						doLog(true, "%v", err.Error())
+						break
+					}
 					if playerList[nid] == nil {
-						playerList[nid] = &playerData{id: nid, pos: XY{X: nx, Y: ny}, direction: DIR_S}
+						playerList[nid] = &playerData{id: nid, pos: XY{X: nx, Y: ny}, direction: DIR_S, effect: effect}
 					} else {
 
 						// Update local player pos
@@ -272,6 +281,7 @@ func readNet() {
 						playerList[nid].pos.Y = ny
 
 						playerList[nid].health = health
+						playerList[nid].effect = effect
 
 						if playerList[nid].lastPos.X != playerList[nid].pos.X ||
 							playerList[nid].lastPos.Y != playerList[nid].pos.Y {
