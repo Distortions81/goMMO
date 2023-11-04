@@ -1,0 +1,16 @@
+Edit mode: only moderators, remove & move objects
+
+bit-pack networking
+object flags:
+(physics type (or none), locked, static or dynamic, on-ground)
+finish CMD_WORLDDATA object data transfer
+
+controller inputs
+make non-pixel doubled mode for small screens/mobile
+player guest / login / create login
+
+ make sprite compositor, for clothing/weapons/etc
+ fix mouse/touch walk being eaten by UI elements
+
+add first few sounds, at least one enemy (zombie)
+
