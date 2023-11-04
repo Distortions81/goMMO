@@ -255,23 +255,6 @@ func drawPlayers(screen *ebiten.Image) {
 	}
 	sort.Sort(xySort(pList))
 
-	// Draw player
-	for _, player := range pList {
-
-		xPos := float64(int(sCamPos.X) - int(player.spos.X))
-		yPos := float64(int(sCamPos.Y) - int(player.spos.Y))
-
-		op := ebiten.DrawImageOptions{}
-
-		op.GeoM.Scale(2, 2)
-
-		//camera - object, TODO: get sprite size
-		op.GeoM.Translate(float64(xPos)-48.0, float64(yPos)-48.0)
-
-		//Draw sub-image
-		screen.DrawImage(getCharFrame(player).(*ebiten.Image), &op)
-	}
-
 	// Draw player name
 	for _, player := range pList {
 
@@ -291,6 +274,23 @@ func drawPlayers(screen *ebiten.Image) {
 
 	}
 
+	// Draw player
+	for _, player := range pList {
+
+		xPos := float64(int(sCamPos.X) - int(player.spos.X))
+		yPos := float64(int(sCamPos.Y) - int(player.spos.Y))
+
+		op := ebiten.DrawImageOptions{}
+
+		op.GeoM.Scale(2, 2)
+
+		//camera - object, TODO: get sprite size
+		op.GeoM.Translate(float64(xPos)-48.0, float64(yPos)-48.0)
+
+		//Draw sub-image
+		screen.DrawImage(getCharFrame(player).(*ebiten.Image), &op)
+	}
+
 	// Draw health
 	for _, player := range pList {
 		if player.health < 100 && player.health > 0 {
@@ -305,16 +305,16 @@ func drawPlayers(screen *ebiten.Image) {
 
 			vector.DrawFilledRect(
 				screen,
-				float32(int(sCamPos.X)-int(player.spos.X))-12+4-1,
-				float32(int(sCamPos.Y)-int(player.spos.Y))+24-1,
-				27, 4, colorNameBG,
+				float32(int(sCamPos.X)-int(player.spos.X))-25+4-1,
+				float32(int(sCamPos.Y)-int(player.spos.Y))+27-1,
+				53, 4, color.Black,
 				false)
 
 			vector.DrawFilledRect(
 				screen,
-				float32(int(sCamPos.X)-int(player.spos.X))-12+4,
-				float32(int(sCamPos.Y)-int(player.spos.Y))+24,
-				25-((100.0-float32(player.health))/4.0), 2, healthColor,
+				float32(int(sCamPos.X)-int(player.spos.X))-22+2,
+				float32(int(sCamPos.Y)-int(player.spos.Y))+27,
+				50-((100.0-float32(player.health))/2.0), 2, healthColor,
 				false)
 		}
 	}
