@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	netReadLimit = 1024 * 1024 // 1 MB
+	netReadLimit = 1024 * 10240 // 10 MB
 	bootSleep    = time.Millisecond * 500
 )
 
