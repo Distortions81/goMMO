@@ -21,6 +21,7 @@ Eventually use target system for targeted, add flags.
 Test if bit-packed networking is faster or slower.
 
 ### Fix all slice-delete operations, server and client
+Check client for deadlock! Fix spawn-checks!
 
 Future:
 Look into threading physics by using two-step like:
