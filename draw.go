@@ -81,7 +81,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 func drawBootScreen(screen *ebiten.Image) {
 	// Boot screen
 	op := &ebiten.DrawImageOptions{Filter: ebiten.FilterLinear}
-	var imgSize float64 = 1024.0
+	var imgSize float64 = 1080.0
 
 	scalew := 1.0 / (imgSize / float64(screenX))
 	scaleh := 1.0 / (imgSize / float64(screenY))
@@ -94,12 +94,25 @@ func drawBootScreen(screen *ebiten.Image) {
 
 func drawGrass(screen *ebiten.Image) {
 	// Draw grass
-	for x := -32; x <= screenX; x += 32 {
-		for y := -32; y <= screenY; y += 32 {
-			op := ebiten.DrawImageOptions{}
-			op.GeoM.Scale(2, 2)
-			op.GeoM.Translate(float64(x+int(sCamPos.X%32)), float64(y+int(sCamPos.Y%32)))
-			screen.DrawImage(testGrass, &op)
+
+	if !smallMode {
+		for x := -32; x <= screenX; x += 32 {
+			for y := -32; y <= screenY; y += 32 {
+				op := ebiten.DrawImageOptions{}
+				op.GeoM.Scale(2, 2)
+				op.GeoM.Translate(float64(x+int(sCamPos.X%32)), float64(y+int(sCamPos.Y%32)))
+
+				screen.DrawImage(testGrass, &op)
+			}
+		}
+	} else {
+		for x := -16; x <= screenX; x += 16 {
+			for y := -16; y <= screenY; y += 16 {
+				op := ebiten.DrawImageOptions{}
+				op.GeoM.Translate(float64(x+int(sCamPos.X/2%16)), float64(y+int(sCamPos.Y/2%16)))
+
+				screen.DrawImage(testGrass, &op)
+			}
 		}
 	}
 }
@@ -163,39 +176,24 @@ func drawWorldObjs(screen *ebiten.Image) {
 
 	//Draw on-ground objects first
 	for _, obj := range wObjList {
-		if !obj.itemData.OnGround {
-			continue
-		}
-
-		xPos := float64(int(sCamPos.X) - int(obj.pos.X))
-		yPos := float64(int(sCamPos.Y) - int(obj.pos.Y))
 
 		op := ebiten.DrawImageOptions{}
-		op.GeoM.Scale(2, 2)
-		op.GeoM.Translate(xPos-48.0, yPos-48.0)
+		if !smallMode {
+			op.GeoM.Scale(2, 2)
+			xPos := float64(int(sCamPos.X) - int(obj.pos.X))
+			yPos := float64(int(sCamPos.Y) - int(obj.pos.Y))
+			op.GeoM.Translate(xPos-40, yPos-40)
+		} else {
+			xPos := float64(int(sCamPos.X/2)-int(obj.pos.X/2)) + 135
+			yPos := float64(int(sCamPos.Y/2)-int(obj.pos.Y/2)) + 135
+			op.GeoM.Translate(xPos-20, yPos-20)
+		}
 
 		screen.DrawImage(obj.itemData.image, &op)
 	}
 
 	//Draw night shadows
 	drawNightShadows(screen)
-
-	//Draw other objects (buildings/trees)
-	for _, obj := range wObjList {
-		if obj.itemData.OnGround {
-			continue
-		}
-
-		xPos := float64(int(sCamPos.X) - int(obj.pos.X))
-		yPos := float64(int(sCamPos.Y) - int(obj.pos.Y))
-
-		op := ebiten.DrawImageOptions{}
-		op.GeoM.Scale(2, 2)
-		op.GeoM.Translate(xPos-48.0, yPos-48.0)
-
-		screen.DrawImage(obj.itemData.image, &op)
-	}
-
 }
 
 func drawNightVignette(screen *ebiten.Image) {
@@ -215,15 +213,23 @@ func drawNightVignette(screen *ebiten.Image) {
 	} else {
 		screenSize = screenX
 	}
+
+	var size int
+	if smallMode {
+		size = 540
+	} else {
+		size = 1080
+	}
+
 	var sc float64
-	if screenSize > 1024 {
-		sc = (float64(screenSize) / 1024.0) + 0.01
+	if screenSize > size {
+		sc = (float64(screenSize) / float64(size)) + 0.01
 	} else {
 		sc = 1.01
 	}
 
-	xPos := float64(int(sCamPos.X)-int(playerList[localPlayer.id].spos.X)) - (512 * sc)
-	yPos := float64(int(sCamPos.Y)-int(playerList[localPlayer.id].spos.Y)) - (512 * sc)
+	xPos := float64(int(sCamPos.X)-int(playerList[localPlayer.id].spos.X)) - (float64(size) / 2 * sc)
+	yPos := float64(int(sCamPos.Y)-int(playerList[localPlayer.id].spos.Y)) - (float64(size) / 2 * sc)
 
 	op.GeoM.Translate(float64(xPos), float64(yPos))
 	op.GeoM.Scale(sc, sc)
@@ -238,19 +244,6 @@ func drawPlayers(screen *ebiten.Image) {
 	// Find visible players and sort them
 	var pList []*playerData
 	for _, player := range playerList {
-		xPos := float64(int(sCamPos.X) - int(player.spos.X))
-		yPos := float64(int(sCamPos.Y) - int(player.spos.Y))
-
-		//Sprite on screen?
-		if xPos-playerSpriteSize > float64(screenX) {
-			continue
-		} else if xPos < -playerSpriteSize {
-			continue
-		} else if yPos-playerSpriteSize > float64(screenY) {
-			continue
-		} else if yPos < -playerSpriteSize {
-			continue
-		}
 		pList = append(pList, player)
 	}
 	sort.Sort(xySort(pList))
@@ -295,25 +288,39 @@ func drawPlayers(screen *ebiten.Image) {
 		}
 
 		// Draw name
-		drawText(pname, toolTipFont, color.White, colorNameBG,
-			XYf32{X: float32(int(sCamPos.X)-int(player.spos.X)) + 4,
-				Y: float32(int(sCamPos.Y)-int(player.spos.Y)) + 48},
-			2, screen, false, false, true)
+		if !smallMode {
+			drawText(pname, toolTipFont, color.White, colorNameBG,
+				XYf32{X: float32(int(sCamPos.X)-int(player.spos.X)) + 4,
+					Y: float32(int(sCamPos.Y)-int(player.spos.Y)) + 48},
+				2, screen, false, false, true)
+		} else {
+			drawText(pname, toolTipFont, color.White, colorNameBG,
+				XYf32{X: float32(int(sCamPos.X/2)-int(player.spos.X/2)) + 2 + 135,
+					Y: float32(int(sCamPos.Y/2)-int(player.spos.Y/2)) + 32 + 135},
+				1, screen, false, false, true)
+		}
 
 	}
 
 	// Draw player
 	for _, player := range pList {
 
-		xPos := float64(int(sCamPos.X) - int(player.spos.X))
-		yPos := float64(int(sCamPos.Y) - int(player.spos.Y))
-
 		op := ebiten.DrawImageOptions{}
 
-		op.GeoM.Scale(2, 2)
+		if !smallMode {
+			op.GeoM.Scale(2, 2)
 
-		//camera - object, TODO: get sprite size
-		op.GeoM.Translate(float64(xPos)-48.0, float64(yPos)-48.0)
+			xPos := float64(int(sCamPos.X) - int(player.spos.X))
+			yPos := float64(int(sCamPos.Y) - int(player.spos.Y))
+
+			op.GeoM.Translate(float64(xPos)-48.0, float64(yPos)-48.0)
+		} else {
+
+			xPos := float64(int(sCamPos.X/2)-int(player.spos.X/2)) + 135
+			yPos := float64(int(sCamPos.Y/2)-int(player.spos.Y/2)) + 135
+
+			op.GeoM.Translate(float64(xPos)-24.0, float64(yPos)-24.0)
+		}
 
 		//Draw sub-image
 		screen.DrawImage(getCharFrame(player).(*ebiten.Image), &op)

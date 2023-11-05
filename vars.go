@@ -58,5 +58,6 @@ var (
 
 	//Settings
 	vSync     bool = true
+	smallMode bool = false
 	debugLine bool = false
 )
