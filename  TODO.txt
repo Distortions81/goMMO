@@ -18,8 +18,9 @@ Healing:
 maybe also different sprite for the healer?
 Need to think about how we can do the effect without new sprites.
 Eventually use target system for targeted, add flags.
-
 Test if bit-packed networking is faster or slower.
+
+### Fix all slice-delete operations, server and client
 
 Future:
 Look into threading physics by using two-step like:
