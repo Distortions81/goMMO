@@ -232,6 +232,7 @@ func readNet() {
 
 		case CMD_WorldUpdate:
 			netTick++
+
 			var numPlayers uint16
 			binary.Read(inbuf, binary.LittleEndian, &numPlayers)
 
@@ -280,7 +281,13 @@ func readNet() {
 					}
 					if playerList[nid] == nil {
 						playerList[nid] = &playerData{id: nid, pos: XY{X: nx, Y: ny}, direction: DIR_S, effects: effects}
+
+						/* Unmark, used to detect if no longer needed */
+						playerList[nid].unmark = false
 					} else {
+
+						/* Unmark, used to detect if no longer needed */
+						playerList[nid].unmark = false
 
 						// Update local player pos
 						if localPlayer.id == nid {
@@ -290,13 +297,12 @@ func readNet() {
 						}
 
 						playerList[nid].lastPos = playerList[nid].pos
-
 						playerList[nid].pos.X = nx
 						playerList[nid].pos.Y = ny
-
 						playerList[nid].health = health
 						playerList[nid].effects = effects
 
+						/* Walk animations */
 						if playerList[nid].lastPos.X != playerList[nid].pos.X ||
 							playerList[nid].lastPos.Y != playerList[nid].pos.Y {
 							playerList[nid].walkFrame++
@@ -307,7 +313,45 @@ func readNet() {
 							playerList[nid].walkFrame = 0
 						}
 					}
-					playerList[nid].unmark = false
+				}
+			}
+
+			var numObj uint16
+			binary.Read(inbuf, binary.LittleEndian, &numObj)
+
+			if numObj > 0 {
+				var x uint16
+				for x = 0; x < numObj; x++ {
+					var sid uint8
+					err := binary.Read(inbuf, binary.LittleEndian, &sid)
+					if err != nil {
+						doLog(true, "%v", err.Error())
+						break
+					}
+					var oid uint8
+					err = binary.Read(inbuf, binary.LittleEndian, &oid)
+					if err != nil {
+						doLog(true, "%v", err.Error())
+						break
+					}
+					var nx uint32
+					err = binary.Read(inbuf, binary.LittleEndian, &nx)
+					if err != nil {
+						doLog(true, "%v", err.Error())
+						break
+					}
+					var ny uint32
+					err = binary.Read(inbuf, binary.LittleEndian, &ny)
+					if err != nil {
+						doLog(true, "%v", err.Error())
+						break
+					}
+					objData := itemTypesList[sid].items[oid]
+					wObjList = append(wObjList,
+						&worldObject{
+							itemId:   IID{section: sid, num: oid},
+							pos:      XY{X: nx, Y: ny},
+							itemData: objData})
 				}
 			}
 
