@@ -269,9 +269,10 @@ func chatCommands() {
 			ChatMode = false
 			CommandMode = false
 			ChatText = ""
-		} else if keyJustPressed(ebiten.KeyBackspace) {
-			if len(ChatText) >= 1 {
-				ChatText = ChatText[:len(ChatText)-1]
+		} else if repeatingKeyPressed(ebiten.KeyBackspace) {
+			textLen := len(ChatText)
+			if textLen > 0 {
+				ChatText = ChatText[:textLen-1]
 			}
 
 		}
@@ -330,7 +331,7 @@ func worldEditor() {
 		if keyPressed(ebiten.KeyShift) {
 			shiftKey = true
 		}
-		if keyJustPressed(ebiten.KeyEqual) {
+		if repeatingKeyPressed(ebiten.KeyEqual) {
 			if shiftKey {
 				if worldEditID.section < assetArraySize {
 					worldEditID.section++
@@ -340,7 +341,7 @@ func worldEditor() {
 					worldEditID.num++
 				}
 			}
-		} else if keyJustPressed(ebiten.KeyMinus) {
+		} else if repeatingKeyPressed(ebiten.KeyMinus) {
 			if shiftKey {
 				if worldEditID.section > 0 {
 					worldEditID.section--
