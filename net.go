@@ -318,57 +318,6 @@ func readNet() {
 				}
 			}
 
-			//Read dynamic world objects
-			var numObj uint16
-			err = binary.Read(inbuf, binary.LittleEndian, &numObj)
-			if err != nil {
-				doLog(true, "%v", err.Error())
-			}
-
-			if numObj > 0 {
-				//fmt.Printf("numObj: %v\n", numObj)
-
-				wObjList = []*worldObject{}
-				for x := 0; x < int(numObj); x++ {
-					var sectionID, itemId uint8
-					var posx, posy uint32
-					err = binary.Read(inbuf, binary.LittleEndian, &sectionID)
-					if err != nil {
-						doLog(true, "%v", err.Error())
-						break
-					}
-					err = binary.Read(inbuf, binary.LittleEndian, &itemId)
-					if err != nil {
-						doLog(true, "%v", err.Error())
-						break
-					}
-
-					err = binary.Read(inbuf, binary.LittleEndian, &posx)
-					if err != nil {
-						doLog(true, "%v", err.Error())
-						break
-					}
-					err = binary.Read(inbuf, binary.LittleEndian, &posy)
-					if err != nil {
-						doLog(true, "%v", err.Error())
-						break
-					}
-
-					pos := XY{X: posx, Y: posy}
-
-					var itemdata *sectionItemData
-
-					section := itemTypesList[sectionID]
-					if section != nil {
-						itemdata = section.items[itemId]
-					}
-					object := &worldObject{
-						itemId: IID{section: sectionID, num: itemId}, pos: pos, itemData: itemdata}
-					wObjList = append(wObjList, object)
-
-				}
-			}
-
 			//Mark that there is new data to be rendered, used if motion smoothing is OFF.
 			dataDirty = true
 
