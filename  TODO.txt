@@ -18,3 +18,9 @@ Healing:
 maybe also different sprite for the healer?
 Need to think about how we can do the effect without new sprites.
 Eventually use target system for targeted, add flags.
+
+Test if bit-packed networking is faster or slower.
+
+Future:
+Look into threading physics by using two-step like:
+https://github.com/Distortions81/Gravity-Simulation-Golang/blob/main/main.go
