@@ -2,8 +2,7 @@ Edit mode: only moderators, remove & move objects
 
 bit-pack networking
 object flags:
-(physics type (or none), locked, static or dynamic, on-ground)
-finish CMD_WORLDDATA object data transfer
+locked, static or dynamic, on-ground
 
 controller inputs
 make non-pixel doubled mode for small screens/mobile
@@ -20,8 +19,6 @@ Need to think about how we can do the effect without new sprites.
 Eventually use target system for targeted, add flags.
 Test if bit-packed networking is faster or slower.
 
-### Fix all slice-delete operations, server and client
-Check client for deadlock! Fix spawn-checks!
 
 Future:
 Look into threading physics by using two-step like:
