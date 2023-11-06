@@ -300,6 +300,8 @@ func readNet() {
 						playerList[nid].lastPos = playerList[nid].pos
 						playerList[nid].pos.X = nx
 						playerList[nid].pos.Y = ny
+						playerList[nid].spos.X = nx
+						playerList[nid].spos.Y = ny
 						playerList[nid].health = health
 						playerList[nid].effects = effects
 
@@ -404,7 +406,7 @@ func readNet() {
 					}
 					creData := creatureData{id: IID{section: sec, num: cid}, target: nil}
 					newCreature := &playerData{
-						creature: &creData, pos: XY{X: nx, Y: ny}, health: health,
+						creature: &creData, pos: XY{X: nx, Y: ny}, spos: XY{X: nx, Y: ny}, health: health,
 						lastPos: XY{X: nx, Y: ny}, direction: DIR_S}
 					creatureList = append(creatureList, newCreature)
 				}

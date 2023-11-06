@@ -165,9 +165,6 @@ func motionSmoothing() {
 		camPos.X = (uint32(halfScreenX)) + localPlayerPos.X
 		camPos.Y = (uint32(halfScreenY)) + localPlayerPos.Y
 		sCamPos = camPos
-		for o := range playerList {
-			playerList[o].spos = playerList[o].pos
-		}
 	}
 }
 
