@@ -8,7 +8,6 @@ Test if bit-packed networking is faster or slower.
 Edit mode: only moderators, remove & move objects
 object flags: locked, static or dynamic, on-ground
 controller inputs
-make non-pixel doubled mode for small screens/mobile
 player guest / login / create login
  make sprite compositor, for clothing/weapons/etc
  fix mouse/touch walk being eaten by UI elements
