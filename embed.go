@@ -15,19 +15,6 @@ var (
 	//go:embed data
 	efs embed.FS
 
-	healPlayerSprite,
-	healPlayerSprite2,
-
-	playerSprite,
-	deadPlayerSprite,
-
-	deadHealPlayerSprite,
-	deadHealPlayerSprite2,
-
-	attackPlayerSprite,
-	attackHealPlayerSprite,
-	attackHealPlayerSprite2,
-
 	testGrass,
 	testlight,
 	splashScreen,
@@ -86,18 +73,6 @@ func loadSprites() {
 	}
 
 	testGrass = findItemImage("ground", "grass-1")
-
-	playerSprite = findItemImage("characters", "player")
-	healPlayerSprite = findItemImage("characters", "player-heal")
-	healPlayerSprite2 = findItemImage("characters", "player-heal2")
-
-	deadPlayerSprite = findItemImage("characters", "player-dead")
-	deadHealPlayerSprite = findItemImage("characters", "player-dead-heal")
-	deadHealPlayerSprite2 = findItemImage("characters", "player-dead-heal2")
-
-	attackPlayerSprite = findItemImage("characters", "player-attack")
-	attackHealPlayerSprite = findItemImage("characters", "player-attack-heal")
-	attackHealPlayerSprite2 = findItemImage("characters", "player-attack-heal2")
 
 	testlight = findItemImage("effects", "light")
 	splashScreen = findItemImage("ui", "login")

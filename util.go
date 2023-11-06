@@ -73,15 +73,17 @@ func radiansToDirection(in float64) DIR {
 func getCharFrame(player *playerData) image.Image {
 	defer reportPanic("getCharFrame")
 
+	var sprite *spritePack = spritePacks["character"]
+
 	if player.health < 1 {
 		if hasEffects(player, EFFECT_HEAL) {
 			if (netTick/2)%2 == 0 {
-				return deadHealPlayerSprite
+				return sprite.healingDead
 			} else {
-				return deadHealPlayerSprite2
+				return sprite.healingDead2
 			}
 		} else {
-			return deadPlayerSprite
+			return sprite.dead
 		}
 	}
 
@@ -106,27 +108,27 @@ func getCharFrame(player *playerData) image.Image {
 	}
 
 	rect := image.Rectangle{}
-	rect.Min.X = (newFrame * playerSpriteSize)
-	rect.Max.X = (newFrame * playerSpriteSize) + playerSpriteSize
+	rect.Min.X = (newFrame * sprite.size)
+	rect.Max.X = (newFrame * sprite.size) + sprite.size
 	rect.Min.Y = dirOff
-	rect.Max.Y = playerSpriteSize + dirOff
+	rect.Max.Y = sprite.size + dirOff
 
 	if hasEffects(player, EFFECT_ATTACK|EFFECT_HEAL) {
 		if (netTick/2)%2 == 0 {
-			return attackHealPlayerSprite.SubImage(rect)
+			return sprite.healingAttack.SubImage(rect)
 		} else {
-			return attackHealPlayerSprite2.SubImage(rect)
+			return sprite.healingAttack2.SubImage(rect)
 		}
 	} else if hasEffects(player, EFFECT_HEAL) {
 		if (netTick/2)%2 == 0 {
-			return healPlayerSprite.SubImage(rect)
+			return sprite.healing.SubImage(rect)
 		} else {
-			return healPlayerSprite2.SubImage(rect)
+			return sprite.healing2.SubImage(rect)
 		}
 	} else if hasEffects(player, EFFECT_ATTACK) {
-		return attackPlayerSprite.SubImage(rect)
+		return sprite.attack.SubImage(rect)
 	} else {
-		return playerSprite.SubImage(rect)
+		return sprite.walking.SubImage(rect)
 	}
 }
 
