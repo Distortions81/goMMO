@@ -73,7 +73,14 @@ func radiansToDirection(in float64) DIR {
 func getCharFrame(player *playerData) image.Image {
 	defer reportPanic("getCharFrame")
 
-	var sprite *spritePack = spritePacks["character"]
+	var sprite *spritePack
+	if player.creature == nil {
+		sprite = spritePacks["character"]
+	} else {
+		sType := itemTypesList[player.creature.id.section]
+		item := sType.items[player.creature.id.num]
+		sprite = spritePacks[item.name]
+	}
 
 	if player.health < 1 {
 		if hasEffects(player, EFFECT_HEAL) {

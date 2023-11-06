@@ -11,7 +11,7 @@ func initSpritePacks() {
 		size:    52,
 		walking: findItemImage("characters", "player"),
 		dead:    findItemImage("characters", "player-dead"),
-		attack:  findItemImage("characters", "player-attacj"),
+		attack:  findItemImage("characters", "player-attack"),
 
 		healing:  findItemImage("characters", "player-heal"),
 		healing2: findItemImage("characters", "player-heal2"),
@@ -23,6 +23,23 @@ func initSpritePacks() {
 		healingAttack2: findItemImage("characters", "player-attack-heal2"),
 	}
 	spritePacks["character"] = &character
+
+	zombie := spritePack{
+		size:    52,
+		walking: findItemImage("creatures", "zombie"),
+		dead:    findItemImage("creatures", "zombie-dead"),
+		attack:  findItemImage("creatures", "zombie-attack"),
+
+		healing:  findItemImage("creatures", "zombie"),
+		healing2: findItemImage("creatures", "zombie"),
+
+		healingDead:  findItemImage("creatures", "zombie-dead"),
+		healingDead2: findItemImage("creatures", "zombie-dead"),
+
+		healingAttack:  findItemImage("creatures", "zombie-attack"),
+		healingAttack2: findItemImage("creatures", "zombie-attack"),
+	}
+	spritePacks["zombie"] = &zombie
 }
 
 type spritePack struct {
