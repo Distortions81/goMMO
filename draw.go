@@ -151,6 +151,14 @@ func motionSmoothing() {
 				psmooth.Y = uint32(float64(player.lastPos.Y) - ((float64(player.pos.Y) - float64(player.lastPos.Y)) * normal))
 				playerList[p].spos = XY{X: uint32(psmooth.X), Y: uint32(psmooth.Y)}
 			}
+
+			//Extrapolated creatures
+			for p, player := range creatureList {
+				var psmooth XY
+				psmooth.X = uint32(float64(player.lastPos.X) - ((float64(player.pos.X) - float64(player.lastPos.X)) * normal))
+				psmooth.Y = uint32(float64(player.lastPos.Y) - ((float64(player.pos.Y) - float64(player.lastPos.Y)) * normal))
+				creatureList[p].spos = XY{X: uint32(psmooth.X), Y: uint32(psmooth.Y)}
+			}
 		}
 	} else {
 		// Standard mode, just copy data over

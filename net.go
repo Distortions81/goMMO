@@ -403,7 +403,9 @@ func readNet() {
 						break
 					}
 					creData := creatureData{id: IID{section: sec, num: cid}, target: nil}
-					newCreature := &playerData{creature: &creData, pos: XY{X: nx, Y: ny}, health: health}
+					newCreature := &playerData{
+						creature: &creData, pos: XY{X: nx, Y: ny}, health: health,
+						lastPos: XY{X: nx, Y: ny}}
 					creatureList = append(creatureList, newCreature)
 				}
 			}
