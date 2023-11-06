@@ -256,6 +256,7 @@ func drawPlayers(screen *ebiten.Image) {
 	for _, player := range playerList {
 		pList = append(pList, player)
 	}
+	pList = append(pList, creatureList...)
 	sort.Sort(xySort(pList))
 
 	// Draw health
@@ -351,7 +352,6 @@ func drawPlayers(screen *ebiten.Image) {
 		//Draw sub-image
 		screen.DrawImage(getCharFrame(player).(*ebiten.Image), &op)
 	}
-
 }
 
 func drawText(input string, face font.Face, color color.Color, bgcolor color.Color, pos XYf32,

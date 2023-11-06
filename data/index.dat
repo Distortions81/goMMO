@@ -53,7 +53,7 @@ version 2
 1:attack:attack.png
 2:heal:heal.png
 
-7:enemies:
+7:creatures:
 0:zombie:zombie.png
 1:zombie-attack:zombie-attack.png
 2:zombie-dead:zombie-dead.png

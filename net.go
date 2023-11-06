@@ -364,7 +364,7 @@ func readNet() {
 			}
 
 			var numCreatures uint8
-			creatureList = []*creatureData{}
+			creatureList = []*playerData{}
 			binary.Read(inbuf, binary.LittleEndian, &numCreatures)
 
 			if numCreatures > 0 {
@@ -402,7 +402,9 @@ func readNet() {
 						doLog(true, "%v", err.Error())
 						break
 					}
-					creatureList = append(creatureList, &creatureData{id: IID{section: sec, num: cid}, pos: XY{X: nx, Y: ny}, health: health})
+					creData := creatureData{id: IID{section: sec, num: cid}, target: nil}
+					newCreature := &playerData{creature: &creData, pos: XY{X: nx, Y: ny}, health: health}
+					creatureList = append(creatureList, newCreature)
 				}
 			}
 

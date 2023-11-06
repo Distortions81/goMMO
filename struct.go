@@ -42,9 +42,10 @@ type pNameData struct {
 }
 
 type playerData struct {
-	conn    *websocket.Conn
-	context context.Context
-	cancel  context.CancelFunc
+	creature *creatureData
+	conn     *websocket.Conn
+	context  context.Context
+	cancel   context.CancelFunc
 
 	health int16
 
@@ -83,9 +84,6 @@ type worldObject struct {
 }
 
 type creatureData struct {
-	id  IID
-	pos XY
-
+	id     IID
 	target *playerData
-	health int16
 }

@@ -32,7 +32,7 @@ var (
 
 	//Players from server
 	playerList   map[uint32]*playerData
-	creatureList []*creatureData
+	creatureList []*playerData
 	drawLock     sync.Mutex
 
 	//World object list
