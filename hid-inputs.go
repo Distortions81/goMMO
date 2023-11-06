@@ -205,7 +205,7 @@ func getCursor() {
 			hadTouchEvent = false
 			mouseHeld = false
 			draggingWindow = nil
-			mouseX, mouseY = halfScreenX, halfScreenY
+			//mouseX, mouseY = halfScreenX, halfScreenY
 		} else {
 			getMouseClicks()
 		}
