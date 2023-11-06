@@ -135,11 +135,15 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 		halfScreenY = outsideHeight / 2
 
 		//Keep UI windows from going outside the window
-		if screenX < 720 || screenY < 720 {
+		if !smallMode && (screenX < 720 || screenY < 720) {
 			smallMode = true
 			//uiScale = 0.5
 			maxScreenSize = 1080 / 2
 			ebiten.SetWindowSize(screenX/2, screenY/2)
+		} else if smallMode && (screenX >= 720 || screenY >= 720) {
+			smallMode = false
+			//uiScale = 0.5
+			maxScreenSize = 1080
 		}
 
 		clampUIWindows()
