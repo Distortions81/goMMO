@@ -31,8 +31,9 @@ var (
 	oldLocalPlayerPos XY
 
 	//Players from server
-	playerList map[uint32]*playerData
-	drawLock   sync.Mutex
+	playerList   map[uint32]*playerData
+	creatureList []*creatureData
+	drawLock     sync.Mutex
 
 	//World object list
 	wObjList []*worldObject

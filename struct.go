@@ -81,3 +81,11 @@ type worldObject struct {
 
 	itemData *sectionItemData
 }
+
+type creatureData struct {
+	id  IID
+	pos XY
+
+	target *playerData
+	health int16
+}

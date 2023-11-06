@@ -363,6 +363,49 @@ func readNet() {
 				}
 			}
 
+			var numCreatures uint16
+			creatureList = []*creatureData{}
+			binary.Read(inbuf, binary.LittleEndian, &numCreatures)
+
+			if numCreatures > 0 {
+
+				var x uint16
+				for x = 0; x < numPlayers; x++ {
+					var sec uint8
+					err := binary.Read(inbuf, binary.LittleEndian, &sec)
+					if err != nil {
+						doLog(true, "%v", err.Error())
+						break
+					}
+					var cid uint8
+					err = binary.Read(inbuf, binary.LittleEndian, &cid)
+					if err != nil {
+						doLog(true, "%v", err.Error())
+						break
+					}
+					var nx uint32
+					err = binary.Read(inbuf, binary.LittleEndian, &nx)
+					if err != nil {
+						doLog(true, "%v", err.Error())
+						break
+					}
+					var ny uint32
+					err = binary.Read(inbuf, binary.LittleEndian, &ny)
+					if err != nil {
+						doLog(true, "%v", err.Error())
+						break
+					}
+
+					var health int16
+					err = binary.Read(inbuf, binary.LittleEndian, &health)
+					if err != nil {
+						doLog(true, "%v", err.Error())
+						break
+					}
+					creatureList = append(creatureList, &creatureData{id: IID{section: sec, num: cid}, pos: XY{X: nx, Y: ny}, health: health})
+				}
+			}
+
 			//Mark that there is new data to be rendered, used if motion smoothing is OFF.
 			dataDirty = true
 
