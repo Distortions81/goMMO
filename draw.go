@@ -209,7 +209,7 @@ func drawNightVignette(screen *ebiten.Image) {
 	// Fit this onto the screen
 	var screenSize int
 	if screenY > screenX {
-		screenSize = screenY
+		screenSize = screenX
 	} else {
 		screenSize = screenX
 	}
@@ -223,13 +223,23 @@ func drawNightVignette(screen *ebiten.Image) {
 
 	var sc float64
 	if screenSize > size {
-		sc = (float64(screenSize) / float64(size)) + 0.01
+		sc = (float64(screenSize) / float64(size)) + 0.2
 	} else {
-		sc = 1.01
+		if !smallMode {
+			sc = 1.01
+		} else {
+			sc = 0.5
+		}
 	}
 
-	xPos := float64(int(sCamPos.X)-int(playerList[localPlayer.id].spos.X)) - (float64(size) / 2 * sc)
-	yPos := float64(int(sCamPos.Y)-int(playerList[localPlayer.id].spos.Y)) - (float64(size) / 2 * sc)
+	var xPos, yPos float64
+	if !smallMode {
+		xPos = float64(int(sCamPos.X)-int(playerList[localPlayer.id].spos.X)) - (float64(size) / 2 * sc)
+		yPos = float64(int(sCamPos.Y)-int(playerList[localPlayer.id].spos.Y)) - (float64(size) / 2 * sc)
+	} else {
+		xPos = float64(int(sCamPos.X/2)-int(playerList[localPlayer.id].spos.X/2)) - (float64(size) / 2 * sc)
+		yPos = float64(int(sCamPos.Y/2)-int(playerList[localPlayer.id].spos.Y/2)) - (float64(size) / 2 * sc)
+	}
 
 	op.GeoM.Translate(float64(xPos), float64(yPos))
 	op.GeoM.Scale(sc, sc)

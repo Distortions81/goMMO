@@ -14,13 +14,11 @@
 package main
 
 import (
-	"fmt"
 	"image/color"
 	"math"
 	"sort"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/hajimehoshi/ebiten/v2/vector"
 )
 
@@ -192,7 +190,7 @@ func rayVertices(x1, y1, x2, y2, x3, y3 float64) []ebiten.Vertex {
 
 func drawNightShadows(screen *ebiten.Image) {
 
-	if nightLevel == 0 || disableNightShadow {
+	if smallMode || nightLevel == 0 || disableNightShadow {
 		return
 	}
 	makeRayObjs()
@@ -250,5 +248,5 @@ func drawNightShadows(screen *ebiten.Image) {
 		}
 	*/
 
-	ebitenutil.DebugPrintAt(screen, fmt.Sprintf("Rays: 2*%d", len(rays)/2), 1, 222)
+	//ebitenutil.DebugPrintAt(screen, fmt.Sprintf("Rays: 2*%d", len(rays)/2), 1, 222)
 }

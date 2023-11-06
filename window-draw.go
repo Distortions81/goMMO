@@ -18,7 +18,7 @@ func setupOptionsWindow(window *windowData) {
 	optionWindowButtons = []image.Rectangle{}
 
 	// Loop all settings
-	optNum := 1
+	optNum := 0
 	for pos := range settingItems {
 
 		// Place line
@@ -33,8 +33,9 @@ func setupOptionsWindow(window *windowData) {
 
 			button.Min.Y = int((float64(generalFontH)*scaleFactor)*float64(optNum)) + int(padding*uiScale)
 			button.Max.Y = int((float64(generalFontH)*scaleFactor)*float64(optNum+linePad)) + int(padding*uiScale)
+
+			optionWindowButtons = append(optionWindowButtons, button)
 		}
-		optionWindowButtons = append(optionWindowButtons, button)
 
 		if (WASMMode && !settingItems[pos].WASMExclude) || !WASMMode {
 			optNum++
@@ -81,31 +82,35 @@ func drawOptionsWindow(window *windowData) {
 				color.NRGBA{R: 255, G: 255, B: 255, A: 16}, false)
 		}
 
-		// Skip some entries for WASM mode
 		if (WASMMode && !item.WASMExclude) || !WASMMode {
-
 			text.Draw(window.cache, txt, generalFont, item.TextPosX, item.TextPosY-(generalFontH/2), color.White)
+		} else {
+			text.Draw(window.cache, txt, generalFont, item.TextPosX, item.TextPosY-(generalFontH/2), ColorVeryDarkGray)
+		}
 
-			// if the item can be toggled, draw checkmark
-			if !item.NoCheck {
+		// if the item can be toggled, draw checkmark
+		if !item.NoCheck {
 
-				//Get checkmark image
-				op := &ebiten.DrawImageOptions{Filter: ebiten.FilterLinear}
-				var check *ebiten.Image
-				if item.Enabled {
-					check = checkOn
-				} else {
-					check = checkOff
-				}
+			//Get checkmark image
+			op := &ebiten.DrawImageOptions{Filter: ebiten.FilterLinear}
+			var check *ebiten.Image
+			if item.Enabled {
+				check = checkOn
+			} else {
+				check = checkOff
+			}
+			// Draw checkmark
+			op.GeoM.Scale(uiScale*checkScale, uiScale*checkScale)
+			op.GeoM.Translate(
+				float64(window.scaledSize.X)-(float64(check.Bounds().Dx())*uiScale)-(padding*uiScale),
+				float64(item.TextPosY-5)-(float64(check.Bounds().Dy())*uiScale*checkScale))
 
-				// Draw checkmark
-				op.GeoM.Scale(uiScale*checkScale, uiScale*checkScale)
-				op.GeoM.Translate(
-					float64(window.scaledSize.X)-(float64(check.Bounds().Dx())*uiScale)-(padding*uiScale),
-					float64(item.TextPosY-5)-(float64(check.Bounds().Dy())*uiScale*checkScale))
+			// Skip some entries for WASM mode
+			if (WASMMode && !item.WASMExclude) || !WASMMode {
 				window.cache.DrawImage(check, op)
 			}
-			d++
 		}
+		d++
+
 	}
 }
