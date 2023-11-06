@@ -237,14 +237,14 @@ func readNet() {
 			var numPlayers uint8
 			binary.Read(inbuf, binary.LittleEndian, &numPlayers)
 
-			//Mark players, so we know if we can remove them
-			for _, player := range playerList {
-				player.unmark = true
-			}
-
 			//Mark time here, used for motion smoothing
 			lastNetUpdate = time.Now()
 			if numPlayers > 0 {
+
+				//Mark players, so we know if we can remove them
+				for _, player := range playerList {
+					player.unmark = true
+				}
 
 				var x uint8
 				for x = 0; x < numPlayers; x++ {
@@ -317,6 +317,12 @@ func readNet() {
 						}
 					}
 				}
+				//Delete players that are no longer found
+				for p, player := range playerList {
+					if player.unmark {
+						delete(playerList, p)
+					}
+				}
 			}
 
 			var numObj uint8
@@ -352,29 +358,31 @@ func readNet() {
 					objData := itemTypesList[sid].items[oid]
 					wObjList = append(wObjList,
 						&worldObject{
-							itemId:   IID{section: sid, num: oid},
+							itemId:   IID{Section: sid, Num: oid},
 							pos:      XY{X: nx, Y: ny},
 							itemData: objData})
 				}
 			}
 
-			//Delete players that are no longer found
-			for p, player := range playerList {
-				if player.unmark {
-					delete(playerList, p)
-				}
-			}
-
 			var numCreatures uint8
-			creatureList = []*playerData{}
 			binary.Read(inbuf, binary.LittleEndian, &numCreatures)
 
 			if numCreatures > 0 {
+				//Mark players, so we know if we can remove them
+				for _, cre := range creatureList {
+					cre.unmark = true
+				}
 
 				var x uint8
 				for x = 0; x < numPlayers; x++ {
+					var uid uint32
+					err := binary.Read(inbuf, binary.LittleEndian, &uid)
+					if err != nil {
+						doLog(true, "%v", err.Error())
+						break
+					}
 					var sec uint8
-					err := binary.Read(inbuf, binary.LittleEndian, &sec)
+					err = binary.Read(inbuf, binary.LittleEndian, &sec)
 					if err != nil {
 						doLog(true, "%v", err.Error())
 						break
@@ -404,11 +412,19 @@ func readNet() {
 						doLog(true, "%v", err.Error())
 						break
 					}
-					creData := creatureData{id: IID{section: sec, num: cid}, target: nil}
+					creData := creatureData{id: IID{Section: sec, Num: cid, UID: uid}, target: nil}
 					newCreature := &playerData{
 						creature: &creData, pos: XY{X: nx, Y: ny}, spos: XY{X: nx, Y: ny}, health: health,
-						lastPos: XY{X: nx, Y: ny}, direction: DIR_S}
-					creatureList = append(creatureList, newCreature)
+						direction: DIR_S}
+					creatureList[uid] = newCreature
+
+					creatureList[uid].lastPos = creatureList[uid].pos
+				}
+				//Delete players that are no longer found
+				for p, cre := range creatureList {
+					if cre.unmark {
+						delete(playerList, p)
+					}
 				}
 			}
 

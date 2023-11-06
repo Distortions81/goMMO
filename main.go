@@ -31,6 +31,7 @@ func main() {
 	defer time.Sleep(time.Second * 2) //Wait for log to close
 
 	playerList = make(map[uint32]*playerData)
+	creatureList = make(map[uint32]*playerData)
 
 	StartLog()
 	LogDaemon()

@@ -65,7 +65,7 @@ func makeRayObjs() {
 
 	//Cast against objects
 	for _, obj := range wObjList {
-		if obj.itemId.section != 3 {
+		if obj.itemId.Section != 3 {
 			continue
 		}
 		rec := rect(

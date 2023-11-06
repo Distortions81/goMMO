@@ -13,8 +13,9 @@ const assetArraySize = 255
 var topSection, topItem uint8
 
 type IID struct {
-	section uint8
-	num     uint8
+	Section uint8
+	Num     uint8
+	UID     uint32
 }
 
 type sectionData struct {
@@ -122,7 +123,7 @@ func readIndex() bool {
 			itemID, _ := strconv.ParseUint(words[0], 10, 8)
 			newItem := &sectionItemData{
 				name: words[1], fileName: words[2],
-				id: IID{section: currentSection.id, num: uint8(itemID)}}
+				id: IID{Section: currentSection.id, Num: uint8(itemID)}}
 			if itemID > uint64(topItem) {
 				topItem = uint8(itemID)
 			}
@@ -132,7 +133,7 @@ func readIndex() bool {
 				sizeH, _ := strconv.ParseUint(words[4], 10, 16)
 				newItem.SizeH = uint16(sizeH)
 			}
-			currentSection.items[newItem.id.num] = newItem
+			currentSection.items[newItem.id.Num] = newItem
 
 			if devMode {
 				doLog(true, "item found: %v:%v", newItem.id, newItem.name)
