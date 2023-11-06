@@ -234,7 +234,7 @@ func readNet() {
 		case CMD_WorldUpdate:
 			netTick++
 
-			var numPlayers uint16
+			var numPlayers uint8
 			binary.Read(inbuf, binary.LittleEndian, &numPlayers)
 
 			//Mark players, so we know if we can remove them
@@ -246,7 +246,7 @@ func readNet() {
 			lastNetUpdate = time.Now()
 			if numPlayers > 0 {
 
-				var x uint16
+				var x uint8
 				for x = 0; x < numPlayers; x++ {
 					var nid uint32
 					err := binary.Read(inbuf, binary.LittleEndian, &nid)
@@ -317,11 +317,11 @@ func readNet() {
 				}
 			}
 
-			var numObj uint16
+			var numObj uint8
 			binary.Read(inbuf, binary.LittleEndian, &numObj)
 
 			if numObj > 0 {
-				var x uint16
+				var x uint8
 				for x = 0; x < numObj; x++ {
 					var sid uint8
 					err := binary.Read(inbuf, binary.LittleEndian, &sid)
@@ -363,13 +363,13 @@ func readNet() {
 				}
 			}
 
-			var numCreatures uint16
+			var numCreatures uint8
 			creatureList = []*creatureData{}
 			binary.Read(inbuf, binary.LittleEndian, &numCreatures)
 
 			if numCreatures > 0 {
 
-				var x uint16
+				var x uint8
 				for x = 0; x < numPlayers; x++ {
 					var sec uint8
 					err := binary.Read(inbuf, binary.LittleEndian, &sec)
