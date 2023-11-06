@@ -54,6 +54,7 @@ func connectServer() {
 		}
 	}
 	time.Sleep(bootSleep)
+
 }
 
 func doConnect() bool {

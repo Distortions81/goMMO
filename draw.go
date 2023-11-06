@@ -184,8 +184,8 @@ func drawWorldObjs(screen *ebiten.Image) {
 			yPos := float64(int(sCamPos.Y) - int(obj.pos.Y))
 			op.GeoM.Translate(xPos-40, yPos-40)
 		} else {
-			xPos := float64(int(sCamPos.X/2)-int(obj.pos.X/2)) + 135
-			yPos := float64(int(sCamPos.Y/2)-int(obj.pos.Y/2)) + 135
+			xPos := float64(int(sCamPos.X/2)-int(obj.pos.X/2)) + float64(halfScreenX/2)
+			yPos := float64(int(sCamPos.Y/2)-int(obj.pos.Y/2)) + float64(halfScreenY/2)
 			op.GeoM.Translate(xPos-20, yPos-20)
 		}
 
@@ -260,19 +260,35 @@ func drawPlayers(screen *ebiten.Image) {
 			healthColor.R = uint8(r)
 			healthColor.G = uint8(float32(player.health) * 1.5)
 
-			vector.DrawFilledRect(
-				screen,
-				float32(int(sCamPos.X)-int(player.spos.X))-25+4-1,
-				float32(int(sCamPos.Y)-int(player.spos.Y))+27-1,
-				53, 4, color.Black,
-				false)
+			if !smallMode {
+				vector.DrawFilledRect(
+					screen,
+					float32(int(sCamPos.X)-int(player.spos.X))-25+4-1,
+					float32(int(sCamPos.Y)-int(player.spos.Y))+27-1,
+					53, 4, color.Black,
+					false)
 
-			vector.DrawFilledRect(
-				screen,
-				float32(int(sCamPos.X)-int(player.spos.X))-22+2,
-				float32(int(sCamPos.Y)-int(player.spos.Y))+27,
-				50-((100.0-float32(player.health))/2.0), 2, healthColor,
-				false)
+				vector.DrawFilledRect(
+					screen,
+					float32(int(sCamPos.X)-int(player.spos.X))-22+2,
+					float32(int(sCamPos.Y)-int(player.spos.Y))+27,
+					50-((100.0-float32(player.health))/2.0), 2, healthColor,
+					false)
+			} else {
+				vector.DrawFilledRect(
+					screen,
+					float32(int(sCamPos.X/2)-int(player.spos.X/2))-25+2-1+float32(halfScreenX/2),
+					float32(int(sCamPos.Y/2)-int(player.spos.Y/2))+12-1+float32(halfScreenY/2),
+					53, 4, color.Black,
+					false)
+
+				vector.DrawFilledRect(
+					screen,
+					float32(int(sCamPos.X/2)-int(player.spos.X/2))-22+float32(halfScreenX/2),
+					float32(int(sCamPos.Y/2)-int(player.spos.Y/2))+12+float32(halfScreenY/2),
+					50-((100.0-float32(player.health))/2.0), 2, healthColor,
+					false)
+			}
 		}
 	}
 
@@ -295,8 +311,8 @@ func drawPlayers(screen *ebiten.Image) {
 				2, screen, false, false, true)
 		} else {
 			drawText(pname, toolTipFont, color.White, colorNameBG,
-				XYf32{X: float32(int(sCamPos.X/2)-int(player.spos.X/2)) + 2 + 135,
-					Y: float32(int(sCamPos.Y/2)-int(player.spos.Y/2)) + 32 + 135},
+				XYf32{X: float32(int(sCamPos.X/2)-int(player.spos.X/2)) + 2 + (float32(halfScreenX / 2)),
+					Y: float32(int(sCamPos.Y/2)-int(player.spos.Y/2)) + 32 + (float32(halfScreenY / 2))},
 				1, screen, false, false, true)
 		}
 
@@ -316,8 +332,8 @@ func drawPlayers(screen *ebiten.Image) {
 			op.GeoM.Translate(float64(xPos)-48.0, float64(yPos)-48.0)
 		} else {
 
-			xPos := float64(int(sCamPos.X/2)-int(player.spos.X/2)) + 135
-			yPos := float64(int(sCamPos.Y/2)-int(player.spos.Y/2)) + 135
+			xPos := float64(int(sCamPos.X/2)-int(player.spos.X/2)) + float64(halfScreenX/2)
+			yPos := float64(int(sCamPos.Y/2)-int(player.spos.Y/2)) + float64(halfScreenY/2)
 
 			op.GeoM.Translate(float64(xPos)-24.0, float64(yPos)-24.0)
 		}
