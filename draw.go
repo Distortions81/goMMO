@@ -318,6 +318,8 @@ func drawPlayers(screen *ebiten.Image) {
 		pnameStr := playerIdToName(player.id)
 		if pnameStr != "" {
 			pname = pnameStr
+		} else if player.creature != nil {
+			pname = itemTypesList[player.creature.id.section].items[player.creature.id.num].name
 		} else {
 			pname = fmt.Sprintf("Player-%v", player.id)
 		}
