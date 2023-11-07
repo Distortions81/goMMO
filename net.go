@@ -412,10 +412,17 @@ func readNet() {
 						doLog(true, "%v", err.Error())
 						break
 					}
+
+					var effects EFF
+					err = binary.Read(inbuf, binary.LittleEndian, &effects)
+					if err != nil {
+						doLog(true, "%v", err.Error())
+						break
+					}
 					creData := creatureData{id: IID{Section: sec, Num: cid, UID: uid}, target: nil}
 					newCreature := &playerData{
 						creature: &creData, pos: XY{X: nx, Y: ny}, spos: XY{X: nx, Y: ny}, health: health,
-						direction: DIR_S}
+						direction: DIR_S, effects: effects}
 					creatureList[uid] = newCreature
 
 					creatureList[uid].lastPos = creatureList[uid].pos
