@@ -374,7 +374,7 @@ func readNet() {
 				}
 
 				var x uint8
-				for x = 0; x < numPlayers; x++ {
+				for x = 0; x < numCreatures; x++ {
 					var uid uint32
 					err := binary.Read(inbuf, binary.LittleEndian, &uid)
 					if err != nil {
