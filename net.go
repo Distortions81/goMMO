@@ -419,13 +419,31 @@ func readNet() {
 						doLog(true, "%v", err.Error())
 						break
 					}
-					creData := creatureData{id: IID{Section: sec, Num: cid, UID: uid}, target: nil}
-					newCreature := &playerData{
-						creature: &creData, pos: XY{X: nx, Y: ny}, spos: XY{X: nx, Y: ny}, health: health,
-						direction: DIR_S, effects: effects}
-					creatureList[uid] = newCreature
+					if creatureList[uid] == nil {
+						creData := creatureData{id: IID{Section: sec, Num: cid, UID: uid}, target: nil}
+						newCreature := &playerData{
+							creature: &creData, pos: XY{X: nx, Y: ny}, spos: XY{X: nx, Y: ny}, health: health,
+							direction: DIR_S, effects: effects}
+						creatureList[uid] = newCreature
+					} else {
+						creatureList[uid].lastPos = creatureList[uid].pos
+						if creatureList[uid].lastPos.X != nx ||
+							creatureList[uid].lastPos.Y != ny {
+							if netTick%4 == 0 {
+								creatureList[uid].walkFrame++
+							}
+							creatureList[uid].isWalking = true
+						} else {
+							creatureList[uid].isWalking = false
+							creatureList[uid].walkFrame = 0
+						}
+						creatureList[uid].pos.X = nx
+						creatureList[uid].pos.Y = ny
+						creatureList[uid].health = health
+						creatureList[uid].effects = effects
+						creatureList[uid].unmark = false
+					}
 
-					creatureList[uid].lastPos = creatureList[uid].pos
 				}
 				//Delete players that are no longer found
 				for p, cre := range creatureList {
