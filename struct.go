@@ -60,7 +60,7 @@ type playerData struct {
 	walkFrame int
 	isWalking bool
 
-	unmark bool
+	unmark uint16
 
 	id uint32
 }

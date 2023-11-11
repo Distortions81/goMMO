@@ -100,6 +100,7 @@ func doConnect() bool {
 	wObjList = []*worldObject{}
 	playerList = make(map[uint32]*playerData)
 	playerMode = PMODE_PASSIVE
+	creatureList = make(map[uint32]*playerData)
 	drawToolbar(false, false, maxItemType)
 
 	go sendCommand(CMD_Init, outbuf.Bytes())
@@ -243,7 +244,7 @@ func readNet() {
 
 				//Mark players, so we know if we can remove them
 				for _, player := range playerList {
-					player.unmark = true
+					player.unmark++
 				}
 
 				var x uint8
@@ -284,11 +285,11 @@ func readNet() {
 						playerList[nid] = &playerData{id: nid, pos: XY{X: nx, Y: ny}, direction: DIR_S, effects: effects}
 
 						/* Unmark, used to detect if no longer needed */
-						playerList[nid].unmark = false
+						playerList[nid].unmark = 0
 					} else {
 
 						/* Unmark, used to detect if no longer needed */
-						playerList[nid].unmark = false
+						playerList[nid].unmark = 0
 
 						// Update local player pos
 						if localPlayer.id == nid {
@@ -319,7 +320,7 @@ func readNet() {
 				}
 				//Delete players that are no longer found
 				for p, player := range playerList {
-					if player.unmark {
+					if player.unmark > 15 {
 						delete(playerList, p)
 					}
 				}
@@ -370,7 +371,7 @@ func readNet() {
 			if numCreatures > 0 {
 				//Mark players, so we know if we can remove them
 				for _, cre := range creatureList {
-					cre.unmark = true
+					cre.unmark++
 				}
 
 				var x uint8
@@ -427,8 +428,8 @@ func readNet() {
 						creatureList[uid] = newCreature
 					} else {
 						creatureList[uid].lastPos = creatureList[uid].pos
-						if creatureList[uid].lastPos.X != nx ||
-							creatureList[uid].lastPos.Y != ny {
+						if creatureList[uid].pos.X != nx ||
+							creatureList[uid].pos.Y != ny {
 							if netTick%4 == 0 {
 								creatureList[uid].walkFrame++
 							}
@@ -439,15 +440,17 @@ func readNet() {
 						}
 						creatureList[uid].pos.X = nx
 						creatureList[uid].pos.Y = ny
+						creatureList[uid].spos.X = nx
+						creatureList[uid].spos.Y = ny
 						creatureList[uid].health = health
 						creatureList[uid].effects = effects
-						creatureList[uid].unmark = false
+						creatureList[uid].unmark = 0
 					}
 
 				}
 				//Delete players that are no longer found
 				for p, cre := range creatureList {
-					if cre.unmark {
+					if cre.unmark > 15 {
 						delete(playerList, p)
 					}
 				}
