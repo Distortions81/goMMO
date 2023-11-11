@@ -307,8 +307,8 @@ func readNet() {
 						playerList[nid].effects = effects
 
 						/* Walk animations */
-						if playerList[nid].lastPos.X != playerList[nid].pos.X ||
-							playerList[nid].lastPos.Y != playerList[nid].pos.Y {
+						if playerList[nid].lastPos.X != nx ||
+							playerList[nid].lastPos.Y != ny {
 							playerList[nid].walkFrame++
 							playerList[nid].isWalking = true
 
@@ -427,31 +427,35 @@ func readNet() {
 							direction: DIR_S, effects: effects}
 						creatureList[uid] = newCreature
 					} else {
-						creatureList[uid].lastPos = creatureList[uid].pos
-						if creatureList[uid].pos.X != nx ||
-							creatureList[uid].pos.Y != ny {
+
+						if creatureList[uid].lastPos.X != nx ||
+							creatureList[uid].lastPos.Y != ny {
+							creatureList[uid].lastPos = creatureList[uid].pos
 							if netTick%4 == 0 {
 								creatureList[uid].walkFrame++
 							}
 							creatureList[uid].isWalking = true
 						} else {
-							creatureList[uid].isWalking = false
-							creatureList[uid].walkFrame = 0
+							//creatureList[uid].isWalking = false
+							//creatureList[uid].walkFrame = 0
 						}
+
+						creatureList[uid].unmark = 0
+
 						creatureList[uid].pos.X = nx
 						creatureList[uid].pos.Y = ny
 						creatureList[uid].spos.X = nx
 						creatureList[uid].spos.Y = ny
 						creatureList[uid].health = health
 						creatureList[uid].effects = effects
-						creatureList[uid].unmark = 0
+
 					}
 
 				}
 				//Delete players that are no longer found
 				for p, cre := range creatureList {
 					if cre.unmark > 15 {
-						delete(playerList, p)
+						delete(creatureList, p)
 					}
 				}
 			}
