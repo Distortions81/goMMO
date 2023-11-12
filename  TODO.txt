@@ -7,7 +7,7 @@ Current:
 Test if bit-packed networking is faster or slower.
 Edit mode: only moderators, remove & move objects
 controller inputs
-player guest / login / create login
+player guest / login / create login ### goMMOLogin on laptop ###
  make sprite compositor, for clothing/weapons/etc
  fix mouse/touch walk being eaten by UI elements
 add first few sounds
