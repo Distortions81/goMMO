@@ -107,7 +107,7 @@ func getCharFrame(player *playerData) image.Image {
 
 	var newFrame int
 	if hasEffects(player, EFFECT_ATTACK) {
-		newFrame = int((netTick/4)%3) + 1
+		newFrame = int((netTick/2)%3) + 1
 	} else if player.isWalking {
 		newFrame = ((player.walkFrame) % 3) + 1
 	} else {

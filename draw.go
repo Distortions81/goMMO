@@ -123,11 +123,11 @@ func motionSmoothing() {
 		startTime = time.Now()
 		since := startTime.Sub(lastNetUpdate)
 		remaining := FrameSpeedNS - since.Nanoseconds()
-		normal = (float64(remaining) / float64(FrameSpeedNS))
+		normal = (float64(remaining) / float64(FrameSpeedNS)) - 1
 
 		//Extrapolation limits
-		if normal < 0 {
-			normal = 0
+		if normal < -1 {
+			normal = -1
 		} else if normal > 1 {
 			normal = 1
 		}

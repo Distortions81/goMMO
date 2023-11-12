@@ -431,13 +431,11 @@ func readNet() {
 						if creatureList[uid].lastPos.X != nx ||
 							creatureList[uid].lastPos.Y != ny {
 							creatureList[uid].lastPos = creatureList[uid].pos
-							if netTick%4 == 0 {
-								creatureList[uid].walkFrame++
-							}
+							creatureList[uid].walkFrame++
 							creatureList[uid].isWalking = true
 						} else {
-							//creatureList[uid].isWalking = false
-							//creatureList[uid].walkFrame = 0
+							creatureList[uid].isWalking = false
+							creatureList[uid].walkFrame = 0
 						}
 
 						creatureList[uid].unmark = 0
