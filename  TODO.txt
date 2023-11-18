@@ -7,7 +7,7 @@ Current:
 Test if bit-packed networking is faster or slower.
 Edit mode: only moderators, remove & move objects
 controller inputs
-player guest / login / create login ### goMMOLogin on laptop ###
+player guest / login / create login ### goMMOLogin on laptop? ###
  make sprite compositor, for clothing/weapons/etc
  fix mouse/touch walk being eaten by UI elements
 add first few sounds
@@ -17,5 +17,3 @@ Future:
 Look into threading physics by using two-step like:
 https://github.com/Distortions81/Gravity-Simulation-Golang/blob/main/main.go
 Clear chunks from players on edit, write net/client so client can also clear.
-
-### Refine client side smoothing, currently jumps when changing direction.
