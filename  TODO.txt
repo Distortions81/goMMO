@@ -26,7 +26,7 @@ Current:
 10k players, 194 megabit uplink.
 
 ###################################
-Bit-packed (APPROX)
+Bit-packed (guessed normal max values)
 180 bytes per frame, 1350 bytes/sec
 10k players, 87 megabit uplink
 
