@@ -17,6 +17,7 @@ New:
 Check how much CPU/Bandwidth is needed to handle character directions server side.
 Would eleminate player-aim sprite issues. (2/8 bits per entity)
 A* pathing, for click-walkto and creature pathing.
+Perlin noise for terrain "base"?
 
 Future:
 Look into threading physics by using two-step like:
