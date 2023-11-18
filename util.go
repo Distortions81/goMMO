@@ -9,9 +9,6 @@ import (
 	"math"
 	"strings"
 	"time"
-
-	"github.com/twpayne/go-geom"
-	"github.com/twpayne/go-geom/xy"
 )
 
 func changeGameMode(newMode MODE, delay time.Duration) {
@@ -92,15 +89,6 @@ func getCharFrame(player *playerData) image.Image {
 		} else {
 			return sprite.dead
 		}
-	}
-
-	if player.pos.X != player.lastPos.X || player.pos.Y != player.lastPos.Y {
-
-		p1 := geom.Coord{float64(player.pos.X), float64(player.pos.Y), 0}
-		p2 := geom.Coord{float64(player.lastPos.X), float64(player.lastPos.Y), 0}
-		angle := xy.Angle(p1, p2)
-
-		player.direction = radiansToDirection(angle)
 	}
 
 	dirOff := playerDirSpriteOffset(player.direction)
