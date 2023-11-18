@@ -2,7 +2,7 @@ package main
 
 import "github.com/hajimehoshi/ebiten/v2"
 
-var netProtoVersion uint16 = 16
+var netProtoVersion uint16 = 17
 
 const FrameSpeedNS = 133333333
 
