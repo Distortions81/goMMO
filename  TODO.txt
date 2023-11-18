@@ -13,10 +13,16 @@ player guest / login / create login ### goMMOLogin on laptop? ###
 add first few sounds
 draw sorting enhancements
 
+New:
+Check how much CPU/Bandwidth is needed to handle character directions server side.
+Would eleminate player-aim sprite issues. (2/8 bits per entity)
+A* pathing, for click-walkto and creature pathing.
+
 Future:
 Look into threading physics by using two-step like:
 https://github.com/Distortions81/Gravity-Simulation-Golang/blob/main/main.go
 Clear chunks from players on edit, write net/client so client can also clear.
+
 
 ##################################
 Bit pack networking:
@@ -31,8 +37,3 @@ Bit-packed (guessed normal max values)
 10k players, 87 megabit uplink (under 10% utilization)
 
 Could save 50% or more bandwidth.
-
-###################################
-Conclusion:
-Need to invistigate CPU use
-###################################
