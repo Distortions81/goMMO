@@ -19,7 +19,7 @@ Sprite compositing, caching.
 Creature spans, area file data.
 Creature spawn zones/areas.
 Zone/area triggers.
-Sprite-pack files
+Sprite-pack files, possibbly make spritepack entries in index.
 
 
 Future:
