@@ -21,7 +21,6 @@ Creature spawn zones/areas.
 Zone/area triggers.
 Sprite-pack files, possibbly make spritepack entries in index.
 
-
 Future:
 Look into threading physics by using two-step like:
 https://github.com/Distortions81/Gravity-Simulation-Golang/blob/main/main.go
