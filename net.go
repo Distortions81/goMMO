@@ -268,6 +268,13 @@ func readNet() {
 						break
 					}
 
+					var dir DIR
+					err = binary.Read(inbuf, binary.LittleEndian, &dir)
+					if err != nil {
+						doLog(true, "%v", err.Error())
+						break
+					}
+
 					var health int16
 					err = binary.Read(inbuf, binary.LittleEndian, &health)
 					if err != nil {
@@ -301,6 +308,7 @@ func readNet() {
 						playerList[nid].lastPos = playerList[nid].pos
 						playerList[nid].pos.X = nx
 						playerList[nid].pos.Y = ny
+						playerList[nid].direction = dir
 						playerList[nid].spos.X = nx
 						playerList[nid].spos.Y = ny
 						playerList[nid].health = health
@@ -406,7 +414,12 @@ func readNet() {
 						doLog(true, "%v", err.Error())
 						break
 					}
-
+					var dir DIR
+					err = binary.Read(inbuf, binary.LittleEndian, &dir)
+					if err != nil {
+						doLog(true, "%v", err.Error())
+						break
+					}
 					var health int16
 					err = binary.Read(inbuf, binary.LittleEndian, &health)
 					if err != nil {
@@ -442,6 +455,7 @@ func readNet() {
 
 						creatureList[uid].pos.X = nx
 						creatureList[uid].pos.Y = ny
+						creatureList[uid].direction = dir
 						creatureList[uid].spos.X = nx
 						creatureList[uid].spos.Y = ny
 						creatureList[uid].health = health
