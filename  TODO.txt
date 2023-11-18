@@ -4,7 +4,6 @@ Need to think about how we can do the effect without new sprites.
 Eventually use target system for targeted
 
 Current:
-Test if bit-packed networking is faster or slower.
 Edit mode: only moderators, remove & move objects
 controller inputs
 player guest / login / create login ### goMMOLogin on laptop? ###
@@ -14,27 +13,12 @@ add first few sounds
 draw sorting enhancements
 
 New:
-Check how much CPU/Bandwidth is needed to handle character directions server side.
-Would eleminate player-aim sprite issues. (2/8 bits per entity)
+Move player direction to server-side.
 A* pathing, for click-walkto and creature pathing.
 Perlin noise for terrain "base"?
+Write-off network bit-packing, small savings.
 
 Future:
 Look into threading physics by using two-step like:
 https://github.com/Distortions81/Gravity-Simulation-Golang/blob/main/main.go
 Clear chunks from players on edit, write net/client so client can also clear.
-
-
-##################################
-Bit pack networking:
-7.5 UPS: 10 players, 10 creatures
-Current:
-340 bytes per frame, 2550 bytes/sec
-10k players, 194 megabit uplink. (20% utilization)
-
-###################################
-Bit-packed (guessed normal max values)
-180 bytes per frame, 1350 bytes/sec
-10k players, 87 megabit uplink (under 10% utilization)
-
-Could save 50% or more bandwidth.
