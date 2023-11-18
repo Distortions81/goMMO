@@ -2,7 +2,7 @@ Healing:
 maybe also different sprite for the healer?
 Need to think about how we can do the effect without new sprites.
 Eventually use target system for targeted
-
+auto-resets
 Current:
 Edit mode: only moderators, remove & move objects
 controller inputs
@@ -16,9 +16,10 @@ New:
 Move player direction to server-side.
 A* pathing, for click-walkto and creature pathing.
 Perlin noise for terrain "base"?
-Sprite compositing.
-Creature auto-resets, area file data.
-Reset zones/areas.
+Sprite compositing, caching.
+Creature spans, area file data.
+Creature spawn zones/areas.
+Zone/area triggers.
 
 
 Future:
