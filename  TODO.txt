@@ -16,7 +16,10 @@ New:
 Move player direction to server-side.
 A* pathing, for click-walkto and creature pathing.
 Perlin noise for terrain "base"?
-Write-off network bit-packing, small savings with added complexity.
+Sprite compositing.
+Creature auto-resets, area file data.
+Reset zones/areas.
+
 
 Future:
 Look into threading physics by using two-step like:
