@@ -23,12 +23,16 @@ Bit pack networking:
 7.5 UPS: 10 players, 10 creatures
 Current:
 340 bytes per frame, 2550 bytes/sec
-10k players, 194 megabit uplink.
+10k players, 194 megabit uplink. (20% utilization)
 
 ###################################
 Bit-packed (guessed normal max values)
 180 bytes per frame, 1350 bytes/sec
-10k players, 87 megabit uplink
+10k players, 87 megabit uplink (under 10% utilization)
 
 Could save 50% or more bandwidth.
-Need to invistigate CPU use.
+
+###################################
+Conclusion:
+Need to invistigate CPU use
+###################################
