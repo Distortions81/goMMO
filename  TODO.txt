@@ -17,3 +17,18 @@ Future:
 Look into threading physics by using two-step like:
 https://github.com/Distortions81/Gravity-Simulation-Golang/blob/main/main.go
 Clear chunks from players on edit, write net/client so client can also clear.
+
+##################################
+Bit pack networking:
+7.5 UPS: 10 players, 10 creatures
+Current:
+340 bytes per frame, 2550 bytes/sec
+10k players, 194 megabit uplink.
+
+###################################
+Bit-packed (APPROX)
+180 bytes per frame, 1350 bytes/sec
+10k players, 87 megabit uplink
+
+Could save 50% or more bandwidth.
+Need to invistigate CPU use.
