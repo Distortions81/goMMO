@@ -16,7 +16,7 @@ New:
 A* pathing, for click-walkto and creature pathing.
 Perlin noise for terrain "base"?
 Sprite compositing, caching.
-Creature spans, area file data.
+Creature spawns, area file data.
 Creature spawn zones/areas.
 Zone/area triggers.
 Sprite-pack files, possibbly make spritepack entries in index.
