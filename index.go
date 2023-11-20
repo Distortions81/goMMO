@@ -48,12 +48,12 @@ func readDir(path string) bool {
 		return false
 	}
 	for _, item := range dirs {
-		buf := fmt.Sprintf("%v/%v", cleanPath, item.Name())
+		newPath := fmt.Sprintf("%v/%v", cleanPath, item.Name())
 
 		if item.IsDir() {
-			readDir(buf)
+			readDir(newPath)
 		} else if strings.EqualFold(item.Name(), "object.dat") {
-			if !readObject(buf) {
+			if !readObject(newPath) {
 				return false
 			}
 		}
@@ -95,7 +95,7 @@ func readObject(filepath string) bool {
 				doLog(true, "No version header found, line: %v: '%v %v'", lnum, words[0], words[1])
 				return false
 			}
-			if !strings.EqualFold("2", words[1]) {
+			if !strings.EqualFold("3", words[1]) {
 				doLog(true, "Index version not supported, line: %v", lnum)
 				return false
 			}
