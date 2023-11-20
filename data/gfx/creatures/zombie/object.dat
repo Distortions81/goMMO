@@ -1,0 +1,10 @@
+version 3
+
+info:
+size:52,52
+id:0
+
+sprites:
+walk:zombie-walk.png
+attack:zombie-attack.png
+dead:zombie-dead.png

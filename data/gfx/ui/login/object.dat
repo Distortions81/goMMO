@@ -1,0 +1,8 @@
+version 3
+
+info:
+size:1080,1080
+id:3
+
+sprites:
+login:login.png

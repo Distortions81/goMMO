@@ -1,0 +1,11 @@
+version 3
+
+info:
+size:52,52
+effects:heal
+id:0
+
+sprites:
+walk:player-walk.png
+attack:player-attack.png
+dead:player-dead.png

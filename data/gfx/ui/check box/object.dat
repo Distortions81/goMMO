@@ -1,0 +1,9 @@
+version 3
+
+info:
+size:32,32
+id:0
+
+sprites:
+off:check-off.png
+on:check-on.png

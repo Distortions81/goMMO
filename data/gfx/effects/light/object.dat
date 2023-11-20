@@ -1,0 +1,8 @@
+version 3
+
+info:
+size:1080,1080
+id:0
+
+sprites:
+light:light.png

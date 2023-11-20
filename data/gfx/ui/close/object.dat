@@ -1,0 +1,8 @@
+version 3
+
+info:
+size:32,32
+id:1
+
+sprites:
+close:close.png

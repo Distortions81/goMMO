@@ -1,0 +1,9 @@
+version 3
+
+info:
+size:48,48
+id:0
+
+sprites:
+tree1:tree1.png
+tree2:tree2.png

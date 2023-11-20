@@ -1,0 +1,9 @@
+version 3
+
+info:
+size:16,16
+id:1
+
+sprites:
+small:small-rock.png
+tiny:tiny-rock.png

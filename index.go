@@ -1,13 +1,13 @@
 package main
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
-const indexFileName = "index.dat"
 const assetArraySize = 255
 
 var topSection, topItem uint8
@@ -37,14 +37,33 @@ type sectionItemData struct {
 
 var itemTypesList [assetArraySize]*sectionData
 
-func readIndex() bool {
+func readDir(path string) bool {
 
-	data, err := efs.ReadFile(dataDir + indexFileName)
+	dirs, err := efs.ReadDir(path)
 	if err != nil {
-		doLog(true, "Unable to read %v", indexFileName)
+		doLog(true, "Unable to read directory: %v (%v)", path, err.Error())
 		return false
 	}
-	doLog(true, "Reading %v", indexFileName)
+	for _, item := range dirs {
+		buf := fmt.Sprintf("%v/%v", path, item.Name())
+
+		if item.IsDir() {
+			readDir(buf)
+		} else if strings.EqualFold(item.Name(), "object.dat") {
+			readObject(buf)
+		}
+	}
+
+	return true
+}
+
+func readObject(filepath string) bool {
+	data, err := efs.ReadFile(filepath)
+	if err != nil {
+		doLog(true, "Unable to read %v", filepath)
+		return false
+	}
+	doLog(true, "Reading %v", filepath)
 
 	lines := strings.Split(string(data), "\n")
 	var l int

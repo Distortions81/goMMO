@@ -1,0 +1,10 @@
+version 3
+
+info:
+size:32,32
+id:0
+
+sprites:
+attack:attack.png
+heal:heal.png
+passive:passive.png
