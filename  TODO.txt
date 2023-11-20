@@ -25,3 +25,8 @@ Future:
 Look into threading physics by using two-step like:
 https://github.com/Distortions81/Gravity-Simulation-Golang/blob/main/main.go
 Clear chunks from players on edit, write net/client so client can also clear.
+
+
+TODO:
+Add object/sprite pack
+Add flags, render effects.
