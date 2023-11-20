@@ -39,18 +39,23 @@ var itemTypesList [assetArraySize]*sectionData
 
 func readDir(path string) bool {
 
-	dirs, err := efs.ReadDir(path)
+	//ReadDir doesn't like leading slashes
+	cleanPath := strings.TrimSuffix(path, "/")
+
+	dirs, err := efs.ReadDir(cleanPath)
 	if err != nil {
-		doLog(true, "Unable to read directory: %v (%v)", path, err.Error())
+		doLog(true, "Unable to read directory: %v (%v)", cleanPath, err.Error())
 		return false
 	}
 	for _, item := range dirs {
-		buf := fmt.Sprintf("%v/%v", path, item.Name())
+		buf := fmt.Sprintf("%v/%v", cleanPath, item.Name())
 
 		if item.IsDir() {
 			readDir(buf)
 		} else if strings.EqualFold(item.Name(), "object.dat") {
-			readObject(buf)
+			if !readObject(buf) {
+				return false
+			}
 		}
 	}
 
