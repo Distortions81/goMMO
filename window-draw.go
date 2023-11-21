@@ -22,12 +22,12 @@ func setupOptionsWindow(window *windowData) {
 	for pos := range settingItems {
 
 		// Place line
-		settingItems[pos].TextPosX = int(padding * uiScale)
-		settingItems[pos].TextPosY = int((float64(generalFontH)*scaleFactor)*float64(optNum+linePad)) + int(padding*uiScale)
+		settingItems[pos].textPosX = int(padding * uiScale)
+		settingItems[pos].textPosY = int((float64(generalFontH)*scaleFactor)*float64(optNum+linePad)) + int(padding*uiScale)
 
 		// Generate button
 		button := image.Rectangle{}
-		if (WASMMode && !settingItems[pos].WASMExclude) || !WASMMode {
+		if (WASMMode && !settingItems[pos].wasmExclude) || !WASMMode {
 			button.Min.X = 0
 			button.Max.X = xyMax
 
@@ -37,7 +37,7 @@ func setupOptionsWindow(window *windowData) {
 			optionWindowButtons = append(optionWindowButtons, button)
 		}
 
-		if (WASMMode && !settingItems[pos].WASMExclude) || !WASMMode {
+		if (WASMMode && !settingItems[pos].wasmExclude) || !WASMMode {
 			optNum++
 		}
 	}
@@ -67,10 +67,10 @@ func drawOptionsWindow(window *windowData) {
 		b := optionWindowButtons[i]
 
 		// Text
-		if !item.NoCheck {
-			txt = fmt.Sprintf("%v: %v", item.Text, BoolToOnOff(item.Enabled))
+		if !item.noCheck {
+			txt = fmt.Sprintf("%v: %v", item.text, BoolToOnOff(item.Enabled))
 		} else {
-			txt = item.Text
+			txt = item.text
 		}
 
 		if d%2 != 0 {
@@ -82,14 +82,14 @@ func drawOptionsWindow(window *windowData) {
 				color.NRGBA{R: 255, G: 255, B: 255, A: 16}, false)
 		}
 
-		if (WASMMode && !item.WASMExclude) || !WASMMode {
-			text.Draw(window.cache, txt, generalFont, item.TextPosX, item.TextPosY-(generalFontH/2), color.White)
+		if (WASMMode && !item.wasmExclude) || !WASMMode {
+			text.Draw(window.cache, txt, generalFont, item.textPosX, item.textPosY-(generalFontH/2), color.White)
 		} else {
-			text.Draw(window.cache, txt, generalFont, item.TextPosX, item.TextPosY-(generalFontH/2), ColorVeryDarkGray)
+			text.Draw(window.cache, txt, generalFont, item.textPosX, item.textPosY-(generalFontH/2), ColorVeryDarkGray)
 		}
 
 		// if the item can be toggled, draw checkmark
-		if !item.NoCheck {
+		if !item.noCheck {
 
 			//Get checkmark image
 			op := &ebiten.DrawImageOptions{Filter: ebiten.FilterLinear}
@@ -103,10 +103,10 @@ func drawOptionsWindow(window *windowData) {
 			op.GeoM.Scale(uiScale*checkScale, uiScale*checkScale)
 			op.GeoM.Translate(
 				float64(window.scaledSize.X)-(float64(check.Bounds().Dx())*uiScale)-(padding*uiScale),
-				float64(item.TextPosY-5)-(float64(check.Bounds().Dy())*uiScale*checkScale))
+				float64(item.textPosY-5)-(float64(check.Bounds().Dy())*uiScale*checkScale))
 
 			// Skip some entries for WASM mode
-			if (WASMMode && !item.WASMExclude) || !WASMMode {
+			if (WASMMode && !item.wasmExclude) || !WASMMode {
 				window.cache.DrawImage(check, op)
 			}
 		}

@@ -14,7 +14,7 @@ func handleOptions(input XYs, window *windowData) bool {
 		if PosWithinRect(
 			XY{X: uint32(input.X - originX),
 				Y: uint32(input.Y - originY)}, b, 1) {
-			if (WASMMode && !item.WASMExclude) || !WASMMode {
+			if (WASMMode && !item.wasmExclude) || !WASMMode {
 				item.action(i)
 				saveOptions()
 				window.dirty = true

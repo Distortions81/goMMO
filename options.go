@@ -27,29 +27,29 @@ var (
 
 type settingType struct {
 	ConfigName string
-	Text       string `json:"-"`
+	text       string
 
-	TextPosX   int             `json:"-"`
-	TextPosY   int             `json:"-"`
-	TextBounds image.Rectangle `json:"-"`
-	Rect       image.Rectangle `json:"-"`
+	textPosX   int
+	textPosY   int
+	textBounds image.Rectangle
+	rect       image.Rectangle
 
 	Enabled     bool
-	WASMExclude bool `json:"-"`
+	wasmExclude bool
 
-	action  func(item int) `json:"-"`
-	NoCheck bool           `json:"-"`
+	action  func(item int)
+	noCheck bool
 }
 
 func init() {
 	defer reportPanic("options init")
 	settingItems = []settingType{
-		{ConfigName: "VSYNC", Text: "Limit FPS (VSYNC)", action: toggleVsync, Enabled: true},
-		{ConfigName: "FULLSCREEN", Text: "Full Screen", action: toggleFullscreen},
-		{ConfigName: "FAST-SHADOWS", Text: "Fast Shadows", action: toggleFastShadow},
-		{ConfigName: "MOTION-SMOOTH", Text: "Motion Smoothing", action: toggleSmoothing, Enabled: true},
-		{ConfigName: "NIGHT-MODE", Text: "Disable Shadows", action: toggleNightShadow},
-		{ConfigName: "DEBUG-TEXT", Text: "Debug info-text", action: toggleInfoLine},
+		{ConfigName: "VSYNC", text: "Limit FPS (VSYNC)", action: toggleVsync, Enabled: true},
+		{ConfigName: "FULLSCREEN", text: "Full Screen", action: toggleFullscreen},
+		{ConfigName: "FAST-SHADOWS", text: "Fast Shadows", action: toggleFastShadow},
+		{ConfigName: "MOTION-SMOOTH", text: "Motion Smoothing", action: toggleSmoothing, Enabled: true},
+		{ConfigName: "NIGHT-MODE", text: "Disable Shadows", action: toggleNightShadow},
+		{ConfigName: "DEBUG-TEXT", text: "Debug info-text", action: toggleInfoLine},
 	}
 }
 
@@ -179,7 +179,7 @@ func toggleFullscreen(item int) {
 		settingItems[item].Enabled = true
 	}
 	buf := fmt.Sprintf("%v is now %v.",
-		settingItems[item].Text,
+		settingItems[item].text,
 		BoolToOnOff(settingItems[item].Enabled))
 	chatDetailed(buf, ColorDarkOrange, time.Second*5)
 }
@@ -198,7 +198,7 @@ func toggleFastShadow(item int) {
 	//handleResize(int(ScreenWidth), int(ScreenHeight))
 
 	buf := fmt.Sprintf("%v is now %v.",
-		settingItems[item].Text,
+		settingItems[item].text,
 		BoolToOnOff(settingItems[item].Enabled))
 	chatDetailed(buf, ColorDarkOrange, time.Second*5)
 }
@@ -214,7 +214,7 @@ func toggleSmoothing(item int) {
 		settingItems[item].Enabled = true
 	}
 	buf := fmt.Sprintf("%v is now %v.",
-		settingItems[item].Text,
+		settingItems[item].text,
 		BoolToOnOff(settingItems[item].Enabled))
 	chatDetailed(buf, ColorDarkOrange, time.Second*5)
 }
@@ -231,7 +231,7 @@ func toggleVsync(item int) {
 		ebiten.SetVsyncEnabled(true)
 	}
 	buf := fmt.Sprintf("%v is now %v.",
-		settingItems[item].Text,
+		settingItems[item].text,
 		BoolToOnOff(settingItems[item].Enabled))
 	chatDetailed(buf, ColorDarkOrange, time.Second*5)
 }
