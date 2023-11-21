@@ -66,7 +66,7 @@ func main() {
 		WASMMode = true
 	}
 
-	if !readDir(gfxDir) {
+	if !readIndex() {
 		return
 	}
 
