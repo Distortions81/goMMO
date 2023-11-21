@@ -35,7 +35,7 @@ type settingType struct {
 	Rect       image.Rectangle `json:"-"`
 
 	Enabled     bool
-	WASMExclude bool
+	WASMExclude bool `json:"-"`
 
 	action  func(item int) `json:"-"`
 	NoCheck bool           `json:"-"`
