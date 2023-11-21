@@ -154,7 +154,7 @@ func readObject(name string) bool {
 	}
 	doLog(true, "Reading %v", filePath)
 
-	var xs, ys, itemID uint64
+	var xs, ys, id uint64
 	var spriteName, spriteFile string
 
 	lines := strings.Split(string(data), "\n")
@@ -189,9 +189,6 @@ func readObject(name string) bool {
 				return false
 			}
 
-			//Reset data
-			currentSection = nil
-
 			if devMode {
 				doLog(true, "version header found.")
 			}
@@ -224,7 +221,7 @@ func readObject(name string) bool {
 					doLog(true, "Invalid number of size dimensions: %v, line: %v", numDims, lnum)
 				}
 			} else if words[0] == "id" {
-				itemID, _ = strconv.ParseUint(words[1], 10, 32)
+				id, _ = strconv.ParseUint(words[1], 10, 32)
 			}
 		} else if area == OBJDAT_SPRITES {
 			spriteName = words[0]
@@ -232,11 +229,17 @@ func readObject(name string) bool {
 		}
 	}
 
-	newItem := &sectionItemData{name: spriteName, fileName: spriteFile, SizeW: uint16(ys), SizeH: uint16(xs)}
+	itemID := IID{Section: currentSection.id, Num: uint8(id)}
+	newItem := &sectionItemData{
+		name:     spriteName,
+		fileName: spriteFile,
+		SizeW:    uint16(ys), SizeH: uint16(xs),
+		id: itemID,
+	}
 	currentSection.items[newItem.id.Num] = newItem
 
 	if devMode {
-		doLog(true, "item found: %v:%v", newItem.id, newItem.name)
+		doLog(true, "item found: %v (%v)", newItem.name, newItem.id)
 	}
 
 	return true
