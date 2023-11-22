@@ -28,5 +28,4 @@ Clear chunks from players on edit, write net/client so client can also clear.
 
 
 TODO:
-Add object/sprite pack
-Add flags, render effects.
+Figure out multi-sprite organization, ids, etc.

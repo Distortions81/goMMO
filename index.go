@@ -236,9 +236,8 @@ func readObject(name string) bool {
 
 	itemID := IID{Section: currentSection.id, Num: uint8(id)}
 	newItem := &sectionItemData{
-		name:     spriteName,
-		fileName: spriteFile,
-		SizeW:    uint16(ys), SizeH: uint16(xs),
+		name:  spriteName,
+		SizeW: uint16(ys), SizeH: uint16(xs),
 		id: itemID,
 	}
 	currentSection.items[newItem.id.Num] = newItem
