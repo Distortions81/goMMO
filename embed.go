@@ -61,14 +61,20 @@ func loadSprites() {
 			if typeData.items[y] == nil {
 				continue
 			}
-			itemData := typeData.items[y]
 
-			doLog(true, "loading %v:%v", typeData.name, itemData.fileName)
-			imageData, err := loadSprite(typeData.name+"/"+itemData.fileName, false)
-			if err != nil {
-				log.Fatalln(err)
+			for s, sprite := range typeData.items[y].sprites {
+				doLog(true, "loading %v:%v", sprite.name, sprite.filepath)
+				imageData, err := loadSprite(sprite.name+"/"+sprite.filepath, false)
+				if err != nil {
+					log.Fatalln(err)
+				}
+				typeData.items[y].sprites[s].image = imageData
 			}
-			itemTypesList[x].items[y].image = imageData
+			if typeData.items[y].sprites != nil {
+				item := typeData.items[y].id.sprite
+				sprite := typeData.items[y].sprites[item].image
+				typeData.items[y].currentSprite = sprite
+			}
 		}
 	}
 
@@ -115,11 +121,11 @@ func findItemImage(typeName string, itemName string) *ebiten.Image {
 		doLog(true, "Item not found: %v : %v", typeName, itemName)
 		return nil
 	}
-	if item.image == nil {
+	if item.currentSprite == nil {
 		doLog(true, "Image not found: %v : %v", typeName, itemName)
 		return nil
 	}
-	return item.image
+	return item.currentSprite
 }
 
 // Read fonts

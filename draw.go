@@ -194,7 +194,7 @@ func drawWorldObjs(screen *ebiten.Image) {
 			op.GeoM.Translate(xPos-20, yPos-20)
 		}
 
-		screen.DrawImage(obj.itemData.image, &op)
+		screen.DrawImage(obj.itemData.currentSprite, &op)
 	}
 
 	//Draw night shadows
@@ -516,7 +516,7 @@ func drawDebugEdit(screen *ebiten.Image) {
 	buf = fmt.Sprintf("EDIT MODE: ID: %v:%v, Type: %v, Name: %v",
 		worldEditID.section, worldEditID.num, section.name, item.name)
 
-	screen.DrawImage(item.image, &op)
+	screen.DrawImage(item.currentSprite, &op)
 	drawText(buf, monoFont, color.White, colorNameBG,
 		XYf32{X: float32(screenX) - 4, Y: 2},
 		1, screen, false, false, false)

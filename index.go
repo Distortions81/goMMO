@@ -42,13 +42,15 @@ type sectionItemData struct {
 	sizeW    uint16
 	sizeH    uint16
 
-	sprites []spriteData
+	sprites       []spriteData
+	currentSprite *ebiten.Image
 }
 
 type spriteData struct {
-	name  string
-	id    uint8
-	image *ebiten.Image
+	name     string
+	filepath string
+	id       uint8
+	image    *ebiten.Image
 }
 
 var itemTypesList [assetArraySize]*sectionData
@@ -117,7 +119,7 @@ func readIndex() bool {
 			topSection = uint8(secID)
 		}
 
-		if numWords == 3 {
+		if numWords > 3 {
 			if strings.EqualFold(words[3], "onground") {
 				newSection.onGround = true
 			}
@@ -136,7 +138,7 @@ func readIndex() bool {
 
 	}
 
-	return false
+	return true
 }
 
 func readObjects(section string) bool {
@@ -150,7 +152,7 @@ func readObjects(section string) bool {
 			readObject(section + "/" + item.Name())
 		}
 	}
-	return false
+	return true
 }
 
 func readObject(name string) bool {
@@ -168,7 +170,8 @@ func readObject(name string) bool {
 	doLog(true, "Reading %v", filePath)
 
 	var xs, ys, id uint64
-	var spriteName, spriteFile string
+	var lid uint8
+	var sdata []spriteData
 
 	lines := strings.Split(string(data), "\n")
 
@@ -237,16 +240,17 @@ func readObject(name string) bool {
 				id, _ = strconv.ParseUint(words[1], 10, 32)
 			}
 		} else if area == OBJDAT_SPRITES {
-			spriteName = words[0]
-			spriteFile = words[1]
+			sdata = append(sdata, spriteData{name: words[0], filepath: words[1], id: lid})
+			lid++
 		}
 	}
 
 	itemID := IID{section: currentSection.id, num: uint8(id)}
 	newItem := &sectionItemData{
-		name:  spriteName,
+		name:  name,
 		sizeW: uint16(ys), sizeH: uint16(xs),
-		id: itemID,
+		id:      itemID,
+		sprites: sdata,
 	}
 	currentSection.items[newItem.id.num] = newItem
 

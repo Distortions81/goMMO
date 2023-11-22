@@ -434,7 +434,7 @@ func readNet() {
 						break
 					}
 					if creatureList[uid] == nil {
-						creData := creatureData{id: IID{section: sec, num: cid, UID: uid}, target: nil}
+						creData := creatureData{id: IID{section: sec, num: cid}, target: nil}
 						newCreature := &playerData{
 							creature: &creData, pos: XY{X: nx, Y: ny}, spos: XY{X: nx, Y: ny}, health: health,
 							direction: DIR_S, effects: effects}
