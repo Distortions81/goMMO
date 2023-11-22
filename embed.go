@@ -50,6 +50,8 @@ func getText(name string) (string, error) {
 // Load sprites
 func loadSprites() {
 
+	doLog(true, "Loading sprites.")
+
 	var x, y uint32
 	for x = 0; x <= uint32(topSection); x++ {
 		if itemTypesList[x] == nil {
@@ -61,34 +63,29 @@ func loadSprites() {
 			if typeData.items[y] == nil {
 				continue
 			}
-
 			for s, sprite := range typeData.items[y].sprites {
-				doLog(true, "loading %v:%v", sprite.name, sprite.filepath)
-				imageData, err := loadSprite(sprite.name+"/"+sprite.filepath, false)
+				doLog(true, "loading '%v:%v'", typeData.items[y].name, sprite.filepath)
+				imageData, err := loadSprite(typeData.items[y].name+"/"+sprite.filepath, false)
 				if err != nil {
-					log.Fatalln(err)
+					doLog(true, "loadSprites: %v", err.Error())
+					return
 				}
 				typeData.items[y].sprites[s].image = imageData
-			}
-			if typeData.items[y].sprites != nil {
-				item := typeData.items[y].id.sprite
-				sprite := typeData.items[y].sprites[item].image
-				typeData.items[y].currentSprite = sprite
 			}
 		}
 	}
 
-	testGrass = findItemImage("ground", "grass-1")
+	testGrass = findItemImage("ground", "grass", "grass")
 
-	testlight = findItemImage("effects", "light")
-	splashScreen = findItemImage("ui", "login")
+	testlight = findItemImage("effects", "light", "light")
 
-	checkOn = findItemImage("ui", "check on")
-	checkOff = findItemImage("ui", "check off")
-	closeBox = findItemImage("ui", "close box")
+	splashScreen = findItemImage("ui", "login", "login")
+	checkOn = findItemImage("ui", "check box", "on")
+	checkOff = findItemImage("ui", "check box", "off")
+	closeBox = findItemImage("ui", "close", "close")
 }
 
-func findItemImage(typeName string, itemName string) *ebiten.Image {
+func findItemImage(typeName string, itemName string, spriteName string) *ebiten.Image {
 
 	var typeID uint8
 	for _, item := range itemTypesList {
@@ -97,12 +94,12 @@ func findItemImage(typeName string, itemName string) *ebiten.Image {
 		}
 		if item.name == typeName {
 			typeID = item.id
-			continue
+			break
 		}
 	}
 	iType := itemTypesList[typeID]
 	if iType == nil {
-		doLog(true, "Item type not found: %v", typeName)
+		doLog(true, "findItemImage: Type not found: %v:%v:%v", typeName, itemName, spriteName)
 		return nil
 	}
 
@@ -118,14 +115,23 @@ func findItemImage(typeName string, itemName string) *ebiten.Image {
 	}
 	item := iType.items[itemID]
 	if item == nil {
-		doLog(true, "Item not found: %v : %v", typeName, itemName)
+		doLog(true, "findItemImage: Item not found: %v:%v:%v", typeName, itemName, spriteName)
 		return nil
 	}
-	if item.currentSprite == nil {
-		doLog(true, "Image not found: %v : %v", typeName, itemName)
-		return nil
+
+	for _, sprite := range item.sprites {
+		if sprite.name == spriteName {
+			if sprite.image == nil {
+				doLog(true, "findItemImage: Nil match: %v:%v:%v", typeName, itemName, spriteName)
+				return nil
+			}
+			doLog(true, "findItemImage: Matched: %v:%v:%v", typeName, itemName, spriteName)
+			return sprite.image
+		}
 	}
-	return item.currentSprite
+
+	doLog(true, "findItemImage: Sprite not found: %v:%v:%v", typeName, itemName, spriteName)
+	return nil
 }
 
 // Read fonts

@@ -6,6 +6,6 @@ effects:heal
 id:0
 
 sprites:
-0:walk:player-walk.png
-1:attack:player-attack.png
-2:dead:player-dead.png
+walk:player-walk.png
+attack:player-attack.png
+dead:player-dead.png

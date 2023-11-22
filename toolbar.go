@@ -126,7 +126,7 @@ func initToolbar() {
 			toolbarMax++
 			toolbarItems = append(toolbarItems, toolbarItemData{sType: subPos, oType: oType})
 
-			subType.list[o].image = findItemImage(subType.folder, oType.base)
+			subType.list[o].image = findItemImage(subType.folder, "test", oType.base)
 		}
 	}
 }
@@ -157,11 +157,11 @@ func drawToolbar(click, hover bool, index int) {
 
 		if item.oType.base == "passive" {
 			if playerMode == PMODE_PASSIVE {
-				img = findItemImage("player-modes", "passive")
+				img = findItemImage("player-modes", "modes", "passive")
 			} else if playerMode == PMODE_ATTACK {
-				img = findItemImage("player-modes", "attack")
+				img = findItemImage("player-modes", "modes", "attack")
 			} else if playerMode == PMODE_HEAL {
-				img = findItemImage("player-modes", "heal")
+				img = findItemImage("player-modes", "modes", "heal")
 			}
 		}
 

@@ -47,7 +47,7 @@ func loadPlayerModes() {
 
 	//Load images
 	for m, mode := range modeNames {
-		modeNames[m].image = findItemImage("player-modes", mode.imgName)
+		modeNames[m].image = findItemImage("player-modes", "modes", mode.imgName)
 	}
 }
 

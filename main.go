@@ -89,7 +89,6 @@ func main() {
 
 	helpText, _ = getText("help")
 	loadSprites()
-	initSpritePacks()
 
 	initToolbar()
 	drawToolbar(false, false, maxItemType)

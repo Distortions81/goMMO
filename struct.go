@@ -84,6 +84,7 @@ type worldObject struct {
 }
 
 type creatureData struct {
-	id     IID
+	id IID
+
 	target *playerData
 }

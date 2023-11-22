@@ -88,7 +88,7 @@ func drawBootScreen(screen *ebiten.Image) {
 
 	op.GeoM.Scale(scalew, scaleh)
 
-	screen.DrawImage(splashScreen, op)
+	//screen.DrawImage(splashScreen, op)
 	drawChatLines(screen)
 }
 
@@ -194,7 +194,7 @@ func drawWorldObjs(screen *ebiten.Image) {
 			op.GeoM.Translate(xPos-20, yPos-20)
 		}
 
-		screen.DrawImage(obj.itemData.currentSprite, &op)
+		//screen.DrawImage(obj.itemData.sprites[0].image, &op)
 	}
 
 	//Draw night shadows
@@ -359,7 +359,7 @@ func drawPlayers(screen *ebiten.Image) {
 		}
 
 		//Draw sub-image
-		screen.DrawImage(getCharFrame(player).(*ebiten.Image), &op)
+		//		screen.DrawImage(getCharFrame(player).(*ebiten.Image), &op)
 	}
 }
 
@@ -516,7 +516,7 @@ func drawDebugEdit(screen *ebiten.Image) {
 	buf = fmt.Sprintf("EDIT MODE: ID: %v:%v, Type: %v, Name: %v",
 		worldEditID.section, worldEditID.num, section.name, item.name)
 
-	screen.DrawImage(item.currentSprite, &op)
+	screen.DrawImage(item.sprites[item.id.sprite].image, &op)
 	drawText(buf, monoFont, color.White, colorNameBG,
 		XYf32{X: float32(screenX) - 4, Y: 2},
 		1, screen, false, false, false)

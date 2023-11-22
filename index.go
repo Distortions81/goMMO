@@ -42,8 +42,7 @@ type sectionItemData struct {
 	sizeW    uint16
 	sizeH    uint16
 
-	sprites       []spriteData
-	currentSprite *ebiten.Image
+	sprites []spriteData
 }
 
 type spriteData struct {
@@ -217,13 +216,15 @@ func readObject(name string) bool {
 		if numWords == 0 {
 			continue
 		}
-		if area == OBJDATA_NONE {
-			if words[0] == "info" {
-				area = OBJDAT_INFO
-			} else if words[0] == "sprites" {
-				area = OBJDAT_SPRITES
-			}
-		} else if area == OBJDAT_INFO {
+
+		if words[0] == "info" {
+			area = OBJDAT_INFO
+			continue
+		} else if words[0] == "sprites" {
+			area = OBJDAT_SPRITES
+			continue
+		}
+		if area == OBJDAT_INFO {
 			if words[0] == "size" {
 				dims := strings.Split(words[1], ",")
 				numDims := len(dims)
@@ -242,6 +243,7 @@ func readObject(name string) bool {
 		} else if area == OBJDAT_SPRITES {
 			sdata = append(sdata, spriteData{name: words[0], filepath: words[1], id: lid})
 			lid++
+			doLog(true, "sprite added: %v: %v", words[0], words[1])
 		}
 	}
 
@@ -255,7 +257,7 @@ func readObject(name string) bool {
 	currentSection.items[newItem.id.num] = newItem
 
 	if devMode {
-		doLog(true, "item found: %v (%v)", newItem.name, newItem.id)
+		doLog(true, "object added: %v", newItem.name)
 	}
 
 	return true
