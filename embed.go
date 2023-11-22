@@ -106,7 +106,7 @@ func findItemImage(typeName string, itemName string) *ebiten.Image {
 			continue
 		}
 		if item.name == itemName {
-			itemID = item.id.Num
+			itemID = item.id.num
 			continue
 		}
 	}

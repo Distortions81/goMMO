@@ -318,7 +318,7 @@ func drawPlayers(screen *ebiten.Image) {
 		if pnameStr != "" {
 			pname = pnameStr
 		} else if player.creature != nil {
-			pname = itemTypesList[player.creature.id.Section].items[player.creature.id.Num].name
+			pname = itemTypesList[player.creature.id.section].items[player.creature.id.num].name
 		} else {
 			pname = fmt.Sprintf("Player-%v", player.id)
 		}
@@ -497,16 +497,16 @@ func drawDebugEdit(screen *ebiten.Image) {
 	op.GeoM.Translate(xPos, yPos)
 
 	// Draw debug info
-	var buf = fmt.Sprintf("EDIT MODE: ID: %v:%v - Invalid item", worldEditID.Section, worldEditID.Num)
+	var buf = fmt.Sprintf("EDIT MODE: ID: %v:%v - Invalid item", worldEditID.section, worldEditID.num)
 
-	section := itemTypesList[worldEditID.Section]
+	section := itemTypesList[worldEditID.section]
 	if section == nil {
 		drawText(buf, monoFont, color.White, colorNameBG,
 			XYf32{X: float32(screenX) - 4, Y: 2},
 			1, screen, false, false, false)
 		return
 	}
-	item := section.items[worldEditID.Num]
+	item := section.items[worldEditID.num]
 	if item == nil {
 		drawText(buf, monoFont, color.White, colorNameBG,
 			XYf32{X: float32(screenX) - 4, Y: 2},
@@ -514,7 +514,7 @@ func drawDebugEdit(screen *ebiten.Image) {
 		return
 	}
 	buf = fmt.Sprintf("EDIT MODE: ID: %v:%v, Type: %v, Name: %v",
-		worldEditID.Section, worldEditID.Num, section.name, item.name)
+		worldEditID.section, worldEditID.num, section.name, item.name)
 
 	screen.DrawImage(item.image, &op)
 	drawText(buf, monoFont, color.White, colorNameBG,

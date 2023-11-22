@@ -65,13 +65,13 @@ func makeRayObjs() {
 
 	//Cast against objects
 	for _, obj := range wObjList {
-		if obj.itemId.Section != 3 {
+		if obj.itemId.section != 3 {
 			continue
 		}
 		rec := rect(
-			float64(sCamPos.X-obj.pos.X-uint32(obj.itemData.SizeW/2)),
-			float64(sCamPos.Y-obj.pos.Y-uint32(obj.itemData.SizeH/2)),
-			float64(obj.itemData.SizeW), float64(obj.itemData.SizeH))
+			float64(sCamPos.X-obj.pos.X-uint32(obj.itemData.sizeW/2)),
+			float64(sCamPos.Y-obj.pos.Y-uint32(obj.itemData.sizeH/2)),
+			float64(obj.itemData.sizeW), float64(obj.itemData.sizeH))
 		rObjects = append(rObjects, rayObject{rec})
 	}
 }

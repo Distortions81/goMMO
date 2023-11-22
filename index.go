@@ -22,30 +22,32 @@ const (
 )
 
 type IID struct {
-	Section uint8
-	Num     uint8
-	UID     uint32
+	section uint8
+	num     uint8
+	sprite  uint8
 }
 
 type sectionData struct {
-	id    uint8
-	name  string
-	items [assetArraySize]*sectionItemData
+	id       uint8
+	name     string
+	items    [assetArraySize]*sectionItemData
+	onGround bool
 }
 
 type sectionItemData struct {
 	name string
 
 	id       IID
-	OnGround bool
-	SizeW    uint16
-	SizeH    uint16
+	onGround bool
+	sizeW    uint16
+	sizeH    uint16
 
 	sprites []spriteData
 }
 
 type spriteData struct {
 	name  string
+	id    uint8
 	image *ebiten.Image
 }
 
@@ -104,8 +106,8 @@ func readIndex() bool {
 		words := strings.Split(sName, ":")
 		numWords := len(words)
 
-		if numWords != 2 {
-			doLog(true, "Section header invalid: %v words, not 2", numWords)
+		if numWords < 2 {
+			doLog(true, "Section header invalid: %v words, less than 2.", numWords)
 			return false
 		}
 
@@ -113,6 +115,12 @@ func readIndex() bool {
 		newSection := &sectionData{name: words[1], id: uint8(secID)}
 		if secID > uint64(topSection) {
 			topSection = uint8(secID)
+		}
+
+		if numWords == 3 {
+			if strings.EqualFold(words[3], "onground") {
+				newSection.onGround = true
+			}
 		}
 
 		itemTypesList[newSection.id] = newSection
@@ -234,13 +242,13 @@ func readObject(name string) bool {
 		}
 	}
 
-	itemID := IID{Section: currentSection.id, Num: uint8(id)}
+	itemID := IID{section: currentSection.id, num: uint8(id)}
 	newItem := &sectionItemData{
 		name:  spriteName,
-		SizeW: uint16(ys), SizeH: uint16(xs),
+		sizeW: uint16(ys), sizeH: uint16(xs),
 		id: itemID,
 	}
-	currentSection.items[newItem.id.Num] = newItem
+	currentSection.items[newItem.id.num] = newItem
 
 	if devMode {
 		doLog(true, "item found: %v (%v)", newItem.name, newItem.id)

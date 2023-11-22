@@ -2,7 +2,7 @@ version 3
 
 0:characters
 1:creatures
-2:deco
+2:deco:onground
 3:effects
 4:ground
 5:player-modes

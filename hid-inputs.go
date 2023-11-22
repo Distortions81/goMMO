@@ -333,22 +333,22 @@ func worldEditor() {
 		}
 		if repeatingKeyPressed(ebiten.KeyEqual) {
 			if shiftKey {
-				if worldEditID.Section < assetArraySize {
-					worldEditID.Section++
+				if worldEditID.section < assetArraySize {
+					worldEditID.section++
 				}
 			} else {
-				if worldEditID.Num < assetArraySize {
-					worldEditID.Num++
+				if worldEditID.num < assetArraySize {
+					worldEditID.num++
 				}
 			}
 		} else if repeatingKeyPressed(ebiten.KeyMinus) {
 			if shiftKey {
-				if worldEditID.Section > 0 {
-					worldEditID.Section--
+				if worldEditID.section > 0 {
+					worldEditID.section--
 				}
 			} else {
-				if worldEditID.Num > 0 {
-					worldEditID.Num--
+				if worldEditID.num > 0 {
+					worldEditID.num--
 				}
 			}
 		}
@@ -437,7 +437,7 @@ func editPlaceItem() {
 	var buf []byte
 	outbuf := bytes.NewBuffer(buf)
 
-	itemType := itemTypesList[worldEditID.Section]
+	itemType := itemTypesList[worldEditID.section]
 	if itemType == nil {
 		return
 	}
@@ -446,8 +446,8 @@ func editPlaceItem() {
 		return
 	}
 
-	binary.Write(outbuf, binary.LittleEndian, worldEditID.Section)
-	binary.Write(outbuf, binary.LittleEndian, worldEditID.Num)
+	binary.Write(outbuf, binary.LittleEndian, worldEditID.section)
+	binary.Write(outbuf, binary.LittleEndian, worldEditID.num)
 	binary.Write(outbuf, binary.LittleEndian, editPos.X)
 	binary.Write(outbuf, binary.LittleEndian, editPos.Y)
 	sendCommand(CMD_EditPlaceItem, outbuf.Bytes())

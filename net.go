@@ -367,7 +367,7 @@ func readNet() {
 					objData := itemTypesList[sid].items[oid]
 					wObjList = append(wObjList,
 						&worldObject{
-							itemId:   IID{Section: sid, Num: oid},
+							itemId:   IID{section: sid, num: oid},
 							pos:      XY{X: nx, Y: ny},
 							itemData: objData})
 				}
@@ -434,7 +434,7 @@ func readNet() {
 						break
 					}
 					if creatureList[uid] == nil {
-						creData := creatureData{id: IID{Section: sec, Num: cid, UID: uid}, target: nil}
+						creData := creatureData{id: IID{section: sec, num: cid, UID: uid}, target: nil}
 						newCreature := &playerData{
 							creature: &creData, pos: XY{X: nx, Y: ny}, spos: XY{X: nx, Y: ny}, health: health,
 							direction: DIR_S, effects: effects}
