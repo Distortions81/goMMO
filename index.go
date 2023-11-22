@@ -34,13 +34,18 @@ type sectionData struct {
 }
 
 type sectionItemData struct {
-	name     string
-	fileName string
+	name string
+
 	id       IID
 	OnGround bool
 	SizeW    uint16
 	SizeH    uint16
 
+	sprites []spriteData
+}
+
+type spriteData struct {
+	name  string
 	image *ebiten.Image
 }
 
