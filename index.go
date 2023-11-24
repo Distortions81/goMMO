@@ -148,19 +148,19 @@ func readObjects(section string) bool {
 
 	for _, item := range dirs {
 		if item.IsDir() {
-			readObject(section + "/" + item.Name())
+			readObject(section, item.Name())
 		}
 	}
 	return true
 }
 
-func readObject(name string) bool {
+func readObject(folder, name string) bool {
 	if currentSection == nil {
 		doLog(true, "ReadObject: No valid current section?")
 		return false
 	}
 
-	filePath := fmt.Sprintf("%v%v/object.dat", gfxDir, name)
+	filePath := fmt.Sprintf("%v%v/%v/object.dat", gfxDir, folder, name)
 	data, err := efs.ReadFile(filePath)
 	if err != nil {
 		doLog(true, "Unable to read %v", filePath)

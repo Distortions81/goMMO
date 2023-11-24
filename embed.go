@@ -65,7 +65,7 @@ func loadSprites() {
 			}
 			for s, sprite := range typeData.items[y].sprites {
 				doLog(true, "loading '%v:%v'", typeData.items[y].name, sprite.filepath)
-				imageData, err := loadSprite(typeData.items[y].name+"/"+sprite.filepath, false)
+				imageData, err := loadSprite(typeData.name+"/"+typeData.items[y].name+"/"+sprite.filepath, false)
 				if err != nil {
 					doLog(true, "loadSprites: %v", err.Error())
 					return
