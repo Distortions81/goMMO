@@ -52,25 +52,16 @@ func loadSprites() {
 
 	doLog(true, "Loading sprites.")
 
-	var x, y uint32
-	for x = 0; x <= uint32(topSection); x++ {
-		if itemTypesList[x] == nil {
-			continue
-		}
-		typeData := itemTypesList[x]
-
-		for y = 0; y <= uint32(topItem); y++ {
-			if typeData.items[y] == nil {
-				continue
-			}
-			for s, sprite := range typeData.items[y].sprites {
-				doLog(true, "loading '%v:%v'", typeData.items[y].name, sprite.filepath)
-				imageData, err := loadSprite(typeData.name+"/"+typeData.items[y].name+"/"+sprite.filepath, false)
+	for t, typeData := range itemTypesList {
+		for i, item := range typeData.items {
+			for s, sprite := range item.sprites {
+				doLog(true, "loading '%v:%v'", sprite.name, sprite.filepath)
+				imageData, err := loadSprite(typeData.name+"/"+item.name+"/"+sprite.filepath, false)
 				if err != nil {
 					doLog(true, "loadSprites: %v", err.Error())
 					return
 				}
-				typeData.items[y].sprites[s].image = imageData
+				itemTypesList[t].items[i].sprites[s].image = imageData
 			}
 		}
 	}

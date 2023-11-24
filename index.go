@@ -13,8 +13,6 @@ const (
 	indexPath      = gfxDir + "index.dat"
 )
 
-var topSection, topItem uint8
-
 const (
 	OBJDATA_NONE CMD = iota
 	OBJDAT_INFO
@@ -30,7 +28,7 @@ type IID struct {
 type sectionData struct {
 	id       uint8
 	name     string
-	items    [assetArraySize]*sectionItemData
+	items    map[uint8]*sectionItemData
 	onGround bool
 }
 
@@ -42,7 +40,7 @@ type sectionItemData struct {
 	sizeW    uint16
 	sizeH    uint16
 
-	sprites []spriteData
+	sprites map[uint8]*spriteData
 }
 
 type spriteData struct {
@@ -52,10 +50,11 @@ type spriteData struct {
 	image    *ebiten.Image
 }
 
-var itemTypesList [assetArraySize]*sectionData
+var itemTypesList map[uint8]*sectionData
 var currentSection *sectionData
 
 func readIndex() bool {
+	itemTypesList = make(map[uint8]*sectionData)
 
 	data, err := efs.ReadFile(indexPath)
 	if err != nil {
@@ -113,10 +112,8 @@ func readIndex() bool {
 		}
 
 		secID, _ := strconv.ParseUint(words[0], 10, 8)
-		newSection := &sectionData{name: words[1], id: uint8(secID)}
-		if secID > uint64(topSection) {
-			topSection = uint8(secID)
-		}
+		iMap := make(map[uint8]*sectionItemData)
+		newSection := &sectionData{name: words[1], id: uint8(secID), items: iMap}
 
 		if numWords > 3 {
 			if strings.EqualFold(words[3], "onground") {
@@ -252,7 +249,10 @@ func readObject(folder, name string) bool {
 		name:  name,
 		sizeW: uint16(ys), sizeH: uint16(xs),
 		id:      itemID,
-		sprites: sdata,
+		sprites: make(map[uint8]*spriteData),
+	}
+	for s, sprite := range sdata {
+		newItem.sprites[sprite.id] = &sdata[s]
 	}
 	currentSection.items[newItem.id.num] = newItem
 
