@@ -116,7 +116,7 @@ func findItemImage(typeName string, itemName string, spriteName string) *ebiten.
 				doLog(true, "findItemImage: Nil match: %v:%v:%v", typeName, itemName, spriteName)
 				return nil
 			}
-			doLog(true, "findItemImage: Matched: %v:%v:%v", typeName, itemName, spriteName)
+			//doLog(true, "findItemImage: Matched: %v:%v:%v", typeName, itemName, spriteName)
 			return sprite.image
 		}
 	}
