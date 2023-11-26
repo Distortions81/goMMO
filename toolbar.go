@@ -126,7 +126,7 @@ func initToolbar() {
 			toolbarMax++
 			toolbarItems = append(toolbarItems, toolbarItemData{sType: subPos, oType: oType})
 
-			subType.list[o].image = findItemImage(subType.folder, "test", oType.base)
+			subType.list[o].image = findItemImage(subType.folder, oType.base, oType.base)
 		}
 	}
 }
@@ -167,7 +167,7 @@ func drawToolbar(click, hover bool, index int) {
 
 		// Something went wrong, exit
 		if img == nil {
-			//doLog(false, "FAILURE: %v\n", pos)
+			doLog(false, "FAILURE: %v\n", pos)
 			return
 		}
 
