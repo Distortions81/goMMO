@@ -60,7 +60,7 @@ func connectServer() {
 func doConnect() bool {
 
 	if playerNames == nil {
-		playerNames = make(map[uint32]pNameData)
+		playerNames = make(map[uint32]*pNameData)
 	}
 
 	if gameMode != MODE_Connect && gameMode != MODE_Reconnect {
@@ -94,7 +94,7 @@ func doConnect() bool {
 
 	//Send INIT to server, reset everything
 	goingDirection = DIR_NONE
-	playerNames = make(map[uint32]pNameData)
+	playerNames = make(map[uint32]*pNameData)
 	localPlayerPos = worldCenter
 	oldLocalPlayerPos = worldCenter
 	wObjList = []*worldObject{}
@@ -117,16 +117,10 @@ func doConnect() bool {
 
 func playerIdToName(id uint32) string {
 
-	for _, pname := range playerNames {
-		if pname.id == id {
-			if pname.name == "" {
-				continue
-			}
-			return pname.name
-		}
+	if playerNames[id] == nil {
+		return ""
 	}
-
-	return ""
+	return playerNames[id].name
 }
 
 // Used for motion smoothing
@@ -229,7 +223,7 @@ func readNet() {
 					name += string(nameRune)
 				}
 
-				playerNames[id] = pNameData{name: name, id: id}
+				playerNames[id] = &pNameData{name: name, id: id}
 			}
 
 		case CMD_WorldUpdate:
