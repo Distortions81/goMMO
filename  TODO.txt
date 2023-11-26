@@ -1,6 +1,6 @@
 Healing:
 maybe also different sprite for the healer?
-Need to think about how we can do the effect without new sprites.
+Need to think about how we can do the effect without new sprites (partially complete)
 Eventually use target system for targeted
 
 Current:
