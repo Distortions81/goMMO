@@ -1,4 +1,6 @@
 version 3
+#NEVER CHANGE IDS
+#ADD NEW IDS ONLY
 
 0:characters
 1:creatures
