@@ -22,7 +22,7 @@ var (
 	//Our local player's data (id, etc)
 	localPlayer playerData
 	//Player ID to name map
-	playerNames map[uint32]pNameData
+	playerNames map[uint32]*pNameData
 	//Direction we are walking
 	goingDirection DIR
 
