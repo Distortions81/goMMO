@@ -88,7 +88,7 @@ func drawBootScreen(screen *ebiten.Image) {
 
 	op.GeoM.Scale(scalew, scaleh)
 
-	//screen.DrawImage(splashScreen, op)
+	screen.DrawImage(splashScreen, op)
 	drawChatLines(screen)
 }
 
@@ -194,7 +194,15 @@ func drawWorldObjs(screen *ebiten.Image) {
 			op.GeoM.Translate(xPos-20, yPos-20)
 		}
 
-		//screen.DrawImage(obj.itemData.sprites[0].image, &op)
+		var img *ebiten.Image
+		if obj.itemData != nil {
+			img = obj.itemData.sprites[obj.itemId.sprite].image
+		}
+		if img == nil {
+			doLog(true, "Sprite not found: %v", obj.itemId)
+		} else {
+			screen.DrawImage(obj.itemData.sprites[0].image, &op)
+		}
 	}
 
 	//Draw night shadows
