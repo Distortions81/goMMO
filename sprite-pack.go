@@ -9,9 +9,9 @@ func initSpritePacks() {
 
 	character := spritePack{
 		size:    52,
-		walking: findItemImage("characters", "player", "walk"),
-		dead:    findItemImage("characters", "player", "dead"),
-		attack:  findItemImage("characters", "player", "attack"),
+		walking: findItemImage("characters", "player 1", "walk"),
+		dead:    findItemImage("characters", "player 1", "dead"),
+		attack:  findItemImage("characters", "player 1", "attack"),
 	}
 	spritePacks["character"] = &character
 
