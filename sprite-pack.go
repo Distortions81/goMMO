@@ -1,6 +1,8 @@
 package main
 
-import "github.com/hajimehoshi/ebiten/v2"
+import (
+	"github.com/hajimehoshi/ebiten/v2"
+)
 
 var spritePacks map[string]*spritePack
 
@@ -12,6 +14,9 @@ func initSpritePacks() {
 		walking: findItemImage("characters", "player 1", "walk"),
 		dead:    findItemImage("characters", "player 1", "dead"),
 		attack:  findItemImage("characters", "player 1", "attack"),
+		healColors: colorPack{
+			frames: []outlineColors{}, numFrames: 3,
+		},
 	}
 	spritePacks["character"] = &character
 
@@ -39,4 +44,6 @@ type spritePack struct {
 
 	healingAttack  *ebiten.Image
 	healingAttack2 *ebiten.Image
+
+	healColors colorPack
 }

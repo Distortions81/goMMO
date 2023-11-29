@@ -8,7 +8,17 @@ import (
 	"github.com/fogleman/gg"
 )
 
-func makeOutlines(inputImg image.Image) image.Image {
+type colorPack struct {
+	frames    []outlineColors
+	numFrames int
+}
+
+type outlineColors struct {
+	colors       []color.RGBA
+	outlineWidth []int
+}
+
+func makeOutlines(inputImg image.Image, outlineColors []color.RGBA) image.Image {
 
 	// Create a new image context for the original image
 	originalContext := gg.NewContextForImage(inputImg)
@@ -16,15 +26,6 @@ func makeOutlines(inputImg image.Image) image.Image {
 	// Create a new RGBA image for the outlined image
 	outlinedRect := originalContext.Image().Bounds()
 	outlinedRGBA := image.NewRGBA(outlinedRect)
-
-	// Define multiple outline colors
-	outlineColors := []color.RGBA{
-		{0, 255, 255, 255},
-		{0, 255, 255, 255},
-		{0, 192, 255, 255},
-		{0, 128, 255, 255},
-		{0, 0, 255, 255},
-	}
 
 	// Set the outline width
 	oWidth := 1.25
