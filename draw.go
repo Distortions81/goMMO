@@ -367,7 +367,7 @@ func drawPlayers(screen *ebiten.Image) {
 		}
 
 		//Draw sub-image
-		//		screen.DrawImage(getCharFrame(player).(*ebiten.Image), &op)
+		screen.DrawImage(getCharFrame(player).(*ebiten.Image), &op)
 	}
 }
 
