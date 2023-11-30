@@ -49,8 +49,16 @@ const (
 	maxChatLen = 256
 )
 
+var runOnce bool = false
+
 // Ebiten input handler
 func (g *Game) Update() error {
+
+	//For some reason, we can only run this after game init
+	if !runOnce {
+		runOnce = true
+		initSpritePacks()
+	}
 
 	// Ignore if game not focused
 	if !ebiten.IsFocused() {
