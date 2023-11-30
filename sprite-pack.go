@@ -32,7 +32,7 @@ var healAnimation = colorPack{
 			},
 		},
 	},
-	numFrames: 2,
+	numFrames: 3,
 }
 
 func initSpritePacks() {
@@ -48,9 +48,12 @@ func initSpritePacks() {
 				deadSprite := findItemImage(itemType.name, item.name, "dead")
 				attackSprite := findItemImage(itemType.name, item.name, "attack")
 
-				healSprite := makeOutlines(walkSprite, healAnimation.frames[0].colors)
-				healDeadSprite := makeOutlines(deadSprite, healAnimation.frames[0].colors)
-				healAttackSprite := makeOutlines(attackSprite, healAnimation.frames[0].colors)
+				var healSprite, healDeadSprite, healAttackSprite []*ebiten.Image
+				for x := 0; x < healAnimation.numFrames; x++ {
+					healSprite = append(healSprite, makeOutlines(walkSprite, healAnimation.frames[x].colors))
+					healDeadSprite = append(healDeadSprite, makeOutlines(deadSprite, healAnimation.frames[x].colors))
+					healAttackSprite = append(healAttackSprite, makeOutlines(attackSprite, healAnimation.frames[x].colors))
+				}
 
 				if walkSprite == nil || deadSprite == nil || attackSprite == nil {
 					doLog(true, "Item not found: %v, %v", itemType.name, item.name)
@@ -58,9 +61,9 @@ func initSpritePacks() {
 				}
 				newPack := &spritePack{
 					walking: walkSprite, dead: deadSprite, attack: attackSprite,
-					healing:       []*ebiten.Image{healSprite},
-					healingDead:   []*ebiten.Image{healDeadSprite},
-					healingAttack: []*ebiten.Image{healAttackSprite},
+					healing:       healSprite,
+					healingDead:   healDeadSprite,
+					healingAttack: healAttackSprite,
 					sizeH:         int(item.sizeH), sizeW: int(item.sizeW)}
 				spritePacks[item.name] = newPack
 			}
