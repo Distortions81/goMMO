@@ -11,6 +11,8 @@ import (
 	"time"
 )
 
+const healMilliDiv = 50
+
 func changeGameMode(newMode MODE, delay time.Duration) {
 	defer reportPanic("changeGameMode")
 
@@ -84,7 +86,7 @@ func getCharFrame(player *playerData) image.Image {
 		return nil
 	}
 
-	healFrame := int(netTick % uint64((healAnimation.numFrames-1)*2))
+	healFrame := int(uint64(time.Now().UnixMilli()/healMilliDiv) % uint64((healAnimation.numFrames-1)*2))
 	if healFrame > (healAnimation.numFrames - 1) {
 		healFrame = healAnimation.numFrames - (healFrame - (healAnimation.numFrames - 1)) - 1
 	}
