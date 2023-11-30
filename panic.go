@@ -15,6 +15,11 @@ const (
 	buildInfo = "dev"
 )
 
+func init() {
+	os.Remove(hdFileName)
+	os.Remove(pLogName)
+}
+
 func reportPanic(format string, args ...interface{}) {
 	if r := recover(); r != nil {
 
