@@ -16,7 +16,7 @@ type colorPack struct {
 
 type outlineColors struct {
 	colors       []color.RGBA
-	outlineWidth []int
+	outlineWidth []float64
 }
 
 func makeOutlines(inputImg image.Image, outlineColors []color.RGBA) *ebiten.Image {

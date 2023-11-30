@@ -12,31 +12,47 @@ var healAnimation = colorPack{
 	frames: []outlineColors{
 		{
 			colors: []color.RGBA{
-				{R: 255, G: 0, B: 0, A: 255},
-				{R: 0, G: 255, B: 0, A: 255},
 				{R: 0, G: 0, B: 255, A: 255},
+			},
+			outlineWidth: []float64{
+				2, 2, 2,
 			},
 		},
 		{
 			colors: []color.RGBA{
+				{R: 0, G: 255, B: 128, A: 255},
 				{R: 0, G: 0, B: 255, A: 255},
-				{R: 0, G: 255, B: 0, A: 255},
-				{R: 255, G: 0, B: 0, A: 255},
+			},
+			outlineWidth: []float64{
+				2, 2, 2,
 			},
 		},
 		{
 			colors: []color.RGBA{
-				{R: 255, G: 255, B: 255, A: 255},
-				{R: 255, G: 255, B: 255, A: 255},
-				{R: 255, G: 255, B: 255, A: 255},
+				{R: 0, G: 255, B: 255, A: 255},
+				{R: 0, G: 255, B: 128, A: 255},
+				{R: 0, G: 0, B: 255, A: 255},
+			},
+			outlineWidth: []float64{
+				2, 2, 2,
+			},
+		},
+		{
+			colors: []color.RGBA{
+				{R: 0, G: 255, B: 128, A: 255},
+				{R: 0, G: 0, B: 255, A: 255},
+			},
+			outlineWidth: []float64{
+				2, 2, 2,
 			},
 		},
 	},
-	numFrames: 3,
 }
 
 func initSpritePacks() {
 	spritePacks = make(map[string]*spritePack)
+
+	healAnimation.numFrames = len(healAnimation.frames)
 
 	for _, itemType := range itemTypesList {
 
