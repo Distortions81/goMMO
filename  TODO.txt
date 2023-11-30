@@ -4,6 +4,7 @@ Base healing animations on time, not net tick.
 Eventually use target system for targeted
 
 Current:
+FIX TARGETING, NOT WORKING NORTH OR SOUTH FOR PLAYER TO PLAYER???
 Edit mode: only moderators, remove & move objects
 controller inputs
 player guest / login / create login ### goMMOLogin on laptop? ###
@@ -24,3 +25,5 @@ Future:
 Look into threading physics by using two-step like:
 https://github.com/Distortions81/Gravity-Simulation-Golang/blob/main/main.go
 Clear chunks from players on edit, write net/client so client can also clear.
+
+
