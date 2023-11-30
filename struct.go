@@ -28,14 +28,6 @@ type XYf32 struct {
 type Game struct {
 }
 
-type EFF uint8
-
-const (
-	EFFECT_NONE EFF = 1 << iota
-	EFFECT_HEAL
-	EFFECT_ATTACK
-)
-
 type pNameData struct {
 	name string
 	id   uint32

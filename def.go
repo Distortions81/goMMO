@@ -83,6 +83,16 @@ const (
 	PMODE_HEAL
 )
 
+type EFF uint8
+
+const (
+	EFFECT_NONE EFF = 1 << iota
+	EFFECT_HEAL
+	EFFECT_HEALER
+	EFFECT_ATTACK
+	EFFECT_INJURED
+)
+
 // Network commands
 type CMD uint8
 
