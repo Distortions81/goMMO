@@ -6,6 +6,7 @@ import (
 	"image/draw"
 
 	"github.com/fogleman/gg"
+	"github.com/hajimehoshi/ebiten/v2"
 )
 
 type colorPack struct {
@@ -18,7 +19,11 @@ type outlineColors struct {
 	outlineWidth []int
 }
 
-func makeOutlines(inputImg image.Image, outlineColors []color.RGBA) image.Image {
+func makeOutlines(inputImg image.Image, outlineColors []color.RGBA) *ebiten.Image {
+
+	if inputImg == nil {
+		return nil
+	}
 
 	// Create a new image context for the original image
 	originalContext := gg.NewContextForImage(inputImg)
@@ -53,5 +58,5 @@ func makeOutlines(inputImg image.Image, outlineColors []color.RGBA) image.Image 
 	// Composite the original image on top of the outlined image
 	draw.Draw(outlinedRGBA, outlinedRect, originalContext.Image(), image.Point{}, draw.Over)
 
-	return outlinedRGBA
+	return ebiten.NewImageFromImage(outlinedRGBA)
 }
