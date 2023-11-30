@@ -22,7 +22,8 @@ func initSpritePacks() {
 					doLog(true, "Item not found: %v, %v", itemType.name, item.name)
 					continue
 				}
-				newPack := &spritePack{walking: walkSprite, dead: deadSprite, attack: attackSprite}
+				newPack := &spritePack{walking: walkSprite, dead: deadSprite, attack: attackSprite,
+					sizeH: int(item.sizeH), sizeW: int(item.sizeW)}
 				spritePacks[item.name] = newPack
 			}
 		}
@@ -30,7 +31,7 @@ func initSpritePacks() {
 }
 
 type spritePack struct {
-	size int
+	sizeH, sizeW int
 
 	walking *ebiten.Image
 	dead    *ebiten.Image

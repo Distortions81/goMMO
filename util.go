@@ -72,7 +72,7 @@ func getCharFrame(player *playerData) image.Image {
 
 	var sprite *spritePack
 	if player.creature == nil {
-		sprite = spritePacks["characters"]
+		sprite = spritePacks["player 1"]
 	} else {
 		sType := itemTypesList[player.creature.id.section]
 		item := sType.items[player.creature.id.num]
@@ -80,6 +80,7 @@ func getCharFrame(player *playerData) image.Image {
 	}
 
 	if sprite == nil {
+		doLog(true, "getCharFrame: sprite pack nil")
 		return nil
 	}
 
@@ -107,10 +108,10 @@ func getCharFrame(player *playerData) image.Image {
 	}
 
 	rect := image.Rectangle{}
-	rect.Min.X = (newFrame * sprite.size)
-	rect.Max.X = (newFrame * sprite.size) + sprite.size
+	rect.Min.X = (newFrame * sprite.sizeW)
+	rect.Max.X = (newFrame * sprite.sizeW) + sprite.sizeW
 	rect.Min.Y = dirOff
-	rect.Max.Y = sprite.size + dirOff
+	rect.Max.Y = sprite.sizeH + dirOff
 
 	if hasEffects(player, EFFECT_ATTACK|EFFECT_HEAL) {
 		if (netTick/2)%2 == 0 {
