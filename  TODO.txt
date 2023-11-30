@@ -1,5 +1,6 @@
 Healing:
 Offset healing animation for healer
+Base healing animations on time, not net tick.
 Eventually use target system for targeted
 
 Current:
