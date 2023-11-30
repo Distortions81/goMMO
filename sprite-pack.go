@@ -78,6 +78,7 @@ func initSpritePacks() {
 				deadSprite := findItemImage(itemType.name, item.name, "dead")
 				attackSprite := findItemImage(itemType.name, item.name, "attack")
 
+				//Generate healing animations, if needed
 				var healSprite, healDeadSprite, healAttackSprite []*ebiten.Image
 				if itemType.name == "characters" {
 					for x := 0; x < healAnimation.numFrames; x++ {
