@@ -73,6 +73,19 @@ func getCharFrame(player *playerData) image.Image {
 	defer reportPanic("getCharFrame")
 
 	var sprite *spritePack
+	var healFrame int
+	var healing, healer, attacking bool
+
+	if hasEffects(player, EFFECT_ATTACK) {
+		attacking = true
+	}
+	if hasEffects(player, EFFECT_HEALER) {
+		healing = true
+		healer = true
+	} else if hasEffects(player, EFFECT_HEAL) {
+		healing = true
+	}
+
 	if player.creature == nil {
 		sprite = spritePacks["player 1"]
 	} else {
@@ -86,13 +99,21 @@ func getCharFrame(player *playerData) image.Image {
 		return nil
 	}
 
-	healFrame := int(uint64(time.Now().UnixMilli()/healMilliDiv) % uint64((healAnimation.numFrames-1)*2))
-	if healFrame > (healAnimation.numFrames - 1) {
-		healFrame = healAnimation.numFrames - (healFrame - (healAnimation.numFrames - 1)) - 1
+	if healing {
+		curTime := time.Now().UnixMilli() / healMilliDiv
+		/* Offset healer frame */
+		if healer {
+			curTime += 1
+		}
+
+		healFrame = int(curTime % int64((healAnimation.numFrames-1)*2))
+		if healFrame > (healAnimation.numFrames - 1) {
+			healFrame = healAnimation.numFrames - (healFrame - (healAnimation.numFrames - 1)) - 1
+		}
 	}
 
 	if player.health < 1 {
-		if hasEffects(player, EFFECT_HEAL) {
+		if healing {
 			return sprite.healingDead[healFrame]
 		} else {
 			return sprite.dead
@@ -102,7 +123,7 @@ func getCharFrame(player *playerData) image.Image {
 	dirOff := playerDirSpriteOffset(player.direction)
 
 	var newFrame int
-	if hasEffects(player, EFFECT_ATTACK) {
+	if attacking {
 		newFrame = int((netTick/2)%3) + 1
 	} else if player.isWalking {
 		newFrame = ((player.walkFrame) % 3) + 1
@@ -116,11 +137,11 @@ func getCharFrame(player *playerData) image.Image {
 	rect.Min.Y = dirOff
 	rect.Max.Y = sprite.sizeH + dirOff
 
-	if hasEffects(player, EFFECT_ATTACK|EFFECT_HEAL) {
+	if healing && attacking {
 		return sprite.healingAttack[healFrame].SubImage(rect)
-	} else if hasEffects(player, EFFECT_HEAL) {
+	} else if healing {
 		return sprite.healing[healFrame].SubImage(rect)
-	} else if hasEffects(player, EFFECT_ATTACK) {
+	} else if attacking {
 		return sprite.attack.SubImage(rect)
 	} else {
 		return sprite.walking.SubImage(rect)
