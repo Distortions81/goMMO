@@ -86,7 +86,7 @@ func getCharFrame(player *playerData) image.Image {
 
 	if player.health < 1 {
 		if hasEffects(player, EFFECT_HEAL) {
-			return sprite.healingDead[netTick/uint64(sprite.healColors.numFrames)]
+			return sprite.healingDead[0]
 		} else {
 			return sprite.dead
 		}
@@ -110,9 +110,9 @@ func getCharFrame(player *playerData) image.Image {
 	rect.Max.Y = sprite.sizeH + dirOff
 
 	if hasEffects(player, EFFECT_ATTACK|EFFECT_HEAL) {
-		return sprite.healingAttack[netTick%uint64(healAnimation.numFrames-1)].SubImage(rect)
+		return sprite.healingAttack[0].SubImage(rect)
 	} else if hasEffects(player, EFFECT_HEAL) {
-		return sprite.healing[netTick%uint64(healAnimation.numFrames-1)].SubImage(rect)
+		return sprite.healing[0].SubImage(rect)
 	} else if hasEffects(player, EFFECT_ATTACK) {
 		return sprite.attack.SubImage(rect)
 	} else {

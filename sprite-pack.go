@@ -12,19 +12,24 @@ var healAnimation = colorPack{
 	frames: []outlineColors{
 		{
 			colors: []color.RGBA{
-				{R: 1, G: 0, B: 0, A: 1},
-				{R: 0, G: 1, B: 0, A: 1},
-				{R: 0, G: 0, B: 1, A: 1},
+				{R: 255, G: 0, B: 0, A: 255},
+				{R: 0, G: 255, B: 0, A: 255},
+				{R: 0, G: 0, B: 255, A: 255},
 			},
-			outlineWidth: []int{2},
 		},
 		{
 			colors: []color.RGBA{
-				{R: 0, G: 0, B: 1, A: 1},
-				{R: 0, G: 1, B: 0, A: 1},
-				{R: 1, G: 0, B: 0, A: 1},
+				{R: 0, G: 0, B: 255, A: 255},
+				{R: 0, G: 255, B: 0, A: 255},
+				{R: 255, G: 0, B: 0, A: 255},
 			},
-			outlineWidth: []int{2},
+		},
+		{
+			colors: []color.RGBA{
+				{R: 255, G: 255, B: 255, A: 255},
+				{R: 255, G: 255, B: 255, A: 255},
+				{R: 255, G: 255, B: 255, A: 255},
+			},
 		},
 	},
 	numFrames: 2,
