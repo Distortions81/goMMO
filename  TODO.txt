@@ -1,6 +1,5 @@
 Healing:
-maybe also different sprite for the healer?
-Need to think about how we can do the effect without new sprites (partially complete)
+Offset healing animation for healer
 Eventually use target system for targeted
 
 Current:
@@ -19,13 +18,8 @@ Sprite compositing, caching.
 Creature spawns, area file data.
 Creature spawn zones/areas.
 Zone/area triggers.
-Sprite-pack files, possibbly make spritepack entries in index.
 
 Future:
 Look into threading physics by using two-step like:
 https://github.com/Distortions81/Gravity-Simulation-Golang/blob/main/main.go
 Clear chunks from players on edit, write net/client so client can also clear.
-
-
-TODO:
-Figure out multi-sprite organization, ids, etc.
