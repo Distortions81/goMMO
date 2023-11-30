@@ -367,7 +367,13 @@ func drawPlayers(screen *ebiten.Image) {
 		}
 
 		//Draw sub-image
-		screen.DrawImage(getCharFrame(player).(*ebiten.Image), &op)
+		image := getCharFrame(player)
+		if image != nil {
+			screen.DrawImage(image.(*ebiten.Image), &op)
+		} else {
+			screen.DrawImage(findItemImage("ui", "close", "close"), &op)
+			//doLog(true, "getCharFrame nil.")
+		}
 	}
 }
 

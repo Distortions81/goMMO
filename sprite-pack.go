@@ -9,24 +9,24 @@ var spritePacks map[string]*spritePack
 func initSpritePacks() {
 	spritePacks = make(map[string]*spritePack)
 
-	character := spritePack{
-		size:    52,
-		walking: findItemImage("characters", "player 1", "walk"),
-		dead:    findItemImage("characters", "player 1", "dead"),
-		attack:  findItemImage("characters", "player 1", "attack"),
-		healColors: colorPack{
-			frames: []outlineColors{}, numFrames: 3,
-		},
-	}
-	spritePacks["character"] = &character
+	for _, itemType := range itemTypesList {
 
-	zombie := spritePack{
-		size:    52,
-		walking: findItemImage("creatures", "zombie", "walk"),
-		dead:    findItemImage("creatures", "zombie", "dead"),
-		attack:  findItemImage("creatures", "zombie", "attack"),
+		if itemType.name == "characters" ||
+			itemType.name == "creatures" {
+			doLog(true, "Creating sprite pack: %v", itemType.name)
+			for _, item := range itemType.items {
+				walkSprite := findItemImage(itemType.name, item.name, "walk")
+				deadSprite := findItemImage(itemType.name, item.name, "dead")
+				attackSprite := findItemImage(itemType.name, item.name, "attack")
+				if walkSprite == nil || deadSprite == nil || attackSprite == nil {
+					doLog(true, "Item not found: %v, %v", itemType.name, item.name)
+					continue
+				}
+				newPack := &spritePack{walking: walkSprite, dead: deadSprite, attack: attackSprite}
+				spritePacks[item.name] = newPack
+			}
+		}
 	}
-	spritePacks["zombie"] = &zombie
 }
 
 type spritePack struct {

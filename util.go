@@ -72,11 +72,15 @@ func getCharFrame(player *playerData) image.Image {
 
 	var sprite *spritePack
 	if player.creature == nil {
-		sprite = spritePacks["character"]
+		sprite = spritePacks["characters"]
 	} else {
 		sType := itemTypesList[player.creature.id.section]
 		item := sType.items[player.creature.id.num]
 		sprite = spritePacks[item.name]
+	}
+
+	if sprite == nil {
+		return nil
 	}
 
 	if player.health < 1 {
