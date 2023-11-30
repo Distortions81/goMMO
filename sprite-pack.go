@@ -79,10 +79,12 @@ func initSpritePacks() {
 				attackSprite := findItemImage(itemType.name, item.name, "attack")
 
 				var healSprite, healDeadSprite, healAttackSprite []*ebiten.Image
-				for x := 0; x < healAnimation.numFrames; x++ {
-					healSprite = append(healSprite, makeOutlines(walkSprite, healAnimation.frames[x].colors))
-					healDeadSprite = append(healDeadSprite, makeOutlines(deadSprite, healAnimation.frames[x].colors))
-					healAttackSprite = append(healAttackSprite, makeOutlines(attackSprite, healAnimation.frames[x].colors))
+				if itemType.name == "characters" {
+					for x := 0; x < healAnimation.numFrames; x++ {
+						healSprite = append(healSprite, makeOutlines(walkSprite, healAnimation.frames[x].colors))
+						healDeadSprite = append(healDeadSprite, makeOutlines(deadSprite, healAnimation.frames[x].colors))
+						healAttackSprite = append(healAttackSprite, makeOutlines(attackSprite, healAnimation.frames[x].colors))
+					}
 				}
 
 				if walkSprite == nil || deadSprite == nil || attackSprite == nil {
