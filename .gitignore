@@ -6,3 +6,4 @@ main.wasm.gz
 main.wasm
 data/settings.json
 input.wasm
+data
