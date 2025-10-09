@@ -34,7 +34,7 @@ func updateFonts() {
 	var mono, tt *opentype.Font
 	var err error
 
-	fontData := getFont("Ubuntu-Mono.ttf")
+	fontData := getFont("NotoSansMono-Regular.ttf")
 	collection, err := opentype.ParseCollection(fontData)
 	if err != nil {
 		log.Fatal(err)
@@ -46,7 +46,7 @@ func updateFonts() {
 	}
 
 	// Mono font
-	fontData = getFont("Ubuntu.ttf")
+	fontData = getFont("NotoSans-Regular.ttf")
 	collection, err = opentype.ParseCollection(fontData)
 	if err != nil {
 		log.Fatal(err)

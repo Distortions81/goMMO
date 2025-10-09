@@ -95,8 +95,7 @@ func newGame() *Game {
 	splashScreen, err = loadSprite("ui/login/login.png", true)
 	if err != nil {
 		doLog(true, "Unable to load splash.")
-		time.Sleep(time.Second)
-		os.Exit(1)
+		splashScreen = ebiten.NewImage(1, 1)
 	}
 
 	halfScreenX = screenX / 2
