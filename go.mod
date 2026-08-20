@@ -1,12 +1,11 @@
 module goMMO
 
 go 1.26.6
-toolchain go1.26.6
 
 require (
 	github.com/fogleman/gg v1.3.0
 	github.com/hajimehoshi/ebiten/v2 v2.6.2
-	github.com/twpayne/go-geom v1.5.3
+	github.com/twpayne/go-geom v1.6.1
 	golang.org/x/image v0.13.0
 	nhooyr.io/websocket v1.8.10
 )
