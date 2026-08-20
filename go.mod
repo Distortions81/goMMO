@@ -1,6 +1,7 @@
 module goMMO
 
-go 1.21.1
+go 1.26.6
+toolchain go1.26.6
 
 require (
 	github.com/fogleman/gg v1.3.0
